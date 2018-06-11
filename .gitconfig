@@ -1,0 +1,18 @@
+[user]
+	name = Spencer Christiansen
+	email = jc.spencer92@gmail.com
+	signingkey = 38C651240AF486A1
+[alias]
+  co = checkout
+  br = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+[color]
+	ui = auto
+[core]
+	editor = nvim
+[web]
+	browser = open
+[credential]
+	helper = osxkeychain
+[commit]
+	gpgsign = true
