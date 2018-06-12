@@ -99,4 +99,4 @@ match ColorColumn /\M\s\+$/
 let g:airline_powerline_fonts = 1
 
 " Open FZF file-finder with ctrl-p
-map <C-p> :FZF <CR>
+nnoremap <C-p> :FZF <CR>
