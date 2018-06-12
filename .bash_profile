@@ -157,3 +157,4 @@ export VISUAL=nvim
 export EDITOR="$VISUAL"
 
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias rcfg='curl -Lks https://raw.githubusercontent.com/spejamchr/dots/master/install.sh | /bin/bash'
