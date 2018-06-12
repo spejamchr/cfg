@@ -3,7 +3,7 @@ scriptencoding utf-8
 
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
-source ~/.vimrc
+" source ~/.vimrc
 
 set nobackup       " no backup files
 set nowritebackup  " only in case you don't want a backup file while editing
@@ -11,9 +11,6 @@ set noswapfile     " no swap files
 
 " Tab key inserts 2 spaces
 set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab smartindent autoindent
-
-"colorscheme seti
-color dracula
 
 " Show line numbers
 set nu
@@ -85,9 +82,21 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-fugitive'
+
+Plug 'airblade/vim-gitgutter'
 
 " Initialize plugin system
 call plug#end()
+
+color dracula
+
+" Use the terminal background color
+highlight Normal ctermbg=None
+highlight NonText ctermbg=None
+highlight ColorColumn ctermbg=Black
+highlight CursorLine ctermbg=None cterm=underline
 
 " replace all old-style rocket syntaxes with newer versions
 " :example => thing  ->  example: thing
@@ -106,3 +115,6 @@ let g:airline_powerline_fonts = 1
 
 " Open FZF file-finder with ctrl-p
 nnoremap <C-p> :FZF <CR>
+
+" Keep splits equal when resizing vim
+autocmd VimResized * wincmd =
