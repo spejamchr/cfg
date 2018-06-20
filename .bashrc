@@ -41,6 +41,23 @@ function edit {
   (cd $1; $EDITOR .)
 }
 
+# This just simplifies things below
+function rails_command {
+  (
+    cd $1
+    shift
+
+    if [ -f .ruby-version ]; then
+      version=$(cat .ruby-version)
+    fi
+    if [ "$version" ]; then
+      chruby "$version"
+    fi
+
+    $@
+  )
+}
+
 alias slack="open /Applications/Slack.app/"
 
 ################################################################################
@@ -59,9 +76,9 @@ alias slack="open /Applications/Slack.app/"
 export TT=~/git/work/TroopTrack
 
 if [ $(which kitty) ]; then
-  alias tt_log="(cd $TT; tail -f log/development.log)"
-  alias tt_console="(cd $TT; chruby 2.3.1; rails c)"
-  alias tt_resque="(cd $TT; chruby 2.3.1; start_resque)"
+  alias tt_log="rails_command $TT tail -f log/development.log"
+  alias tt_console="rails_command $TT rails console"
+  alias tt_resque="rails_command $TT start_resque"
 
   function tt_terminal {
     cd $TT
@@ -78,9 +95,9 @@ if [ $(which kitty) ]; then
     kitty @ send-text --match title:resque tt_resque "\n"
   }
 
-  alias tt_website="qute http://trooptrack.test"
-  alias harvest="qute https://trooptrack.harvestapp.com/time"
-  alias tt_github="qute https://github.com/TroopTrack/TroopTrack/issues"
+  alias tt_website="open http://trooptrack.test"
+  alias harvest="open https://trooptrack.harvestapp.com/time"
+  alias tt_github="open https://github.com/TroopTrack/TroopTrack/issues"
 
   function tt {
     tt_terminal
@@ -106,9 +123,9 @@ export AHGD=~/git/work/ahg_app
 export AHGM=~/git/work/ahgMobile
 
 if [ $(which kitty) ]; then
-  alias ahg_log="(cd $AHG; tail -f log/development.log)"
-  alias ahg_console="(cd $AHG; chruby 2.3.1; rails c)"
-  alias ahg_resque="(cd $AHG; chruby 2.3.1; start_resque)"
+  alias ahg_log="rails_command $AHG tail -f log/development.log"
+  alias ahg_console="rails_command $AHG rails console"
+  alias ahg_resque="rails_command $AHG start_resque"
 
   alias ahgd_start="(cd $AHGD; yarn start)"
 
@@ -126,9 +143,9 @@ if [ $(which kitty) ]; then
     kitty @ send-text --match title:console ahg_console "\n"
   }
 
-  alias ahg_website="qute http://ahg-connect.test/national"
-  alias ahg_github="qute https://github.com/TroopTrack/ahg_connect"
-  alias ahg_pivotal="qute https://www.pivotaltracker.com/n/projects/901476"
+  alias ahg_website="open http://ahg-connect.test/national"
+  alias ahg_github="open https://github.com/TroopTrack/ahg_connect"
+  alias ahg_pivotal="open https://www.pivotaltracker.com/n/projects/901476"
 
   function ahg {
     ahg_terminal
