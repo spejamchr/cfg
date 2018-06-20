@@ -23,6 +23,7 @@ fun! <SID>StripTrailingWhitespaces()
     let l = line(".")
     let c = col(".")
     %s/\s\+$//e
+    %s/\($\n\s*\)\+\%$//e
     call cursor(l, c)
 endfun
 autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
@@ -85,7 +86,11 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-fugitive'
 
+" Show git diff marks
 Plug 'airblade/vim-gitgutter'
+
+" Show number of search matches
+Plug 'google/vim-searchindex'
 
 " Initialize plugin system
 call plug#end()
