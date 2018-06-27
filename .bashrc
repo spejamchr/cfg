@@ -36,6 +36,9 @@ alias qute='open /Applications/qutebrowser.app/ --args'
 # I have a hard time remembering this
 alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 
+# I forget this too easily:
+alias sync_test="rails db:test:prepare"
+
 # It's nicer to open a dir for editing when it's also the cwd
 function edit {
   (cd $1; $EDITOR .)
