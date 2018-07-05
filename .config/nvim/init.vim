@@ -70,8 +70,8 @@ call plug#begin('~/.local/share/nvim/plugged')
 " Fuzzy finder
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
-" Crystal support
-Plug 'rhysd/vim-crystal'
+" Many languages (including Crystal and JSX)
+Plug 'sheerun/vim-polyglot'
 
 " Statusline
 Plug 'vim-airline/vim-airline'
@@ -79,6 +79,7 @@ Plug 'vim-airline/vim-airline'
 " See https://draculatheme.com/vim/
 Plug 'dracula/vim', { 'as': 'dracula' }
 
+" tpope is the man
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-vinegar'
@@ -101,7 +102,7 @@ color dracula
 highlight Normal ctermbg=None
 highlight NonText ctermbg=None
 highlight ColorColumn ctermbg=Black
-highlight CursorLine ctermbg=None cterm=underline
+highlight CursorLine ctermbg=235
 
 " replace all old-style rocket syntaxes with newer versions
 " :example => thing  ->  example: thing
@@ -123,3 +124,6 @@ nnoremap <C-p> :FZF <CR>
 
 " Keep splits equal when resizing vim
 autocmd VimResized * wincmd =
+
+" Update the GitGutter more frequently
+set updatetime=100
