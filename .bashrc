@@ -11,6 +11,9 @@ export PATH="$PATH:`yarn global bin`"
 # Rust stuff
 export PATH="$HOME/.cargo/bin:$PATH"
 
+# Use the old mysql version
+export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
+
 # My own scripts
 export PATH=$PATH:/Users/spencer/code/scripts
 
@@ -38,6 +41,10 @@ alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 
 # I forget this too easily:
 alias sync_test="rails db:test:prepare"
+
+function reading {
+  osascript -e 'tell application "iTunes" to play playlist "Reading"'
+}
 
 # It's nicer to open a dir for editing when it's also the cwd
 function edit {
@@ -106,6 +113,7 @@ if [ $(which kitty) ]; then
     tt_terminal
     qute -r tt
     slack
+    reading
   }
 fi
 
@@ -154,6 +162,7 @@ if [ $(which kitty) ]; then
     ahg_terminal
     qute -r ahg
     slack
+    reading
   }
 fi
 
@@ -233,8 +242,6 @@ function gitpushnew {
   fi
 }
 
-# added by Anaconda3 4.3.0 installer
-export PATH="/Users/spencer/anaconda/bin:$PATH"
 export GPG_TTY=$(tty)
 
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
