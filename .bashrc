@@ -231,7 +231,54 @@ function parse_git_dirty {
   fi
 }
 
-export PS1="\[\e[36m\][\d \t] \h:\w \u \`parse_git_branch\`\[\e[m\]\n\[\e[36m\]\\$ \[\e[m\]"
+C1="96;164;162"
+C2="98;114;164"
+C3="96;164;113"
+C4="124;96;164"
+BLACK="0;0;0"
+WHITE="255;255;255"
+CLEAR="\033[0m"
+
+function _c_fg() {
+  if [ "$COLORTERM" ]; then
+    echo "\033[38;2;$1m"
+  else
+    echo "\033[36m"
+  fi
+}
+
+function _c_bg() {
+  if [ "$COLORTERM" ]; then
+    echo "\033[48;2;$1m"
+  fi
+}
+
+function _prompt_piece() {
+  str="$(_c_fg $WHITE)$(_c_bg $1)$2$(_c_fg $1)"
+  if [ "$3" ]; then
+    str=$str"$(_c_bg $3)"
+  fi
+  str=$str" "
+
+  echo "$str"
+}
+
+function _my_prompt_cmd {
+  _date_and_time=$(_prompt_piece $C1 "$(date "+ %a %b %d %H:%M:%S") " $C2)
+  _user_name=$(_prompt_piece $C2 "$(whoami) " $C3)
+  pgb=$(parse_git_branch)
+  if [ "$pgb" ];then
+    _current_dir=$(_prompt_piece $C3 "$(dirs +0) " $C4)
+    _git_info=$(_prompt_piece $C4 "$pgb $CLEAR")
+  else
+    _current_dir=$(_prompt_piece $C3 "$(dirs +0) $CLEAR")
+    _git_info=""
+  fi
+  echo -e "$_date_and_time$_user_name$_current_dir$_git_info$CLEAR"
+}
+
+PROMPT_COMMAND="_my_prompt_cmd"
+PS1="\[\033[1m\]\\$ \[$CLEAR\]"
 
 function gitpushnew {
   BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
