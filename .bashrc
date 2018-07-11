@@ -64,7 +64,7 @@ function rails_command {
       chruby "$version"
     fi
 
-    $@
+    eval $@
   )
 }
 
