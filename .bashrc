@@ -42,6 +42,17 @@ alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 # I forget this too easily:
 alias sync_test="rails db:test:prepare"
 
+# git for my dotfiles
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+
+function gt {
+  if [ "$HOME" == "$PWD" ]; then
+    config "$@"
+  else
+    git "$@"
+  fi
+}
+
 function reading {
   current_playlist=$(osascript -e 'tell application "iTunes" to name of current playlist as string')
   playing=$(osascript -e 'tell application "iTunes" to player state as string')
@@ -192,7 +203,7 @@ alias fix_camera="sudo killall VDCAssistant"
 #
 # get current branch in git repo
 function parse_git_branch() {
-  BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+  BRANCH=`gt branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
   if [ ! "${BRANCH}" == "" ]
   then
     STAT=`parse_git_dirty`
@@ -204,7 +215,7 @@ function parse_git_branch() {
 
 # get current status of git repo
 function parse_git_dirty {
-  status=`git status 2>&1 | tee`
+  status=`gt status 2>&1 | tee`
   dirty=`echo -n "${status}" 2> /dev/null | grep "modified:" &> /dev/null; echo "$?"`
   untracked=`echo -n "${status}" 2> /dev/null | grep "Untracked files" &> /dev/null; echo "$?"`
   ahead=`echo -n "${status}" 2> /dev/null | grep "Your branch is ahead of" &> /dev/null; echo "$?"`
@@ -297,5 +308,4 @@ function gitpushnew {
 
 export GPG_TTY=$(tty)
 
-alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias rcfg='curl -Lks https://raw.githubusercontent.com/spejamchr/dots/master/install.sh | /bin/bash'
