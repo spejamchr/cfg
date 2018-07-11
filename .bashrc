@@ -207,7 +207,7 @@ function parse_git_branch() {
   if [ ! "${BRANCH}" == "" ]
   then
     STAT=`parse_git_dirty`
-    echo "[${BRANCH}${STAT}]"
+    echo "${BRANCH}${STAT}"
   else
     echo ""
   fi
