@@ -127,3 +127,6 @@ autocmd VimResized * wincmd =
 
 " Update the GitGutter more frequently
 set updatetime=100
+
+" Use ag with FZF, showing hidden files but ignoring .git/
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
