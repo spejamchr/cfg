@@ -43,7 +43,13 @@ alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 alias sync_test="rails db:test:prepare"
 
 function reading {
-  osascript -e 'tell application "iTunes" to play playlist "Reading"'
+  current_playlist=$(osascript -e 'tell application "iTunes" to name of current playlist as string')
+  playing=$(osascript -e 'tell application "iTunes" to player state as string')
+  if [ $current_playlist != "Reading" ]; then
+    osascript -e 'tell application "iTunes" to play playlist "Reading"'
+  elif [ $playing != "playing" ]; then
+    osascript -e 'tell application "iTunes" to play'
+  fi
 }
 
 # It's nicer to open a dir for editing when it's also the cwd
