@@ -258,28 +258,27 @@ BLACK="0;0;0"
 WHITE="255;255;255"
 CLEAR="\033[0m"
 
-function _c_fg() {
+function _fg() {
   if [ "$COLORTERM" ]; then
     echo "\033[38;2;$1m"
-  else
+  elif [ "$2" ]; then
     echo "\033[36m"
+  else
+    echo "\033[30m"
   fi
 }
 
-function _c_bg() {
+function _bg() {
   if [ "$COLORTERM" ]; then
     echo "\033[48;2;$1m"
+  else
+    echo "\033[46m"
   fi
 }
 
 function _prompt_piece() {
-  str="$(_c_fg $WHITE)$(_c_bg $1)$2$(_c_fg $1)"
-  if [ "$3" ]; then
-    str=$str"$(_c_bg $3)"
-  fi
-  str=$str" "
-
-  echo "$str"
+  sep=""
+  echo " \033[30m$(_bg $1)$sep$(_fg $WHITE) $2 $CLEAR$(_fg $1 t)$sep$CLEAR"
 }
 
 function z() {
@@ -302,17 +301,16 @@ function z() {
 }
 
 function _my_prompt_cmd {
-  _date_and_time=$(_prompt_piece $C1 "$(date "+ %a %b %d %H:%M:%S") " $C2)
-  _user_name=$(_prompt_piece $C2 "$(whoami) " $C3)
+  _date_and_time=$(_prompt_piece $C1 "$(date "+%a %b %d %H:%M:%S")")
+  _user_name=$(_prompt_piece $C2 "$(whoami)")
+  _current_dir=$(_prompt_piece $C3 "$(dirs +0)")
   pgb=$(parse_git_branch)
   if [ "$pgb" ];then
-    _current_dir=$(_prompt_piece $C3 "$(dirs +0) " $C4)
-    _git_info=$(_prompt_piece $C4 "$pgb $CLEAR")
+    _git_info=$(_prompt_piece $C4 "$pgb")
   else
-    _current_dir=$(_prompt_piece $C3 "$(dirs +0) $CLEAR")
     _git_info=""
   fi
-  echo -e "$_date_and_time$_user_name$_current_dir$_git_info$CLEAR"
+  echo -e "$_date_and_time$_user_name$_current_dir$_git_info"
 }
 
 PROMPT_COMMAND=_my_prompt_cmd
