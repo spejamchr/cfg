@@ -282,6 +282,25 @@ function _prompt_piece() {
   echo "$str"
 }
 
+function z() {
+  time "$@"
+  phrases="done
+  finished
+  over
+  end
+  stop
+  terminated
+  complete
+  concluded
+  performed
+  realized
+  wrought
+  brought to pass"
+
+  word=$(echo "$phrases" | sort -R | head -n 1)
+  say "$word"
+}
+
 function _my_prompt_cmd {
   _date_and_time=$(_prompt_piece $C1 "$(date "+ %a %b %d %H:%M:%S") " $C2)
   _user_name=$(_prompt_piece $C2 "$(whoami) " $C3)
