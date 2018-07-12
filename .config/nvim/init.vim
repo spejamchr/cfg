@@ -93,6 +93,8 @@ Plug 'airblade/vim-gitgutter'
 " Show number of search matches
 Plug 'google/vim-searchindex'
 
+Plug 'junegunn/goyo.vim'
+
 " Initialize plugin system
 call plug#end()
 
