@@ -315,7 +315,7 @@ function _my_prompt_cmd {
   echo -e "$_date_and_time$_user_name$_current_dir$_git_info$CLEAR"
 }
 
-PROMPT_COMMAND="_my_prompt_cmd"
+PROMPT_COMMAND=_my_prompt_cmd
 PS1="\[\033[1m\]\\$ \[$CLEAR\]"
 
 function gitpushnew {
