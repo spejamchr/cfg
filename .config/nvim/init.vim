@@ -100,11 +100,21 @@ call plug#end()
 
 color dracula
 
-" Use the terminal background color
-highlight Normal ctermbg=None
-highlight NonText ctermbg=None
-highlight ColorColumn ctermbg=Black
-highlight CursorLine ctermbg=235
+" Apply custom highlights
+fun! s:Highlight()
+  " Use the terminal background color
+  highlight Normal ctermbg=None
+  highlight NonText ctermbg=None
+  highlight ColorColumn ctermbg=Black
+  highlight CursorLine ctermbg=235
+endfun
+
+call s:Highlight()
+
+" Reapply custom highlights when the color scheme is reloaded
+augroup Highlight
+  autocmd! ColorScheme * call s:Highlight()
+augroup end
 
 " replace all old-style rocket syntaxes with newer versions
 " :example => thing  ->  example: thing
