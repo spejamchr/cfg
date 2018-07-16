@@ -42,6 +42,10 @@ alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 # I forget this too easily:
 alias sync_test="rails db:test:prepare"
 
+# Remove the git alias if it exists
+# Fixes a bug when re-sourcing this file.
+[ "$(alias | grep 'alias git=')" ] && unalias git
+
 # git for my dotfiles
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
@@ -310,7 +314,7 @@ function _my_prompt_cmd {
   else
     _git_info=""
   fi
-  echo -e "$_date_and_time$_user_name$_current_dir$_git_info"
+  echo -e "$CLEAR$_date_and_time$_user_name$_current_dir$_git_info"
 }
 
 PROMPT_COMMAND=_my_prompt_cmd
