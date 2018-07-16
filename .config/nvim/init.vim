@@ -95,6 +95,9 @@ Plug 'google/vim-searchindex'
 
 Plug 'junegunn/goyo.vim'
 
+" Get synonyms for writing
+Plug 'ron89/thesaurus_query.vim'
+
 " Initialize plugin system
 call plug#end()
 
