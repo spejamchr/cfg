@@ -7,8 +7,10 @@
 #
 #                       mode     = 'name of mode' | <mode> ',' <mode>
 #
-#                       action   = <keysym> ':' <command> | <keysym> '->' ':' <command>
-#                                  <keysym> ';' <mode>    | <keysym> '->' ';' <mode>
+#                       action   = <keysym> ':' <command> | <keysym> '->' ':'
+#                                  <command>
+#                                  <keysym> ';' <mode>    | <keysym> '->' ';'
+#                                  <mode>
 #
 #                       keysym   = <mod> '-' <key> | <key>
 #
@@ -23,36 +25,44 @@
 #                       ->       = keypress is not consumed by skhd
 #
 #                       command  = command is executed through '$SHELL -c' and
-#                                  follows valid shell syntax. if the $SHELL environment
-#                                  variable is not set, it will default to '/bin/bash'.
-#                                  when bash is used, the ';' delimeter can be specified
-#                                  to chain commands.
+#                                  follows valid shell syntax. if the $SHELL
+#                                  environment variable is not set, it will
+#                                  default to '/bin/bash'.  when bash is used,
+#                                  the ';' delimeter can be specified to chain
+#                                  commands.
 #
-#                                  to allow a command to extend into multiple lines,
-#                                  prepend '\' at the end of the previous line.
+#                                  to allow a command to extend into multiple
+#                                  lines, prepend '\' at the end of the
+#                                  previous line.
 #
-#                                  an EOL character signifies the end of the bind.
+#                                  an EOL character signifies the end of the
+#                                  bind.
 #
 #
 #  NOTE(koekeishiya): A mode is declared according to the following rules:
 #
-#                       mode_decl = '::' <name> '@' ':' <command> | '::' <name> ':' <command> |
+#                       mode_decl = '::' <name> '@' ':' <command> | '::' <name>
+#                                   ':' <command> |
 #                                   '::' <name> '@'               | '::' <name>
 #
 #                       name      = desired name for this mode,
 #
-#                       @         = capture keypresses regardless of being bound to an action
+#                       @         = capture keypresses regardless of being
+#                                   bound to an action
 #
 #                       command  = command is executed through '$SHELL -c' and
-#                                  follows valid shell syntax. if the $SHELL environment
-#                                  variable is not set, it will default to '/bin/bash'.
-#                                  when bash is used, the ';' delimeter can be specified
-#                                  to chain commands.
+#                                  follows valid shell syntax. if the $SHELL
+#                                  environment variable is not set, it will
+#                                  default to '/bin/bash'.  when bash is used,
+#                                  the ';' delimeter can be specified to chain
+#                                  commands.
 #
-#                                  to allow a command to extend into multiple lines,
-#                                  prepend '\' at the end of the previous line.
+#                                  to allow a command to extend into multiple
+#                                  lines, prepend '\' at the end of the
+#                                  previous line.
 #
-#                                  an EOL character signifies the end of the bind.
+#                                  an EOL character signifies the end of the
+#                                  bind.
 
 # add an on_enter command to the default mode
 # :: default : chunkc border::color 0xff775759
@@ -70,10 +80,12 @@
 # default, test < cmd - return : open -na /Applications/Terminal.app
 
 # open terminal, blazingly fast compared to iTerm/Hyper
-cmd - return : /Applications/Kitty.app/Contents/MacOS/kitty --single-instance
+cmd - return : /Applications/Kitty.app/Contents/MacOS/kitty --single-instance -d ~
 
 # open qutebrowser
-cmd + shift - return : ~/Scripts/qtb.sh
+cmd + ctrl - t : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser -r tt
+cmd + ctrl - a : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser -r ahg
+shift + ctrl - return : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser
 
 # close focused window
 alt - w : chunkc tiling::window --close
@@ -97,10 +109,10 @@ shift + alt - k : chunkc tiling::window --swap north
 shift + alt - l : chunkc tiling::window --swap east
 
 # move window
-shift + cmd - h : chunkc tiling::window --warp west
-shift + cmd - j : chunkc tiling::window --warp south
-shift + cmd - k : chunkc tiling::window --warp north
-shift + cmd - l : chunkc tiling::window --warp east
+shift + ctrl - h : chunkc tiling::window --warp west
+shift + ctrl - j : chunkc tiling::window --warp south
+shift + ctrl - k : chunkc tiling::window --warp north
+shift + ctrl - l : chunkc tiling::window --warp east
 
 # make floating window fill screen
 shift + alt - up     : chunkc tiling::window --grid-layout 1:1:0:0:1:1
@@ -124,9 +136,17 @@ cmd + alt - 6 : chunkc tiling::desktop --focus 6
 # cmd + alt - 7 : chunkc tiling::desktop --focus 7
 
 # send window to desktop
+shift + alt - c : \
+  echo $(chunkc tiling::query --desktops-for-monitor \
+    $(chunkc tiling::query --monitor id) \
+  ) | \
+  grep -q $(($(chunkc tiling::query --desktop id)+1)) || \
+    chunkc tiling::desktop --create; \
+  chunkc tiling::window --send-to-desktop next
+
 shift + alt - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop)
 shift + alt - z : chunkc tiling::window --send-to-desktop prev
-shift + alt - c : chunkc tiling::window --send-to-desktop next
+
 shift + alt - 1 : chunkc tiling::window --send-to-desktop 1
 shift + alt - 2 : chunkc tiling::window --send-to-desktop 2
 shift + alt - 3 : chunkc tiling::window --send-to-desktop 3
@@ -136,16 +156,25 @@ shift + alt - 6 : chunkc tiling::window --send-to-desktop 6
 # shift + alt - 7 : chunkc tiling::window --send-to-desktop 7
 
 # send window to desktop and follow focus
-shift + cmd - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop); chunkc tiling::desktop --focus $(chunkc get _last_active_desktop)
-shift + cmd - z : chunkc tiling::window --send-to-desktop prev; chunkc tiling::desktop --focus prev
-shift + cmd - c : chunkc tiling::window --send-to-desktop next; chunkc tiling::desktop --focus next
-shift + cmd - 1 : chunkc tiling::window --send-to-desktop 1; chunkc tiling::desktop --focus 1
-shift + cmd - 2 : chunkc tiling::window --send-to-desktop 2; chunkc tiling::desktop --focus 2
-shift + cmd - 3 : chunkc tiling::window --send-to-desktop 3; chunkc tiling::desktop --focus 3
-shift + cmd - 4 : chunkc tiling::window --send-to-desktop 4; chunkc tiling::desktop --focus 4
-shift + cmd - 5 : chunkc tiling::window --send-to-desktop 5; chunkc tiling::desktop --focus 5
-shift + cmd - 6 : chunkc tiling::window --send-to-desktop 6; chunkc tiling::desktop --focus 6
-# shift + cmd - 7 : chunkc tiling::window --send-to-desktop 7; chunkc tiling::desktop --focus 7
+
+shift + ctrl - c : \
+  echo $(chunkc tiling::query --desktops-for-monitor \
+    $(chunkc tiling::query --monitor id) \
+  ) | \
+  grep -q $(($(chunkc tiling::query --desktop id)+1)) || \
+    chunkc tiling::desktop --create; \
+  chunkc tiling::window --send-to-desktop next; \
+  chunkc tiling::desktop --focus next
+
+shift + ctrl - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop); chunkc tiling::desktop --focus $(chunkc get _last_active_desktop)
+shift + ctrl - z : chunkc tiling::window --send-to-desktop prev; chunkc tiling::desktop --focus prev
+shift + ctrl - 1 : chunkc tiling::window --send-to-desktop 1; chunkc tiling::desktop --focus 1
+shift + ctrl - 2 : chunkc tiling::window --send-to-desktop 2; chunkc tiling::desktop --focus 2
+shift + ctrl - 3 : chunkc tiling::window --send-to-desktop 3; chunkc tiling::desktop --focus 3
+shift + ctrl - 4 : chunkc tiling::window --send-to-desktop 4; chunkc tiling::desktop --focus 4
+shift + ctrl - 5 : chunkc tiling::window --send-to-desktop 5; chunkc tiling::desktop --focus 5
+shift + ctrl - 6 : chunkc tiling::window --send-to-desktop 6; chunkc tiling::desktop --focus 6
+# shift + ctrl - 7 : chunkc tiling::window --send-to-desktop 7; chunkc tiling::desktop --focus 7
 
 # focus monitor
 ctrl + alt - z  : chunkc tiling::monitor -f prev
@@ -168,10 +197,10 @@ shift + alt - w : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-windo
 shift + alt - d : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge east
 
 # decrease region size
-shift + cmd - a : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge west
-shift + cmd - s : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge south
-shift + cmd - w : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge north
-shift + cmd - d : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge east
+shift + ctrl - a : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge west
+shift + ctrl - s : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge south
+shift + ctrl - w : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge north
+shift + ctrl - d : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge east
 
 # set insertion point for focused container
 ctrl + alt - f : chunkc tiling::window --use-insertion-point cancel
