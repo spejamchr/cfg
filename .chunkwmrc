@@ -14,7 +14,8 @@
 #       'stdout' or 'stderr' can be used instead of an actual filepath.
 #
 
-chunkc core::log_file stdout
+# chunkc core::log_file stdout
+chunkc core::log_file /Users/spencer/mylogs/chunkwm.log
 
 #
 # NOTE: specify the desired level of logging.
@@ -78,7 +79,7 @@ chunkc set bsp_split_ratio               0.5
 chunkc set monitor_focus_cycle           1
 chunkc set window_focus_cycle            monitor
 
-chunkc set mouse_follows_focus           intrinsic
+chunkc set mouse_follows_focus           off
 chunkc set window_float_next             0
 chunkc set window_region_locked          1
 
@@ -95,7 +96,7 @@ chunkc set preselect_border_width        5
 #
 
 chunkc set window_float_topmost          0
-chunkc set window_fade_inactive          0
+chunkc set window_fade_inactive          1
 chunkc set window_fade_alpha             0.85
 chunkc set window_fade_duration          0.25
 chunkc set window_use_cgs_move           0
