@@ -16,7 +16,12 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab smartindent autoinde
 set nu
 
 " Color the 81'st column, to show lines that are too long
-set colorcolumn=81
+let index = 81
+let &colorcolumn = index
+while index < 200
+  let index+=1
+  let &colorcolumn = &colorcolumn.','.index
+endwhile
 
 " Remove trailing whitespace on save
 fun! <SID>StripTrailingWhitespaces()
