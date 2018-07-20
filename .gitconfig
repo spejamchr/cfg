@@ -1,18 +1,37 @@
 [user]
-	name = Spencer Christiansen
-	email = jc.spencer92@gmail.com
-	signingkey = 38C651240AF486A1
+  name = Spencer Christiansen
+  email = jc.spencer92@gmail.com
+  signingkey = 38C651240AF486A1
 [alias]
   co = checkout
   br = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
-	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  dif = difftool --no-symlinks --dir-diff
 [color]
-	ui = auto
+  ui = auto
 [core]
-	editor = nvim
+  editor = nvim
 [web]
-	browser = open
+  browser = open
 [credential]
-	helper = osxkeychain
+  helper = osxkeychain
 [commit]
-	gpgsign = true
+  gpgsign = true
+[diff]
+  tool = kitty
+  guitool = kitty.gui
+  # Git diff will use (i)ndex, (w)ork tree, (c)ommit and (o)bject
+  # instead of a/b/c/d as prefixes for patches
+  mnemonicprefix = true
+  # Turn on an experimental heuristic that should make the diff easier to read
+  compactionHeuristic = true
+  # Show moved lines differently from added/deleted lines
+  # https://twitter.com/SmileyKeith/status/946789768506912773<Paste>
+  colorMoved = zebra
+[difftool]
+  prompt = false
+  trustExitCode = true
+[difftool "kitty"]
+  cmd = kitty +kitten diff $LOCAL $REMOTE
+[difftool "kitty.gui"]
+  cmd = kitty kitty +kitten diff $LOCAL $REMOTE
