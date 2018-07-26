@@ -60,9 +60,6 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" Exit insert mode by typing jj
-inoremap jj <Esc>
-
 " Highlight the cursor's line
 set cursorline
 
