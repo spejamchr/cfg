@@ -141,13 +141,7 @@ cmd + alt - p : chunkc tiling::window --send-to-desktop prev
 
 # send window to desktop and follow focus
 
-cmd + alt - k : \
-  echo $(chunkc tiling::query --desktops-for-monitor \
-    $(chunkc tiling::query --monitor id) \
-  ) | \
-  grep -q $(($(chunkc tiling::query --desktop id)+1)) || \
-    chunkc tiling::desktop --create; \
-  chunkc tiling::window --send-to-desktop next; \
+cmd + alt - k : chunkc tiling::window --send-to-desktop next; \
   chunkc tiling::desktop --focus next
 
 cmd + alt - j : chunkc tiling::window --send-to-desktop prev; \
@@ -226,3 +220,13 @@ ctrl + alt - d : chunkc tiling::desktop --layout float
 ctrl + alt - w : chunkc tiling::desktop --deserialize ~/.chunkwm_layouts/dev_1
 
 cmd + shift - 4 -> : chunkc border::clear
+
+# focus monitor
+ctrl + alt - z  : chunkc tiling::monitor -f prev
+ctrl + alt - c  : chunkc tiling::monitor -f next
+
+# send window to monitor and follow focus
+ctrl + cmd - z  : chunkc tiling::window --send-to-monitor prev; \
+  chunkc tiling::monitor -f prev
+ctrl + cmd - c  : chunkc tiling::window --send-to-monitor next; \
+  chunkc tiling::monitor -f next
