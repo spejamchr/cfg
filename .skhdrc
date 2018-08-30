@@ -230,3 +230,6 @@ ctrl + cmd - z  : chunkc tiling::window --send-to-monitor prev; \
   chunkc tiling::monitor -f prev
 ctrl + cmd - c  : chunkc tiling::window --send-to-monitor next; \
   chunkc tiling::monitor -f next
+
+# Put the computer to sleep
+shift + cmd + ctrl - s : pmset sleepnow
