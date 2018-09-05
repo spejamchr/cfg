@@ -90,7 +90,7 @@ cmd - return : python3 ~/git/other/kitty --single-instance -d ~
 shift + ctrl - return : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser
 
 # open mpv
-cmd - m : open -na /Applications/mpv.app $(pbpaste)
+cmd - m : mpv $(pbpaste)
 
 # close focused window
 alt - w : chunkc tiling::window --close
