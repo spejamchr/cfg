@@ -20,7 +20,7 @@ chunkc core::log_file /Users/spencer/mylogs/chunkwm.log
 #
 # NOTE: specify the desired level of logging.
 #
-#       - none, debug, warn, error
+#       - none, debug, profile, warn, error
 #
 
 chunkc core::log_level warn
@@ -124,9 +124,7 @@ chunkc set ffm_standby_on_float          1
 
 chunkc core::load border.so
 chunkc core::load tiling.so
-
-# I prefer the default mac behavior
-# chunkc core::load ffm.so
+chunkc core::load ffm.so
 
 #
 # NOTE: sample rules for the tiling plugin
