@@ -136,7 +136,47 @@ if [ $(which kitty) ]; then
     tt_terminal
     qute -r tt
     slack
-    reading
+  }
+fi
+
+################################################################################
+# Start ExecOnline Stuff
+#
+# ONLY AVAILABLE IN KITTY! (Since it's so easy to programmatically control)
+#
+# * cd to exec_online and:
+#   * open editor,
+#   * start tailing the log,
+#   * open rails console
+# * Open the eo browser session
+# * Open Slack
+#
+export EO=~/git/work/exec_online
+
+if [ $(which kitty) ]; then
+  alias eo_log="rails_command $EO tail -f log/development.log"
+  alias eo_console="rails_command $EO rails console"
+  alias eo_resque="rails_command $EO start_resque"
+
+  function eo_terminal {
+    cd $EO
+    kitty @ new-window --new-tab --tab-title "eo source" --title "eo_source" --keep-focus
+    kitty @ send-text --match title:eo_source "edit $EO \n"
+
+    kitty @ new-window --new-tab --tab-title "eo_log" --title "eo_log" --keep-focus
+    kitty @ send-text --match title:log eo_log "\n"
+
+    kitty @ new-window --new-tab --tab-title "eo_console" --title "eo_console" --keep-focus
+    kitty @ send-text --match title:console eo_console "\n"
+
+    kitty @ new-window --new-tab --tab-title "eo_resque" --title "eo_resque" --keep-focus
+    kitty @ send-text --match title:resque eo_resque "\n"
+  }
+
+  function eo {
+    eo_terminal
+    qute -r eo
+    slack
   }
 fi
 
@@ -185,7 +225,6 @@ if [ $(which kitty) ]; then
     ahg_terminal
     qute -r ahg
     slack
-    reading
   }
 fi
 
