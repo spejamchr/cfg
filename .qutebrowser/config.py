@@ -3,11 +3,12 @@ c.editor.command = ["urxvt", "-title", "scratchpad", "-geometry", "86x24+40+60",
 c.new_instance_open_target = "tab-bg"
 c.prompt.filebrowser = False
 c.completion.height = "30%"
-c.completion.web_history_max_items = 1000
+c.completion.web_history.max_items = 1000
 c.input.partial_timeout = 2000
+c.window.title_format = "{perc}{title}"
 c.tabs.background = True
 c.tabs.favicons.show = "always"
-c.tabs.title.format = "{title}"
+c.tabs.title.format = "{audio}{index} {title}"
 c.tabs.position = "left"
 c.tabs.width = 100
 c.downloads.location.directory = '~/Downloads'
@@ -19,7 +20,7 @@ c.hints.mode = "letter"
 c.hints.min_chars = 1
 c.hints.uppercase = True
 c.keyhint.blacklist = ["*"]
-c.scrolling.bar = True
+c.scrolling.bar = "always"
 c.scrolling.smooth = True
 
 # searches
