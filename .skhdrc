@@ -84,7 +84,7 @@
 # ]
 
 # open terminal, blazingly fast compared to iTerm/Hyper
-cmd - return : python3 ~/git/other/kitty --single-instance -d ~
+cmd - return : python3 ~/git/other/kitty --single-instance --title="bash" -d ~
 
 # open qutebrowser
 shift + ctrl - return : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser
