@@ -15,10 +15,10 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab smartindent autoinde
 " Show line numbers
 set nu
 
-" Color the 81'st column, to show lines that are too long
-let index = 81
+" Color the first 80 columns to make long lines more apparent
+let index = 1
 let &colorcolumn = index
-while index < 200
+while index < 80
   let index+=1
   let &colorcolumn = &colorcolumn.','.index
 endwhile
