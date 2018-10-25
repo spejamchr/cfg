@@ -108,8 +108,34 @@ Plug 'junegunn/goyo.vim'
 " Get synonyms for writing
 Plug 'ron89/thesaurus_query.vim'
 
+" For Typescript support
+" Plug 'HerringtonDarkholme/yats.vim'
+Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
+" For async completion
+Plug 'Shougo/deoplete.nvim'
+" For Denite features
+" Plug 'Shougo/denite.nvim'
+
+" Linting
+Plug 'neomake/neomake'
+
+" post install (yarn install | npm install) then load plugin only for editing supported files
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install',
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue'] }
+
 " Initialize plugin system
 call plug#end()
+
+" Enable deoplete at startup
+let g:deoplete#enable_at_startup = 1
+
+" Lint on writes
+call neomake#configure#automake('w')
+
+" Autoformat with Prettier on save
+let g:prettier#autoformat = 0
+autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
 
 color dracula
 
