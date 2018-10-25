@@ -173,6 +173,9 @@ let g:airline_powerline_fonts = 1
 " Open FZF file-finder with ctrl-p
 nnoremap <C-p> :FZF <CR>
 
+" Ggrep the current word with with ctrl-g
+nnoremap <C-g> *:Ggrep "\<<cword>\>"<CR><CR>
+
 " Keep splits equal when resizing vim
 autocmd VimResized * wincmd =
 
