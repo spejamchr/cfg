@@ -152,6 +152,10 @@ fi
 # * Open Slack
 #
 export EO=~/git/work/exec_online
+export P3=~/git/work/platform3
+
+# Run Rubocop against locally modified files
+alias rubodiff='bundle exec pronto run --commit=$(git rev-parse origin/master) --runner rubocop'
 
 if [ $(which kitty) ]; then
   alias eo_log="rails_command $EO tail -f log/development.log"
@@ -171,6 +175,15 @@ if [ $(which kitty) ]; then
 
     kitty @ new-window --new-tab --tab-title "eo_resque" --title "eo_resque" --keep-focus
     kitty @ send-text --match title:resque eo_resque "\n"
+
+    kitty @ new-window --new-tab --tab-title "yarn" --title "yarn" --keep-focus
+    kitty @ send-text --match title:yarn "cd $P3; yarn start \n"
+
+    kitty @ new-window --new-tab --tab-title "P3_source" --title "P3_source" --keep-focus
+    kitty @ send-text --match title:P3_source "edit $P3 \n"
+
+    kitty @ new-window --new-tab --tab-title "P3_bash" --title "P3_bash" --keep-focus
+    kitty @ send-text --match title:P3_bash "cd $P3 \n"
   }
 
   function eo {
