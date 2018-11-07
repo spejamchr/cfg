@@ -12,8 +12,8 @@ set noswapfile     " no swap files
 " Tab key inserts 2 spaces
 set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab smartindent autoindent
 
-" Show line numbers
-set nu
+" Hide line numbers
+set nonu
 
 " Color the first 80 columns to make long lines more apparent
 let index = 1
