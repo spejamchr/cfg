@@ -170,6 +170,11 @@ match ColorColumn /\M\s\+$/
 " Powerline-style statusline
 let g:airline_powerline_fonts = 1
 
+" Slim down the statusline
+let g:airline_section_b=''
+let g:airline_section_y=''
+let g:airline_skip_empty_sections=1
+
 " Open FZF file-finder with ctrl-p
 nnoremap <C-p> :FZF <CR>
 
