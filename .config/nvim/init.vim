@@ -15,6 +15,9 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab smartindent autoinde
 " Hide line numbers
 set nonu
 
+" `word` finds `word`, `Word`, and `WORD`. `WORD` only finds `WORD`.
+set ignorecase smartcase
+
 " Color the first 80 columns to make long lines more apparent
 let index = 1
 let &colorcolumn = index
