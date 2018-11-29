@@ -244,12 +244,9 @@ fi
 ################################################################################
 # Start Teereach stuff (Kale Leavitt's website)
 #
-alias cdentrada="cd ~/git/public_html/entrada"
-alias cdteereach="cd ~/git/public_html"
-alias teereach_atom="cdteereach; atom ."
+alias cdentrada="cd ~/git/work/public_html/entrada"
+alias cdteereach="cd ~/git/work/public_html"
 alias entrada_start="cdentrada; php -S localhost:8000"
-
-# alias teereach="ott; docom entrada_start; open http://localhost:8000/; teereach_atom"
 
 
 # Use this to fix the built-in camera
