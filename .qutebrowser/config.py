@@ -22,6 +22,7 @@ c.hints.uppercase = True
 c.keyhint.blacklist = ["*"]
 c.scrolling.bar = "always"
 c.scrolling.smooth = True
+c.zoom.default = "90%"
 
 # searches
 c.url.searchengines['DEFAULT'] = 'https://searx.me/?q={}'
