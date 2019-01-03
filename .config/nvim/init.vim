@@ -127,6 +127,9 @@ Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue'] }
 
+" Format Haskell on save
+Plug 'alx741/vim-hindent'
+
 " Initialize plugin system
 call plug#end()
 

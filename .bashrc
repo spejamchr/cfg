@@ -14,6 +14,9 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # Use the old mysql version
 export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
 
+# Haskell Stuff
+export PATH="$HOME/.local/bin:$PATH"
+
 # My own scripts
 export PATH=$PATH:/Users/spencer/code/scripts
 
