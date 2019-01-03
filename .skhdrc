@@ -92,6 +92,9 @@ shift + ctrl - return : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser
 # open mpv
 cmd - m : mpv $(pbpaste)
 
+# eject all external drives
+cmd + alt + ctrl - e : ~/code/scripts/eject
+
 # close focused window
 alt - w : chunkc tiling::window --close
 
