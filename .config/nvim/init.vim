@@ -44,8 +44,6 @@ autocmd FileType netrw setl bufhidden=delete
 " Always show the statusline
 "set laststatus=2
 
-"set statusline=%f\ %{fugitive#statusline()}
-
 set splitbelow
 set splitright
 
@@ -160,10 +158,6 @@ call s:Highlight()
 augroup Highlight
   autocmd! ColorScheme * call s:Highlight()
 augroup end
-
-" replace all old-style rocket syntaxes with newer versions
-" :example => thing  ->  example: thing
-"command RTN %s/:\(\w\+\) =>/\1:/g
 
 " Show invisible characters
 set listchars=tab:»\ ,eol:¬,trail:·
