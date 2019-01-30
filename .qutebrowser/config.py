@@ -1,5 +1,5 @@
 # general settings
-c.editor.command = ["urxvt", "-title", "scratchpad", "-geometry", "86x24+40+60", "-e", "nvim", "-f", "{}"]
+c.editor.command = ["kitty", "nvim", "{file}", "+norm {line}G{column}|"]
 c.new_instance_open_target = "tab-bg"
 c.prompt.filebrowser = False
 c.completion.height = "30%"
