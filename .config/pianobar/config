@@ -1,0 +1,16 @@
+# Authentication
+user = spensterc@yahoo.com
+password_command = gpg --decrypt --recipient 38C651240AF486A1 ~/.config/pianobar/password
+
+# Misc
+audio_quality = high
+autostart_station = 4178842495894669939
+
+# Format strings
+format_msg_nowplaying = [33m[1m|>[0m %s
+format_nowplaying_song = [32m%t[0m by [34m%a[0m on [4m%l[0m[30m%r[0m%@%s
+ban_icon =  [32m</3[0m
+love_icon =  [31m<3[0m
+tired_icon =  [33mzZ[0m
+format_nowplaying_station = Station [35m%n[0m (%i)
+format_list_song = %i) %a - %t%r (%d)%@%s
