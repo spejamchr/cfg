@@ -179,7 +179,7 @@ let g:airline_skip_empty_sections=1
 nnoremap <C-p> :FZF <CR>
 
 " Ggrep the current word with with ctrl-g
-nnoremap <C-g> *:Ggrep "\<<cword>\>"<CR><CR>
+nnoremap <C-g> :Ggrep "\<<cword>\>"<CR><CR>
 
 " Keep splits equal when resizing vim
 autocmd VimResized * wincmd =
