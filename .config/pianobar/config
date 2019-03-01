@@ -1,6 +1,6 @@
 # Authentication
 user = spensterc@yahoo.com
-password_command = gpg --decrypt --recipient 38C651240AF486A1 ~/.config/pianobar/password
+password_command = cat ~/.config/pianobar/password
 
 # Misc
 audio_quality = high
