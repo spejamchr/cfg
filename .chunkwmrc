@@ -59,7 +59,7 @@ chunkc set global_desktop_offset_gap     0
 #
 # NOTE: syntax for desktop-specific settings
 #
-chunkc set 1_desktop_mode                monocle
+# chunkc set 1_desktop_mode                monocle
 # chunkc set 5_desktop_mode                float
 # chunkc set 3_desktop_offset_top          190
 # chunkc set 3_desktop_offset_bottom       190
