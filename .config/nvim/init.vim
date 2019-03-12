@@ -9,6 +9,9 @@ set nobackup       " no backup files
 set nowritebackup  " only in case you don't want a backup file while editing
 set noswapfile     " no swap files
 
+" Use prety colors
+set termguicolors
+
 " Tab key inserts 2 spaces
 set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab smartindent autoindent
 
@@ -18,13 +21,8 @@ set nonu
 " `word` finds `word`, `Word`, and `WORD`. `WORD` only finds `WORD`.
 set ignorecase smartcase
 
-" Color the first 80 columns to make long lines more apparent
-let index = 1
-let &colorcolumn = index
-while index < 80
-  let index+=1
-  let &colorcolumn = &colorcolumn.','.index
-endwhile
+" Make long lines more apparent
+let &colorcolumn=join(range(81,999),",")
 
 " Remove trailing whitespace on save
 fun! <SID>StripTrailingWhitespaces()
@@ -87,9 +85,6 @@ Plug 'sheerun/vim-polyglot'
 " Statusline
 Plug 'vim-airline/vim-airline'
 
-" See https://draculatheme.com/vim/
-Plug 'dracula/vim', { 'as': 'dracula' }
-
 " tpope is the man
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
@@ -141,26 +136,12 @@ call neomake#configure#automake('w')
 let g:prettier#autoformat = 0
 autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
 
-color dracula
-
-" Apply custom highlights
-fun! s:Highlight()
-  " Use the terminal background color
-  highlight Normal ctermbg=None
-  highlight NonText ctermbg=None
-  highlight ColorColumn ctermbg=Black
-  highlight CursorLine ctermbg=235
-endfun
-
-call s:Highlight()
-
-" Reapply custom highlights when the color scheme is reloaded
-augroup Highlight
-  autocmd! ColorScheme * call s:Highlight()
-augroup end
+" Colors from themer
+color ThemerVim
 
 " Show invisible characters
-set listchars=tab:»\ ,eol:¬,trail:·
+" set listchars=tab:»\ ,eol:¬,trail:·
+set listchars=tab:»\ ,trail:·
 set list
 
 " Highlight trailing spaces
