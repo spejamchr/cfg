@@ -4,6 +4,10 @@
 # Let dots know I'm using it
 export USES_DOTS=true
 
+# Set the locale
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
 # Yarn setup (https://yarnpkg.com/en/docs/install#mac-tab)
 export PATH="$PATH:`yarn global bin`"
