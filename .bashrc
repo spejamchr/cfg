@@ -306,35 +306,25 @@ function parse_git_dirty {
   fi
 }
 
-C1="96;164;162"
-C2="98;114;164"
-C3="96;164;113"
-C4="124;96;164"
-BLACK="0;0;0"
-WHITE="255;255;255"
+C1="6"
+C2="4"
+C3="2"
+C4="5"
+BLACK="0"
+WHITE="7"
 CLEAR="\033[0m"
 
 function _fg() {
-  if [ "$COLORTERM" ]; then
-    echo "\033[38;2;$1m"
-  elif [ "$2" ]; then
-    echo "\033[36m"
-  else
-    echo "\033[30m"
-  fi
+  echo "\033[3$1m"
 }
 
 function _bg() {
-  if [ "$COLORTERM" ]; then
-    echo "\033[48;2;$1m"
-  else
-    echo "\033[46m"
-  fi
+  echo "\033[4$1m"
 }
 
 function _prompt_piece() {
   sep=""
-  echo " \033[30m$(_bg $1)$sep$(_fg $WHITE) $2 $CLEAR$(_fg $1 t)$sep$CLEAR"
+  echo " \033[30m$(_bg $1)$sep$(_fg $BLACK) $2 $CLEAR$(_fg $1 t)$sep$CLEAR"
 }
 
 function z() {
