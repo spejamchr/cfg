@@ -1,4 +1,3 @@
-
 scriptencoding utf-8
 
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
@@ -8,9 +7,6 @@ let &packpath = &runtimepath
 set nobackup       " no backup files
 set nowritebackup  " only in case you don't want a backup file while editing
 set noswapfile     " no swap files
-
-" Use prety colors
-set termguicolors
 
 " Tab key inserts 2 spaces
 set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab smartindent autoindent
@@ -135,9 +131,6 @@ call neomake#configure#automake('w')
 " Autoformat with Prettier on save
 let g:prettier#autoformat = 0
 autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
-
-" Colors from themer
-color ThemerVim
 
 " Show invisible characters
 " set listchars=tab:»\ ,eol:¬,trail:·
