@@ -2,7 +2,9 @@ scriptencoding utf-8
 
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
-" source ~/.vimrc
+
+" Use <Space> as my leader
+let mapleader=' '
 
 set nobackup       " no backup files
 set nowritebackup  " only in case you don't want a backup file while editing
@@ -112,9 +114,7 @@ Plug 'Shougo/deoplete.nvim'
 Plug 'neomake/neomake'
 
 " post install (yarn install | npm install) then load plugin only for editing supported files
-Plug 'prettier/vim-prettier', {
-  \ 'do': 'yarn install',
-  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue'] }
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
 " Format Haskell on save
 Plug 'alx741/vim-hindent'
