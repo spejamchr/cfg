@@ -21,6 +21,7 @@ set ignorecase smartcase
 
 " Make long lines more apparent
 let &colorcolumn=join(range(81,999),",")
+autocmd BufNewFile,BufRead *.tsx,*.ts let &l:colorcolumn=join(range(101,999),",")
 
 " Remove trailing whitespace on save
 fun! <SID>StripTrailingWhitespaces()
@@ -35,10 +36,6 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " Per default, netrw leaves unmodified buffers open. This autocommand
 " deletes netrw's buffer once it's hidden (using ':q', for example)
 autocmd FileType netrw setl bufhidden=delete
-
-
-" Always show the statusline
-"set laststatus=2
 
 set splitbelow
 set splitright
