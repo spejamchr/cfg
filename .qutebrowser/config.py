@@ -15,6 +15,10 @@ dracula.draw.blood(c, {
     }
 })
 
+# Make hints easier to see
+c.colors.hints.match.fg = c.colors.hints.fg
+c.colors.hints.fg = c.colors.statusbar.url.success.http.fg
+
 # general settings
 c.editor.command = ["kitty", "nvim", "{file}", "+norm {line}G{column}|"]
 c.new_instance_open_target = "tab-bg"
