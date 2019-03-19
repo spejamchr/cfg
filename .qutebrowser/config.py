@@ -2,8 +2,9 @@
 # See: https://qutebrowser.org/doc/help/configuring.html#configpy-autoconfig
 config.load_autoconfig()
 
-import theme_qutebrowser.dark
-theme_qutebrowser.dark.themer(c, {
+# From https://github.com/evannagle/qutebrowser-dracula-theme
+import dracula.draw
+dracula.draw.blood(c, {
     'spacing': {
         'vertical': 0,
         'horizontal': 5
