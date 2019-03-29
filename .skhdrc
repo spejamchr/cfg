@@ -92,22 +92,13 @@ shift + ctrl - return : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser
 # open mpv
 cmd - m : mpv $(pbpaste)
 
-# Declare the 'music' mode
-:: music : chunkc border::color 0xffffffff
-
-# From 'default' mode, activeate mode 'music'
-cmd + alt - p ; music
-
-# Exit mode 'music' with 'e'
-music < e ; default
-
-# Control pianobar with the 'music' mode
-music < p : ps ax | grep -v grep | grep pianobar > /dev/null && \
+# Control pianobar with the media keys
+play : pgrep pianobar > /dev/null && \
   echo -n 'p' > ~/.config/pianobar/ctl || \
   pianobar
 
-music < n : echo -n 'n' > ~/.config/pianobar/ctl
-music < q : echo -n 'q' > ~/.config/pianobar/ctl
+fast : echo -n 'n' > ~/.config/pianobar/ctl
+rewind : echo -n 'q' > ~/.config/pianobar/ctl
 
 # eject all external drives
 cmd + alt + ctrl - e : ~/code/scripts/eject
