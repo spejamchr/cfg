@@ -2,6 +2,8 @@ set nocompatible   " be iMproved
 set nobackup       " no backup files
 set nowritebackup  " only in case you don't want a backup file while editing
 set noswapfile     " no swap files
+set hlsearch       " highlight search terms
+set incsearch      " highlight search as you search
 
 syntax enable
 
