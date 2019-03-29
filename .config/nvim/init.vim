@@ -72,6 +72,8 @@ nnoremap <C-l> <C-w>l
 
 " Ggrep the current word with with Leader-g
 nnoremap <Leader>g :Ggrep "\<<cword>\>"<CR><CR>
+
+nnoremap <Leader>o :TSOrganize<CR>
 " }}}
 
 " Install vim-plug if it's missing {{{
@@ -114,7 +116,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'ron89/thesaurus_query.vim'
 
 " For Typescript support
-" Plug 'HerringtonDarkholme/yats.vim'
+Plug 'HerringtonDarkholme/yats.vim'
 Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
 " For async completion
 Plug 'Shougo/deoplete.nvim'
@@ -171,4 +173,8 @@ let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
 " Configure vim-gitgutter {{{
 " Update the GitGutter more frequently
 set updatetime=100
+" }}}
+
+" Configure polyglot {{{
+let g:polyglot_disabled = ['typescript', 'typescript.jsx']
 " }}}
