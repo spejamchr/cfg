@@ -95,7 +95,7 @@ cmd - m : mpv $(pbpaste)
 # Control pianobar with the media keys
 play : pgrep pianobar > /dev/null && \
   echo -n 'p' > ~/.config/pianobar/ctl || \
-  pianobar
+  pianobar &>~/.config/pianobar/out
 
 fast : echo -n 'n' > ~/.config/pianobar/ctl
 rewind : echo -n 'q' > ~/.config/pianobar/ctl
