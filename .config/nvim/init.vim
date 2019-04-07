@@ -30,12 +30,18 @@ highlight CursorLine cterm=undercurl
 let g:netrw_liststyle = 3
 " No banner in netrw
 let g:netrw_banner = 0
+
+" Show incremental commands
+set inccommand=split
 " }}}
 
 " Custom autocmds {{{
 " Make long lines more apparent
 let &colorcolumn=join(range(81,999),",")
 autocmd BufNewFile,BufRead *.tsx,*.ts let &l:colorcolumn=join(range(101,999),",")
+
+" Spellcheck markdown and text files
+autocmd BufNewFile,BufRead *.md,*.txt setlocal spell spelllang=en_us
 
 " Remove trailing whitespace on save
 fun! <SID>StripTrailingWhitespaces()
@@ -70,10 +76,10 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" Ggrep the current word with with Leader-g
-nnoremap <Leader>g :Ggrep "\<<cword>\>"<CR><CR>
-
 nnoremap <Leader>o :TSOrganize<CR>
+
+" Correct spelling mistake under the cursor
+nnoremap <Leader>s [s1z=<C-o>
 " }}}
 
 " Install vim-plug if it's missing {{{
@@ -89,12 +95,14 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 " Fuzzy finder
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
 " Many languages (including Crystal and JSX)
 Plug 'sheerun/vim-polyglot'
 
 " Statusline
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 " tpope is the man
 Plug 'tpope/vim-commentary'
@@ -119,7 +127,7 @@ Plug 'ron89/thesaurus_query.vim'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
 " For async completion
-Plug 'Shougo/deoplete.nvim'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " For Denite features
 " Plug 'Shougo/denite.nvim'
 
@@ -131,6 +139,12 @@ Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
 " Format Haskell on save
 Plug 'alx741/vim-hindent'
+
+" Markdown
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
+
+" Pretty colors
+Plug 'chriskempson/base16-vim'
 
 " Initialize plugin system
 call plug#end()
@@ -163,11 +177,23 @@ let g:airline_skip_empty_sections=1
 " }}}
 
 " Configure fzf {{{
-" Open FZF file-finder with ctrl-p
-nnoremap <C-p> :FZF <CR>
+" Fuzzy find files in the working directory
+nnoremap <Leader>f :Files<CR>
 
-" Use ag with FZF, showing hidden files but ignoring .git/
-let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
+" Search for the word under the cursor
+nnoremap <Leader>g :Rg <C-r><C-w><CR>
+
+" Fuzzy find text in the working directory
+nnoremap <Leader>G :Rg<CR>
+
+" Fuzzy find lines in the current file
+nnoremap <Leader>/ :BLines<CR>
+
+" Fuzzy find Vim commands
+nnoremap <Leader>c :Commands<CR>
+
+" Use rg with FZF, showing hidden files but ignoring .git/
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/*"'
 " }}}
 
 " Configure vim-gitgutter {{{
@@ -177,4 +203,19 @@ set updatetime=100
 
 " Configure polyglot {{{
 let g:polyglot_disabled = ['typescript', 'typescript.jsx']
+" }}}
+
+" Configure markdown-preview.nvim {{{
+" Do not auto-start when opening markdown files
+let g:mkdp_auto_start = 0
+
+" Do not auto-close when closing markdown files
+let g:mkdp_auto_close = 0
+" }}}
+
+" Configure base16-vim {{{
+if filereadable(expand("~/.vimrc_background"))
+  set termguicolors
+  source ~/.vimrc_background
+endif
 " }}}
