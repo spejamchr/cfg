@@ -1,5 +1,5 @@
 # Base16 Shell
-BASE16_SHELL=".local/share/base16-manager/chriskempson/base16-shell"
+BASE16_SHELL="$HOME/.config/base16-shell/"
 [ -n "$PS1" ] && \
     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
         eval "$("$BASE16_SHELL/profile_helper.sh")"
@@ -34,6 +34,9 @@ export CLICOLOR=1
 # Use NeoVim
 export VISUAL=nvim
 export EDITOR="$VISUAL"
+
+# More History
+export HISTSIZE=5000
 
 source /usr/local/opt/chruby/share/chruby/chruby.sh
 source /usr/local/opt/chruby/share/chruby/auto.sh
