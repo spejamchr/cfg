@@ -40,8 +40,8 @@ set inccommand=split
 let &colorcolumn=join(range(81,999),",")
 autocmd BufNewFile,BufRead *.tsx,*.ts let &l:colorcolumn=join(range(101,999),",")
 
-" Spellcheck markdown and text files
-autocmd BufNewFile,BufRead *.md,*.txt setlocal spell spelllang=en_us
+" Spellcheck markdown and text files, and wrap at 80th column
+autocmd BufNewFile,BufRead *.md,*.txt setlocal spell spelllang=en_us textwidth=80
 
 " Remove trailing whitespace on save
 fun! <SID>StripTrailingWhitespaces()
@@ -76,7 +76,7 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-nnoremap <Leader>o :TSOrganize<CR>
+nnoremap <Leader>o :TSOrganizeImports<CR>
 
 " Correct spelling mistake under the cursor
 nnoremap <Leader>s [s1z=<C-o>
