@@ -93,12 +93,12 @@ shift + ctrl - return : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser
 ctrl - m : mpv $(pbpaste)
 
 # open htop
-ctrl - h : python3 ~/git/other/kitty -1 --title="htop" ~/code/scripts/start_htop
+ctrl - s : python3 ~/git/other/kitty -1 --title="htop" ~/code/scripts/start_htop
 
 # Control pianobar with the media keys
 play : pgrep pianobar > /dev/null && \
   echo -n 'p' > ~/.config/pianobar/ctl || \
-  pianobar &>~/.config/pianobar/out
+  pianobar > ~/.config/pianobar/out
 
 fast : echo -n 'n' > ~/.config/pianobar/ctl
 rewind : echo -n 'q' > ~/.config/pianobar/ctl
