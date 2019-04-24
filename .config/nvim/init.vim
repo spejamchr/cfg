@@ -6,9 +6,15 @@ scriptencoding utf-8
 let mapleader=' '
 
 " Simple option settings {{{
+" If hidden is not set, coc.nvim's TextEdit might fail
+set hidden
+
 set nobackup       " no backup files
 set nowritebackup  " only in case you don't want a backup file while editing
 set noswapfile     " no swap files
+
+" More frequent updates for CursorHold events (GitGutter, coc.nvim)
+set updatetime=100
 
 " Tab key inserts 2 spaces
 set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smartindent
@@ -76,7 +82,7 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-nnoremap <Leader>o :TSOrganizeImports<CR>
+nnoremap <Leader>d :Gdiff<CR>
 
 " Correct spelling mistake under the cursor
 nnoremap <Leader>s [s1z=<C-o>
@@ -125,11 +131,7 @@ Plug 'ron89/thesaurus_query.vim'
 
 " For Typescript support
 Plug 'HerringtonDarkholme/yats.vim'
-Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
-" For async completion
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" For Denite features
-" Plug 'Shougo/denite.nvim'
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 
 " Linting
 Plug 'neomake/neomake'
@@ -196,11 +198,6 @@ nnoremap <Leader>c :Commands<CR>
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/*"'
 " }}}
 
-" Configure vim-gitgutter {{{
-" Update the GitGutter more frequently
-set updatetime=100
-" }}}
-
 " Configure polyglot {{{
 let g:polyglot_disabled = ['typescript', 'typescript.jsx']
 " }}}
@@ -218,4 +215,32 @@ if filereadable(expand("~/.vimrc_background"))
   set termguicolors
   source ~/.vimrc_background
 endif
+" }}}
+
+" Configure coc.nvim {{{
+inoremap <silent><expr> <C-space> coc#refresh()
+
+" Use `[c` and `]c` to navigate diagnostics
+nmap <silent> [e <Plug>(coc-diagnostic-prev)
+nmap <silent> ]e <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+nmap <leader>o :call CocActionAsync('runCommand', 'tsserver.organizeImports')<CR>
+
+augroup coc-nvim
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+" Fix autofix problem of current line
+nmap <leader>qf  <Plug>(coc-fix-current)
 " }}}
