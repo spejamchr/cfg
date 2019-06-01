@@ -228,11 +228,6 @@ alt - p : chunkc tiling::window --toggle sticky;\
 # float next window to be tiled
 shift + alt - t : chunkc set window_float_next 1
 
-# change layout of desktop
-ctrl + alt - a : chunkc tiling::desktop --layout bsp
-ctrl + alt - s : chunkc tiling::desktop --layout monocle
-ctrl + alt - d : chunkc tiling::desktop --layout float
-
 ctrl + alt - w : chunkc tiling::desktop --deserialize ~/.chunkwm_layouts/dev_1
 
 cmd + shift - 4 -> : chunkc border::clear
