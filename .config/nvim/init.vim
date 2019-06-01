@@ -83,6 +83,7 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 nnoremap <Leader>d :Gdiff<CR>
+nnoremap <Leader>w :w<CR>
 
 " Correct spelling mistake under the cursor
 nnoremap <Leader>s [s1z=<C-o>
