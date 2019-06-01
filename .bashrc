@@ -76,16 +76,6 @@ function git_or_config {
 
 alias git='git_or_config'
 
-function reading {
-  current_playlist=$(osascript -e 'tell application "iTunes" to name of current playlist as string')
-  playing=$(osascript -e 'tell application "iTunes" to player state as string')
-  if [ $current_playlist != "Reading" ]; then
-    osascript -e 'tell application "iTunes" to play playlist "Reading"'
-  elif [ $playing != "playing" ]; then
-    osascript -e 'tell application "iTunes" to play'
-  fi
-}
-
 # It's nicer to open a dir for editing when it's also the cwd
 function edit {
   (cd $1; $EDITOR .)
@@ -108,12 +98,38 @@ function rails_command {
   )
 }
 
+function rails_log {
+  rails_command $1 tail -f log/development.log
+}
+
+function rails_console {
+  rails_command $1 rails console
+}
+
+function rails_resque {
+  rails_command $1 start_resque
+}
+
+function in_new_kitty_window {
+  if [[ "$TERM" != "xterm-kitty" ]]; then
+    echo "Only available in Kitty"
+    return 1
+  fi
+
+  title="$1"
+  shift
+
+  kitty @ new-window --new-tab --tab-title "$title" --title "$title" --keep-focus
+
+  if [[ "$@" ]]; then
+    kitty @ send-text --match title:"$title" "$@"
+  fi
+}
+
 alias slack="open /Applications/Slack.app/"
 
 ################################################################################
 # Start TroopTrack stuff
-#
-# ONLY AVAILABLE IN KITTY! (Since it's so easy to programmatically control)
 #
 # * cd to TroopTrack and (in separate tabs):
 #   * open editor,
@@ -125,41 +141,22 @@ alias slack="open /Applications/Slack.app/"
 #
 export TT=~/git/work/TroopTrack
 
-if [ $(which kitty) ]; then
-  alias tt_log="rails_command $TT tail -f log/development.log"
-  alias tt_console="rails_command $TT rails console"
-  alias tt_resque="rails_command $TT start_resque"
-
-  function tt_terminal {
-    cd $TT
-    kitty @ new-window --new-tab --tab-title "source" --title "source" --keep-focus
-    kitty @ send-text --match title:source "edit $TT \n"
-
-    kitty @ new-window --new-tab --tab-title "log" --title "log" --keep-focus
-    kitty @ send-text --match title:log tt_log "\n"
-
-    kitty @ new-window --new-tab --tab-title "console" --title "console" --keep-focus
-    kitty @ send-text --match title:console tt_console "\n"
-
-    kitty @ new-window --new-tab --tab-title "resque" --title "resque" --keep-focus
-    kitty @ send-text --match title:resque tt_resque "\n"
+function tt_terminal {
+  cd $TT
+  in_new_kitty_window "source" "edit $TT \n" && \
+    in_new_kitty_window "log" "rails_log $TT \n" && \
+    in_new_kitty_window "console" "rails_console $TT \n" && \
+    in_new_kitty_window "resque" "rails_resque $TT \n"
   }
 
-  alias tt_website="open http://trooptrack.test"
-  alias harvest="open https://trooptrack.harvestapp.com/time"
-  alias tt_github="open https://github.com/TroopTrack/TroopTrack/issues"
-
-  function tt {
-    tt_terminal
-    qute -r tt
-    slack
-  }
-fi
+function tt {
+  tt_terminal
+  qute -r tt
+  slack
+}
 
 ################################################################################
 # Start ExecOnline Stuff
-#
-# ONLY AVAILABLE IN KITTY! (Since it's so easy to programmatically control)
 #
 # * cd to exec_online and:
 #   * open editor,
@@ -174,41 +171,22 @@ export P3=~/git/work/platform3
 # Run Rubocop against locally modified files
 alias rubodiff='bundle exec pronto run --commit=$(git rev-parse origin/master) --runner rubocop'
 
-if [ $(which kitty) ]; then
-  alias eo_log="rails_command $EO tail -f log/development.log"
-  alias eo_console="rails_command $EO rails console"
-  alias eo_resque="rails_command $EO start_resque"
+function eo_terminal {
+  cd $EO
+  in_new_kitty_window "eo_source" "edit $EO \n" && \
+    in_new_kitty_window "eo_log" "rails_log $EO \n" && \
+    in_new_kitty_window "eo_console" "rails_console $EO \n" && \
+    in_new_kitty_window "eo_resque" "rails_resque $EO \n" && \
+    in_new_kitty_window "yarn" "cd $P3; yarn start \n" && \
+    in_new_kitty_window "P3_source" "edit $P3 \n" && \
+    in_new_kitty_window "P3_bash" "cd $P3 \n"
+}
 
-  function eo_terminal {
-    cd $EO
-    kitty @ new-window --new-tab --tab-title "eo source" --title "eo_source" --keep-focus
-    kitty @ send-text --match title:eo_source "edit $EO \n"
-
-    kitty @ new-window --new-tab --tab-title "eo_log" --title "eo_log" --keep-focus
-    kitty @ send-text --match title:log eo_log "\n"
-
-    kitty @ new-window --new-tab --tab-title "eo_console" --title "eo_console" --keep-focus
-    kitty @ send-text --match title:console eo_console "\n"
-
-    kitty @ new-window --new-tab --tab-title "eo_resque" --title "eo_resque" --keep-focus
-    kitty @ send-text --match title:resque eo_resque "\n"
-
-    kitty @ new-window --new-tab --tab-title "yarn" --title "yarn" --keep-focus
-    kitty @ send-text --match title:yarn "cd $P3; yarn start \n"
-
-    kitty @ new-window --new-tab --tab-title "P3_source" --title "P3_source" --keep-focus
-    kitty @ send-text --match title:P3_source "edit $P3 \n"
-
-    kitty @ new-window --new-tab --tab-title "P3_bash" --title "P3_bash" --keep-focus
-    kitty @ send-text --match title:P3_bash "cd $P3 \n"
-  }
-
-  function eo {
-    eo_terminal
-    qute -r eo
-    slack
-  }
-fi
+function eo {
+  eo_terminal
+  qute -r eo
+  slack
+}
 
 ################################################################################
 # Start AHGConnect Stuff
@@ -226,49 +204,18 @@ export AHG=~/git/work/ahg_connect
 export AHGD=~/git/work/ahg_app
 export AHGM=~/git/work/ahgMobile
 
-if [ $(which kitty) ]; then
-  alias ahg_log="rails_command $AHG tail -f log/development.log"
-  alias ahg_console="rails_command $AHG rails console"
-  alias ahg_resque="rails_command $AHG start_resque"
+function ahg_terminal {
+  cd $AHG
+  in_new_kitty_window "source" "edit $AHG \n" && \
+    in_new_kitty_window "log" "rails_log $AHG \n" && \
+    in_new_kitty_window "console" "rails_console $AHG \n"
+}
 
-  alias ahgd_start="(cd $AHGD; yarn start)"
-
-  alias ahgm_start="(cd $AHGM; yarn ios)"
-
-  function ahg_terminal {
-    cd $AHG
-    kitty @ new-window --new-tab --tab-title "source" --title "source" --keep-focus
-    kitty @ send-text --match title:source "edit $AHG \n"
-
-    kitty @ new-window --new-tab --tab-title "log" --title "log" --keep-focus
-    kitty @ send-text --match title:log ahg_log "\n"
-
-    kitty @ new-window --new-tab --tab-title "console" --title "console" --keep-focus
-    kitty @ send-text --match title:console ahg_console "\n"
-  }
-
-  alias ahg_website="open http://ahg-connect.test/national"
-  alias ahg_github="open https://github.com/TroopTrack/ahg_connect"
-  alias ahg_pivotal="open https://www.pivotaltracker.com/n/projects/901476"
-
-  function ahg {
-    ahg_terminal
-    qute -r ahg
-    slack
-  }
-fi
-
-################################################################################
-# Start Teereach stuff (Kale Leavitt's website)
-#
-alias cdentrada="cd ~/git/work/public_html/entrada"
-alias cdteereach="cd ~/git/work/public_html"
-alias entrada_start="cdentrada; php -S localhost:8000"
-
-
-# Use this to fix the built-in camera
-#    from:    https://discussions.apple.com/thread/4282533?tstart=0
-alias fix_camera="sudo killall VDCAssistant"
+function ahg {
+  ahg_terminal
+  qute -r ahg
+  slack
+}
 
 ################################################################################
 # Custom Bash prompt
@@ -341,25 +288,6 @@ function _prompt_piece() {
   echo " \033[30m$(_bg $1)$sep$(_fg $BLACK) $2 $CLEAR$(_fg $1 t)$sep$CLEAR"
 }
 
-function z() {
-  time "$@"
-  phrases="done
-  finished
-  over
-  end
-  stop
-  terminated
-  complete
-  concluded
-  performed
-  realized
-  wrought
-  brought to pass"
-
-  word=$(echo "$phrases" | sort -R | head -n 1)
-  say "$word"
-}
-
 function _my_prompt_cmd {
   _date_and_time=$(_prompt_piece $C1 "$(date "+%a %b %d %H:%M:%S")")
   _user_name=$(_prompt_piece $C2 "$(whoami)")
@@ -380,6 +308,10 @@ function gitpushnew {
   BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
   if [ "$BRANCH" == "master" ]; then
     echo "You're on master!"
+    return 1
+  elif [ $(git config --get branch.$BRANCH.merge) ]; then
+    echo "This branch already exists upstream"
+    return 1
   else
     git push --set-upstream origin $BRANCH
   fi
