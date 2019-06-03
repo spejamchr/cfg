@@ -29,7 +29,7 @@ export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
 # My own scripts
-export PATH=$PATH:/Users/spencer/code/scripts
+export PATH="$PATH:$HOME/code/scripts"
 
 export CLICOLOR=1
 
