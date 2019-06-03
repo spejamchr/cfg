@@ -1,7 +1,8 @@
+[include]
+  path = .config/git/private-config
 [user]
   name = Spencer Christiansen
   email = jc.spencer92@gmail.com
-  signingkey = 38C651240AF486A1
 [alias]
   co = checkout
   br = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
