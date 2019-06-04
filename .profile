@@ -8,7 +8,6 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
 
 export MANPATH="/usr/local/man:$MANPATH"
 
-
 # Let dots know I'm using it
 export USES_DOTS=true
 
@@ -64,10 +63,7 @@ function rails_command() {
     shift
 
     if [[ -f .ruby-version ]]; then
-      version=$(cat .ruby-version)
-    fi
-    if [[ "$version" ]]; then
-      chruby "$version"
+      chruby $(cat .ruby-version)
     fi
 
     eval $@
