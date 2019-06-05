@@ -146,9 +146,6 @@ Plug 'alx741/vim-hindent'
 " Markdown
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
-" Pretty colors
-Plug 'chriskempson/base16-vim'
-
 " Initialize plugin system
 call plug#end()
 " }}}
@@ -209,13 +206,6 @@ let g:mkdp_auto_start = 0
 
 " Do not auto-close when closing markdown files
 let g:mkdp_auto_close = 0
-" }}}
-
-" Configure base16-vim {{{
-if filereadable(expand("~/.vimrc_background"))
-  set termguicolors
-  source ~/.vimrc_background
-endif
 " }}}
 
 " Configure coc.nvim {{{
