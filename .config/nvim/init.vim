@@ -146,6 +146,8 @@ Plug 'alx741/vim-hindent'
 " Markdown
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
+Plug 'chriskempson/base16-vim'
+
 " Initialize plugin system
 call plug#end()
 " }}}
@@ -234,4 +236,11 @@ augroup coc-nvim
 augroup end
 " Fix autofix problem of current line
 nmap <leader>qf  <Plug>(coc-fix-current)
+" }}}
+
+" Configure base16-vim {{{
+if filereadable(expand("~/.vimrc_background"))
+  let base16colorspace=256
+  source ~/.vimrc_background
+endif
 " }}}
