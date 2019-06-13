@@ -139,22 +139,26 @@ function _fg() { echo "\033[3$1m"; }
 function _bg() { echo "\033[4$1m"; }
 
 function _prompt_piece() {
-  BLACK="0"
-  WHITE="7"
-  CLEAR="\033[0m"
-  sep=""
-  echo " \033[30m$(_bg $1)$sep$(_fg $BLACK) $2 $CLEAR$(_fg $1 t)$sep$CLEAR"
+  (
+    BLACK="0"
+    WHITE="7"
+    CLEAR="\033[0m"
+    sep=""
+    echo " \033[30m$(_bg $1)$sep$(_fg $BLACK) $2 $CLEAR$(_fg $1 t)$sep$CLEAR"
+  )
 }
 
 function _my_prompt_cmd {
-  C1="6"
-  C2="4"
-  C3="2"
-  CLEAR="\033[0m"
-  _date_and_time=$(_prompt_piece $C1 "$(date "+%a %b %d %H:%M:%S")")
-  _user_name=$(_prompt_piece $C2 "$(whoami)")
-  _current_dir=$(_prompt_piece $C3 "$(dirs)")
-  echo -e "$CLEAR$_date_and_time$_user_name$_current_dir"
+  (
+    C1="6"
+    C2="4"
+    C3="2"
+    CLEAR="\033[0m"
+    _date_and_time=$(_prompt_piece $C1 "$(date "+%a %b %d %H:%M:%S")")
+    _user_name=$(_prompt_piece $C2 "$(whoami)")
+    _current_dir=$(_prompt_piece $C3 "$(dirs)")
+    echo -e "$CLEAR$_date_and_time$_user_name$_current_dir"
+  )
 }
 
 function gitpushnew {
