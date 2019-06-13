@@ -35,9 +35,22 @@ zstyle ':completion:*' completer _complete _correct _approximate
 zstyle ':completion:*' menu select
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
+zstyle ':vcs_info:*' actionformats '%b|%a'
+zstyle ':vcs_info:*' formats '%b'
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git:*:-all-' command ~/code/scripts/git
+
+vcs_info_wrapper() {
+  vcs_info
+  if [ -n "$vcs_info_msg_0_" ]; then
+    echo "%F{0}%K{5} ${vcs_info_msg_0_} %F{5}%K{0} %f%k"
+  fi
+}
+
 PROMPT=' %F{0}%K{6} %D{%a %b %d %H:%M:%S} %F{6}%K{0} '"\
 "'%F{0}%K{4} %n %F{4}%K{0} '"\
 "'%F{0}%K{2} %~ %F{2}%K{0} '"\
+"'$(vcs_info_wrapper)'"\
 "'%f%k
 %B%#%b '
 
