@@ -4,5 +4,9 @@
 # Edit this file more easily
 alias eb="$EDITOR ~/.bashrc; source ~/.bashrc; echo \".bashrc edited and sourced\""
 
-PROMPT_COMMAND=_my_prompt_cmd
-PS1="\[\033[1m\]\\$ \[$CLEAR\]"
+_my_prompt_cmd &> /dev/null
+if [[ $? -eq 0 ]]; then
+  PROMPT_COMMAND=_my_prompt_cmd
+fi
+
+PS1="\[\033[1m\]\\$ \[\033[0m\]"
