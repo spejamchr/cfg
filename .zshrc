@@ -30,8 +30,6 @@ setopt EXTENDED_HISTORY
 setopt HIST_IGNORE_ALL_DUPS
 # Do not remember commands that start with a whitespace
 setopt HIST_IGNORE_SPACE
-# Correct spelling of all arguments in the command line
-setopt CORRECT_ALL
 # Enable autocompletion
 zstyle ':completion:*' completer _complete _correct _approximate
 zstyle ':completion:*' menu select
