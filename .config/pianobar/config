@@ -4,7 +4,7 @@ password_command = cat ~/.config/pianobar/password
 
 # Misc
 audio_quality = high
-autostart_station = 4178842495894669939
+autostart_station = 4271011128267229811
 
 # Format strings
 format_msg_nowplaying = [33m[1m|>[0m %s
