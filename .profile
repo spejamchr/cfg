@@ -114,7 +114,7 @@ function eo_terminal {
     in_new_kitty_window "eo_resque" "rails_resque $EO \n" && \
     in_new_kitty_window "yarn" "cd $P3; yarn start \n" && \
     in_new_kitty_window "P3_source" "edit $P3 \n" && \
-    in_new_kitty_window "P3_bash" "cd $P3 \n"
+    in_new_kitty_window "P3_zsh" "cd $P3 \n"
 }
 
 alias eo="eo_terminal; qute -r eo; slack"
