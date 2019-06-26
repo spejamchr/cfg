@@ -35,32 +35,8 @@ zstyle ':completion:*' completer _complete _correct _approximate
 zstyle ':completion:*' menu select
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
-zstyle ':vcs_info:*' actionformats '%b|%a'
-zstyle ':vcs_info:*' formats '%b'
-zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git:*:-all-' command ~/code/scripts/git
+source ~/.config/powerlevel10k/powerlevel10k.zsh-theme
 
-vcs_info_wrapper() {
-  vcs_info
-  if [ -n "$vcs_info_msg_0_" ]; then
-    echo "%F{0}%K{5} ${vcs_info_msg_0_} %F{5}%K{0} %f%k"
-  fi
-}
-
-PROMPT=' %F{0}%K{6} %D{%a %b %d %H:%M:%S} %F{6}%K{0} '"\
-"'%F{0}%K{4} %n %F{4}%K{0} '"\
-"'%F{0}%K{2} %~ %F{2}%K{0} '"\
-"'$(vcs_info_wrapper)'"\
-"'%f%k
-%B%#%b '
-
-# Change the cursor based on input or command mode. Similar to vim.
-function zle-line-init zle-keymap-select() {
-  case $KEYMAP in
-    vicmd) print -n -- '\033[1 q';;
-    viins|main) print -n -- '\033[5 q';;
-  esac
-}
-
-zle -N zle-line-init
-zle -N zle-keymap-select
+POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs vi_mode)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs chruby date time_joined)
