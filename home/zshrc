@@ -11,9 +11,8 @@ bindkey '^P' up-line-or-history
 bindkey '^N' down-line-or-history
 bindkey '^[^M' self-insert-unmeta # Insert newline w/out running command
 
-setopt prompt_subst
-autoload -Uz promptinit vcs_info compinit
-promptinit
+# Enable autocompletion
+autoload -Uz compinit
 compinit
 
 # Report command running time if it is more than 5 seconds
