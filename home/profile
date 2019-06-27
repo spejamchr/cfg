@@ -27,6 +27,8 @@ export EDITOR="$VISUAL"
 # More History
 export HISTSIZE=5000
 
+export GPG_TTY=$(tty)
+
 source /usr/local/opt/chruby/share/chruby/chruby.sh
 source /usr/local/opt/chruby/share/chruby/auto.sh
 chruby 2.6.2
@@ -119,5 +121,3 @@ function ahg_terminal {
 }
 
 alias ahg="ahg_terminal; qute -r ahg; slack"
-
-export GPG_TTY=$(tty)
