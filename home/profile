@@ -8,9 +8,6 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
 
 export MANPATH="/usr/local/man:$MANPATH"
 
-# Let dots know I'm using it
-export USES_DOTS=true
-
 # Set the locale
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -40,16 +37,6 @@ alias ep="$EDITOR ~/.profile; source ~/.profile; echo \".profile edited and sour
 alias qute='open /Applications/qutebrowser.app/ --args'
 alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 alias sync_test="rails db:test:prepare"
-
-alias config="/usr/bin/git --git-dir=$HOME/.cfg --work-tree=$HOME"
-function git_or_config() {
-  if [[ "$(pwd)" == $HOME ]]; then
-    config $@
-  else
-    git $@
-  fi
-}
-alias git='git_or_config'
 
 # It's nicer to open a dir for editing when it's also the cwd
 function edit() {
@@ -175,5 +162,3 @@ function gitpushnew {
 }
 
 export GPG_TTY=$(tty)
-
-alias rcfg='curl -Lks https://raw.githubusercontent.com/spejamchr/dots/master/install.sh | /bin/bash'
