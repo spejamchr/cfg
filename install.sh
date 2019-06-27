@@ -95,10 +95,13 @@ function install_brew() {
 function install_command_line_tools() {
   if [[ ! -d '/Library/Developer/CommandLineTools' ]]; then
     infcho 'Installing apple command line tools. You may have to enter your password in a prompt.'
-    remcho 'rm -rf /Library/Developer/CommandLineTools'
-    logcho 'More info about uninstalling the Command Line Tools here: https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_'
-    # Prompts to install command line tools if not installed
-    make --version > /dev/null
+    if xcode-select --install; then
+      remcho 'rm -rf /Library/Developer/CommandLineTools'
+      logcho 'More info about uninstalling the Command Line Tools here: https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_'
+    else
+      errcho 'Failed to install Command Line Tools. Run `xcode-select --install` to retry'
+      exit 1
+    fi
   fi
 }
 
@@ -208,8 +211,8 @@ function create_symlinks() {
 function main() {
   health_checks
 
-  CFG="$HOME/.dotfiles"
-  LOGGED=''
+  local CFG="$HOME/.dotfiles"
+  local LOGGED=''
 
   clone_the_repo
 
