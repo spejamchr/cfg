@@ -135,8 +135,23 @@ function install_kitty() {
       remcho "rm -rf $kitty_path"
     else
       errcho "Failed to build kitty. Run \`make\` in $kitty_path to see error, or run \`rm -rf "$kitty_path"\` to remove the kitty repo."
+      return 1
     fi
     )
+  fi
+
+  local kitty_bin="$HOME/bin/kitty"
+  local kitty_launcher="$kitty_path/kitty/launcher/kitty"
+  if [[ ! -L "$kitty_bin" ]]; then
+    infcho "Symlinking kitty launcher to $kitty_bin"
+    if [[ -e "$kitty_bin" ]]; then
+      infcho "Removing $kitty_bin without backup"
+    fi
+    if ln -s "$kitty_launcher" "$kitty_bin"; then
+      remcho "rm $kitty_bin"
+    else
+      errcho "Failed to symlink kitty launcher. Run \`ln -s \"$kitty_launcher\" \"$kitty_bin\"\` to retry."
+    fi
   fi
 }
 
@@ -221,6 +236,7 @@ function main() {
     create_dir "$HOME/git/fun"
     create_dir "$HOME/git/other"
   fi
+  create_dir "$HOME/bin"
 
   install_brew
   install_command_line_tools
