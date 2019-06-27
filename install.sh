@@ -25,6 +25,9 @@ function health_checks() {
 
 function logit {
   local logfile="$CFG/.install.log"
+  if [[ ! -e $logfile ]]; then
+    return 1
+  fi
   if [[ ! $LOGGED ]]; then
     echo "Logging results in $logfile"
     LOGGED=true
@@ -50,17 +53,18 @@ function remcho() {
   logit '[Uninstall] - `'"$@"'`'
 }
 
-function clone_the_repo() {
-  if [[ ! -d $CFG ]]; then
-    echo "Cloning config directory to $CFG"
-    local error_msg=$(git clone git@github.com:spejamchr/cfg.git "$CFG" 2>&1)
+function git_clone() {
+  local url="$1"
+  local dir="$2"
+  if [[ ! -d $dir ]]; then
+    infcho "Cloning $url to $dir"
+    local error_msg=$(git clone "$url" "$dir" 2>&1)
     if [[ $? = 0 ]]; then
-      infcho "Cloned config repo to $CFG"
-      remcho "rm -rf $CFG"
+      remcho "rm -rf $dir"
     else
-      errcho "Could not clone config repo to $CFG. Received error:"
+      errcho "Could not clone $url to $dir. Received error:"
       errcho "$error_msg"
-      errcho "Run \`git clone git@github.com:spejamchr/cfg.git \"$CFG\"\` to retry."
+      errcho "Run \`git clone \"$url\" \"$dir\"\` to retry."
       exit 1
     fi
   fi
@@ -116,32 +120,39 @@ function brew_install() {
   fi
 }
 
+function brew_cask_install() {
+  if [[ $brew_cask_list = '' ]]; then
+    brew_cask_list=$(brew cask list)
+  fi
+
+  if [[ ! $(echo $brew_cask_list | grep ${1#*/*/}) ]]; then
+    infcho "Installing $1"
+    if brew cask install "$1" > /dev/null; then
+      remcho "brew cask uninstall $1"
+    else
+      errcho "Failed to install $1. Run \`brew cask install \"$1\"\` to retry"
+    fi
+  fi
+}
+
 function install_kitty() {
   local kitty_path="$HOME/git/other/kitty"
   if [[ ! -d "$kitty_path" ]]; then
     infcho "Installing kitty from source"
-    local error_msg=$(git clone git@github.com:kovidgoyal/kitty.git "$kitty_path" 2>&1)
-    if [[ $? = 0 ]]; then
-      infcho "Cloned kitty repo to $kitty_path"
-    else
-      errcho "Could not clone kitty repo to $kitty_path. Received error:"
-      errcho "$error_msg"
-      errcho "Run \`git clone git@github.com:kovidgoyal/kitty.git \"$kitty_path\"\` to retry."
-      return 1
-    fi
+    git_clone git@github.com:kovidgoyal/kitty.git "$kitty_path"
     (
     cd "$kitty_path"
-    if make &> /dev/null; then
+    if make app &> /dev/null; then
       remcho "rm -rf $kitty_path"
     else
-      errcho "Failed to build kitty. Run \`make\` in $kitty_path to see error, or run \`rm -rf "$kitty_path"\` to remove the kitty repo."
+      errcho "Failed to build kitty. Run \`make app\` in $kitty_path to see error, or run \`rm -rf "$kitty_path"\` to remove the kitty repo."
       return 1
     fi
     )
   fi
 
   local kitty_bin="$HOME/bin/kitty"
-  local kitty_launcher="$kitty_path/kitty/launcher/kitty"
+  local kitty_launcher="$kitty_path/kitty.app/Contents/MacOS/kitty"
   if [[ ! -L "$kitty_bin" ]]; then
     infcho "Symlinking kitty launcher to $kitty_bin"
     if [[ -e "$kitty_bin" ]]; then
@@ -151,17 +162,6 @@ function install_kitty() {
       remcho "rm $kitty_bin"
     else
       errcho "Failed to symlink kitty launcher. Run \`ln -s \"$kitty_launcher\" \"$kitty_bin\"\` to retry."
-    fi
-  fi
-}
-
-function install_qutebrowser() {
-  if [[ ! $(ls /Applications | grep qutebrowser.app) ]]; then
-    infcho "Installing qutebrowser with brew cask"
-    if brew cask install qutebrowser; then
-      remcho "brew cask uninstall qutebrowser"
-    else
-      errcho 'Failed to install qutebrowser. Run `brew cask install qutebrowser` to retry.'
     fi
   fi
 }
@@ -229,7 +229,7 @@ function main() {
   local CFG="$HOME/.dotfiles"
   local LOGGED=''
 
-  clone_the_repo
+  git_clone git@github.com:spejamchr/cfg.git "$CFG"
 
   if create_dir "$HOME/git"; then
     create_dir "$HOME/git/work"
@@ -237,6 +237,7 @@ function main() {
     create_dir "$HOME/git/other"
   fi
   create_dir "$HOME/bin"
+  create_dir "$HOME/.config"
 
   install_brew
   install_command_line_tools
@@ -247,10 +248,12 @@ function main() {
   brew_install gnupg
   brew_install htop
   brew_install imagemagick
+  brew_install librsvg
   brew_install libyaml
   brew_install mpv
   brew_install mysql@5.7
   brew_install neovim
+  brew_install optipng
   brew_install pianobar
   brew_install pkg-config
   brew_install puma/puma/puma-dev
@@ -262,8 +265,14 @@ function main() {
   brew_install zsh
   brew_install zsh-completions
 
+  brew_cask_install homebrew/cask-fonts/font-firacode-nerd-font
+  brew_cask_install flux
+  brew_cask_install gpg-suite-no-mail
+  brew_cask_install qutebrowser
+
   install_kitty
-  install_qutebrowser
+
+  git_clone https://github.com/romkatv/powerlevel10k.git "$HOME/.config/powerlevel10k"
 
   backup_existing_config_files
   create_symlinks

@@ -16,7 +16,8 @@ export PATH="$PATH:`yarn global bin`" # Yarn setup (https://yarnpkg.com/en/docs/
 export PATH="$HOME/.cargo/bin:$PATH" # Rust stuff
 export PATH="/usr/local/opt/mysql@5.7/bin:$PATH" # Use the old mysql version
 export PATH="$HOME/.local/bin:$PATH" # Haskell Stuff
-export PATH="$PATH:$HOME/code/scripts" # My own scripts
+export PATH="$PATH:$HOME/code/scripts" # My own scripts (managed manually)
+export PATH="$PATH:$HOME/bin" # My own scripts (managed by ~/.dotfiles/install.sh)
 
 export CLICOLOR=1
 

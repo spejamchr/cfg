@@ -36,9 +36,13 @@ This stores my dotfiles, and installs several packages I use.
 - [`chruby`](https://github.com/postmodern/chruby): Ruby environment tool
 - [`chunkwm`](https://github.com/koekeishiya/chunkwm): Tiling window manager for macOS based on plugin architecture
 - [`cmake`](https://cmake.org/): Cross-platform make
+- [`firacode`](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FiraCode): Monospaced font with programming ligatures
+- [`flux`](https://justgetflux.com/): Warm up your computer display at night
 - [`gnupg`](https://gnupg.org/): GNU Pretty Good Privacy (PGP) package
+- [`gpg-suite-no-mail`](https://gpgtools.org/): GPG Keychain saves GPG passwords
 - [`htop`](https://hisham.hm/htop/): Improved top (interactive process viewer)
 - [`imagemagick`](https://imagemagick.org/index.php): Tools and libraries to manipulate images in many formats
+- [`librsvg`](https://wiki.gnome.org/Projects/LibRsvg): Library to render SVG files using Cairo
 - [`libyaml`](https://github.com/yaml/libyaml): YAML Parser
 - [`mpv`](https://mpv.io/): Media player based on MPlayer and mplayer2
 - [`mysql@5.7`](https://dev.mysql.com/doc/refman/5.7/en/): Open source relational database management system
@@ -46,6 +50,8 @@ This stores my dotfiles, and installs several packages I use.
 - [`pianobar`](https://github.com/PromyLOPh/pianobar/): Command-line player for [pandora](https://pandora.com)
 - [`pkg-config`](https://freedesktop.org/wiki/Software/pkg-config/): Manage compile and link flags for libraries
 - [`puma-dev`](https://github.com/puma/puma-dev): A tool to manage rack apps in development with puma
+- [`optipng`](https://optipng.sourceforge.io/): PNG file optimizer
+- [`qutebrowser`](https://www.qutebrowser.org/): A keyboard-driven, vim-like browser based on PyQt5
 - [`redis`](https://redis.io/): Persistent key-value database, with built-in net interface
 - [`ripgrep`](https://github.com/BurntSushi/ripgrep): Search tool like grep and The Silver Searcher
 - [`ruby-install`](https://github.com/postmodern/ruby-install): Install Ruby, JRuby, Rubinius, TruffleRuby, or mruby
