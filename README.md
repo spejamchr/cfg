@@ -17,7 +17,7 @@ OVERWRITE=true curl -Lks https://raw.githubusercontent.com/spejamchr/cfg/master/
 This script will:
 
 1. Clone this repo to `$HOME/.dotfiles`
-2. Ensure several directories exist: `~/git/work`, `~/git/fun`, `~/git/other`, `~/bin`, and `~/.config`
+2. Ensure several directories exist: `~/git/work`, `~/git/fun`, `~/git/other`, `~/.bin`, and `~/.config`
 3. Install a bunch of stuff (see below for the list)
 4. Backup existing dotfiles
 5. Symlink the dotfiles stored in this repo into place
@@ -42,12 +42,10 @@ Installed with `brew install`:
 - [`gnupg`](https://gnupg.org/): GNU Pretty Good Privacy (PGP) package
 - [`htop`](https://hisham.hm/htop/): Improved top (interactive process viewer)
 - [`imagemagick`](https://imagemagick.org/index.php): Tools and libraries to manipulate images in many formats
-- [`librsvg`](https://wiki.gnome.org/Projects/LibRsvg): Library to render SVG files using Cairo
 - [`libyaml`](https://github.com/yaml/libyaml): YAML Parser
 - [`mpv`](https://mpv.io/): Media player based on MPlayer and mplayer2
 - [`mysql@5.7`](https://dev.mysql.com/doc/refman/5.7/en/): Open source relational database management system
 - [`neovim`](https://neovim.io/): Ambitious Vim-fork focused on extensibility and agility
-- [`optipng`](https://optipng.sourceforge.io/): PNG file optimizer
 - [`pianobar`](https://github.com/PromyLOPh/pianobar/): Command-line player for [pandora](https://pandora.com)
 - [`pkg-config`](https://freedesktop.org/wiki/Software/pkg-config/): Manage compile and link flags for libraries
 - [`puma-dev`](https://github.com/puma/puma-dev): A tool to manage rack apps in development with puma

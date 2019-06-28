@@ -142,17 +142,17 @@ function install_kitty() {
     git_clone kovidgoyal/kitty "$kitty_path"
     (
     cd "$kitty_path"
-    if make app &> /dev/null; then
+    if make &> /dev/null; then
       remcho "rm -rf $kitty_path"
     else
-      errcho "Failed to build kitty. Run \`make app\` in $kitty_path to see error, or run \`rm -rf "$kitty_path"\` to remove the kitty repo."
+      errcho "Failed to build kitty. Run \`make\` in $kitty_path to see error, or run \`rm -rf "$kitty_path"\` to remove the kitty repo."
       return 1
     fi
     )
   fi
 
-  local kitty_bin="$HOME/bin/kitty"
-  local kitty_launcher="$kitty_path/kitty.app/Contents/MacOS/kitty"
+  local kitty_bin="$HOMEBIN/kitty"
+  local kitty_launcher="$kitty_path/kitty/launcher/kitty"
   if [[ ! -L "$kitty_bin" ]]; then
     infcho "Symlinking kitty launcher to $kitty_bin"
     if [[ -e "$kitty_bin" ]]; then
@@ -229,6 +229,7 @@ function main() {
 
   local DOT="$HOME/.dotfiles"
   local CONFIG="$HOME/.config"
+  local HOMEBIN="$HOME/.bin"
   local LOGGED=''
 
   git_clone spejamchr/cfg "$DOT"
@@ -239,7 +240,7 @@ function main() {
     create_dir "$HOME/git/fun"
     create_dir "$HOME/git/other"
   fi
-  create_dir "$HOME/bin"
+  create_dir "$HOMEBIN"
 
   git_clone romkatv/powerlevel10k "$CONFIG/powerlevel10k"
   git_clone chriskempson/base16-shell "$CONFIG/base16-shell"
@@ -253,12 +254,10 @@ function main() {
   brew_install gnupg
   brew_install htop
   brew_install imagemagick
-  brew_install librsvg
   brew_install libyaml
   brew_install mpv
   brew_install mysql@5.7
   brew_install neovim
-  brew_install optipng
   brew_install pianobar
   brew_install pkg-config
   brew_install puma/puma/puma-dev
