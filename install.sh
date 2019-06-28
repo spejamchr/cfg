@@ -24,7 +24,7 @@ function health_checks() {
 }
 
 function logit {
-  local logfile="$CFG/.install.log"
+  local logfile="$DOT/.install.log"
   if [[ ! -e $logfile ]]; then
     return 1
   fi
@@ -54,11 +54,11 @@ function remcho() {
 }
 
 function git_clone() {
-  local url="$1"
+  local url="git@github.com:$1.git"
   local dir="$2"
   if [[ ! -d $dir ]]; then
     infcho "Cloning $url to $dir"
-    local error_msg=$(git clone "$url" "$dir" 2>&1)
+    error_msg=$(git clone "$url" "$dir" 2>&1)
     if [[ $? = 0 ]]; then
       remcho "rm -rf $dir"
     else
@@ -139,7 +139,7 @@ function install_kitty() {
   local kitty_path="$HOME/git/other/kitty"
   if [[ ! -d "$kitty_path" ]]; then
     infcho "Installing kitty from source"
-    git_clone git@github.com:kovidgoyal/kitty.git "$kitty_path"
+    git_clone kovidgoyal/kitty "$kitty_path"
     (
     cd "$kitty_path"
     if make app &> /dev/null; then
@@ -187,7 +187,7 @@ function all_paths() {
 function backup_existing_config_files() {
   if [[ $OVERWRITE = '' ]]; then
     local error=''
-    for filepath in $(all_paths "$CFG/home" ''); do
+    for filepath in $(all_paths "$DOT/home" ''); do
       local homepath="$HOME/.$filepath"
       if [[ -e "$homepath" && ! -L "$homepath" ]]; then
         infcho "Backing up $homepath to $homepath.bak"
@@ -206,8 +206,8 @@ function backup_existing_config_files() {
 }
 
 function create_symlinks() {
-  for filepath in $(all_paths "$CFG/home" ''); do
-    local cfgpath="$CFG/home/$filepath"
+  for filepath in $(all_paths "$DOT/home" ''); do
+    local cfgpath="$DOT/home/$filepath"
     local homepath="$HOME/.$filepath"
     if [[ -L "$homepath" ]]; then continue; fi
     if [[ -f "$homepath" && ! -L "$homepath" ]]; then
@@ -215,6 +215,7 @@ function create_symlinks() {
       rm "$homepath"
     fi
     infcho "Creating symbolic link at $homepath to $cfgpath"
+    mkdir -p $(dirname "$homepath")
     if ln -s "$cfgpath" "$homepath"; then
       remcho "rm $homepath"
     else
@@ -226,18 +227,22 @@ function create_symlinks() {
 function main() {
   health_checks
 
-  local CFG="$HOME/.dotfiles"
+  local DOT="$HOME/.dotfiles"
+  local CONFIG="$HOME/.config"
   local LOGGED=''
 
-  git_clone git@github.com:spejamchr/cfg.git "$CFG"
+  git_clone spejamchr/cfg "$DOT"
 
+  create_dir "$CONFIG"
   if create_dir "$HOME/git"; then
     create_dir "$HOME/git/work"
     create_dir "$HOME/git/fun"
     create_dir "$HOME/git/other"
   fi
   create_dir "$HOME/bin"
-  create_dir "$HOME/.config"
+
+  git_clone romkatv/powerlevel10k "$CONFIG/powerlevel10k"
+  git_clone chriskempson/base16-shell "$CONFIG/base16-shell"
 
   install_brew
   install_command_line_tools
@@ -271,8 +276,6 @@ function main() {
   brew_cask_install qutebrowser
 
   install_kitty
-
-  git_clone https://github.com/romkatv/powerlevel10k.git "$HOME/.config/powerlevel10k"
 
   backup_existing_config_files
   create_symlinks
