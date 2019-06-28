@@ -26,7 +26,7 @@ fi
       # custom_rprompt          # the output of function `custom_rprompt()` if it is defined
       # context                 # user@host
       time                  # current time
-      chruby                  # current ruby version
+      # chruby                  # current ruby version
   )
 
   # `$(_pp_c x y`) evaluates to `y` if the terminal supports >= 256 colors and to `x` otherwise.
@@ -121,8 +121,9 @@ fi
   typeset -g POWERLEVEL9K_CARRIAGE_RETURN_ICON=
 
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_THRESHOLD=0
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_PRECISION=2
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND=none
-  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$(_pp_c 5 101)
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$(_pp_c 8 101)
   typeset -g POWERLEVEL9K_EXECUTION_TIME_ICON=
 
   typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=false
