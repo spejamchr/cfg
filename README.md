@@ -27,7 +27,6 @@ This script will:
 1. macOS
 2. `ruby`
 3. `git`
-4. [SSH connection with GitHub](https://help.github.com/en/articles/connecting-to-github-with-ssh)
 
 ### Installed Stuff
 

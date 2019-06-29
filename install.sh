@@ -74,7 +74,7 @@ function try_to() {
 }
 
 function git_clone() {
-  local url="git@github.com:$1.git"
+  local url="https://github.com/$1.git"
   local dir="$2"
   if [[ ! -d $dir ]]; then
     try_to "Clone $url to $dir" \
