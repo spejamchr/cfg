@@ -138,8 +138,8 @@ function backup_or_remove() {
         "rm -rf \"$1\""
     else
       try_to "Back up $1 to $1.bak" \
-        "mv \"$1\" \"$1.bak\" \
-        "mv \"$1.bak\" \"$1\"
+        "mv \"$1\" \"$1.bak\"" \
+        "mv \"$1.bak\" \"$1\""
     fi
   fi
 }
