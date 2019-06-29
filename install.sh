@@ -53,84 +53,94 @@ function remcho() {
   logit '[Uninstall] - `'"$@"'`'
 }
 
+function try_to() {
+  if [[ "$#" -lt 3 ]]; then
+    errcho "Not enough args to \`try_to()\`, expected 3 but got $#"
+    exit 1
+  fi
+  local description=$1
+  local cmd=$2
+  local remove=$3
+  infcho "-> $description"
+  if msg=$(eval "$cmd" 2>&1); then
+    [[ "$remove" ]] && remcho "$remove"
+  else
+    errcho "Failed!"
+    errcho "$msg"
+    errcho "Run \`$cmd\` to retry."
+    return 1
+  fi
+
+}
+
 function git_clone() {
   local url="git@github.com:$1.git"
   local dir="$2"
   if [[ ! -d $dir ]]; then
-    infcho "Cloning $url to $dir"
-    error_msg=$(git clone "$url" "$dir" 2>&1)
-    if [[ $? = 0 ]]; then
-      remcho "rm -rf $dir"
-    else
-      errcho "Could not clone $url to $dir. Received error:"
-      errcho "$error_msg"
-      errcho "Run \`git clone \"$url\" \"$dir\"\` to retry."
-      exit 1
-    fi
+    try_to "Clone $url to $dir" \
+      "git clone \"$url\" \"$dir\"" \
+      "rm -rf \"$dir\"" \
+      || exit 1
   fi
 }
 
-function create_dir() {
+function ensure_dir() {
   if [[ ! -e "$1" ]]; then
-    if mkdir "$1"; then
-      infcho "Created $1"
-      remcho "rm -r $1"
-    else
-      errcho "Could not create $1. Run \`mkdir \"$1\"\` to retry"
-      return 1
-    fi
+    try_to "Create $1" \
+      "mkdir -p \"$1\"" \
+      "rm -r \"$1\""
   fi
 }
 
 function install_brew() {
   if [[ ! $(which brew) ]]; then
-    infcho 'Installing Homebrew'
-    logcho 'More info about uninstalling Homebrew here: https://github.com/Homebrew/install'
-    yes | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" > /dev/null
-    if [[ $? = 0 ]]; then
-      remcho '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"'
-    else
-      errcho 'Failed to install Homebrew. Run `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" > /dev/null` to retry.'
-      exit 1
-    fi
+    try_to 'Install Homebrew' \
+      'yes | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" > /dev/null' \
+      '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"' \
+      && logcho 'More info about uninstalling Homebrew here: https://github.com/Homebrew/install'
   fi
 }
 
 function install_command_line_tools() {
   if [[ ! -d '/Library/Developer/CommandLineTools' ]]; then
-    infcho 'Installing apple command line tools. You may have to enter your password in a prompt.'
-    if xcode-select --install; then
-      remcho 'rm -rf /Library/Developer/CommandLineTools'
-      logcho 'More info about uninstalling the Command Line Tools here: https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_'
-    else
-      errcho 'Failed to install Command Line Tools. Run `xcode-select --install` to retry'
-      exit 1
-    fi
+    try_to 'Install Apple Command Line Tols. You may have to enter your password in a prompt.' \
+      'xcode-select --install' \
+      'rm -rf /Library/Developer/CommandLineTools' \
+      && logcho 'More info about uninstalling the Command Line Tools here: https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_'
   fi
 }
 
 function brew_install() {
   if  [[ ! $(ls /usr/local/Cellar | grep ${1#*/*/}) ]]; then
-    infcho "Installing $1"
-    if brew install "$1" > /dev/null; then
-      remcho "brew uninstall $1"
-    else
-      errcho "Failed to install $1. Run \`brew install \"$1\"\` to retry"
-    fi
+    try_to "Install $1 with Homebrew" \
+      "brew install \"$1\"" \
+      "brew uninstall \"$1\""
   fi
 }
 
 function brew_cask_install() {
-  if [[ $brew_cask_list = '' ]]; then
+  if [[ ! "$brew_cask_list" ]]; then
     brew_cask_list=$(brew cask list)
   fi
 
-  if [[ ! $(echo $brew_cask_list | grep ${1#*/*/}) ]]; then
-    infcho "Installing $1"
-    if brew cask install "$1" > /dev/null; then
-      remcho "brew cask uninstall $1"
+  if [[ ! $(echo "$brew_cask_list" | grep ${1#*/*/}) ]]; then
+    try_to "Install $1 with Homebrew Cask" \
+      "brew cask install \"$1\"" \
+      "brew cask uninstall \"$1\""
+  fi
+}
+
+function backup_or_remove() {
+  path="$1"
+  if [[ -e "$path" ]]; then
+    if [[ "$OVERWRITE" ]]; then
+      try_to "Remove $path without backup" \
+        "rm -rf \"$path\"" \
+        ''
     else
-      errcho "Failed to install $1. Run \`brew cask install \"$1\"\` to retry"
+      try_to "Back up $path to $path.bak" \
+        "mv \"$path\" \"$path.bak\" \
+        "mv \"$path.bak\" \"$path\"
     fi
   fi
 }
@@ -138,31 +148,19 @@ function brew_cask_install() {
 function install_kitty() {
   local kitty_path="$HOME/git/other/kitty"
   if [[ ! -d "$kitty_path" ]]; then
-    infcho "Installing kitty from source"
     git_clone kovidgoyal/kitty "$kitty_path"
-    (
-    cd "$kitty_path"
-    if make &> /dev/null; then
-      remcho "rm -rf $kitty_path"
-    else
-      errcho "Failed to build kitty. Run \`make\` in $kitty_path to see error, or run \`rm -rf "$kitty_path"\` to remove the kitty repo."
-      return 1
-    fi
-    )
+    try_to 'Build kitty' \
+      "( cd \"$kitty_path\" && make )" \
+      "rm -rf \"$kitty_path\""
   fi
 
   local kitty_bin="$HOMEBIN/kitty"
   local kitty_launcher="$kitty_path/kitty/launcher/kitty"
   if [[ ! -L "$kitty_bin" ]]; then
-    infcho "Symlinking kitty launcher to $kitty_bin"
-    if [[ -e "$kitty_bin" ]]; then
-      infcho "Removing $kitty_bin without backup"
-    fi
-    if ln -s "$kitty_launcher" "$kitty_bin"; then
-      remcho "rm $kitty_bin"
-    else
-      errcho "Failed to symlink kitty launcher. Run \`ln -s \"$kitty_launcher\" \"$kitty_bin\"\` to retry."
-    fi
+    backup_or_remove "$kitty_bin" || return 1
+    try_to "Symlink kitty launcher to $kitty_bin" \
+      "ln -s \"$kitty_launcher\" \"$kitty_bin\"" \
+      "rm \"$kitty_bin\""
   fi
 }
 
@@ -185,18 +183,12 @@ function all_paths() {
 }
 
 function backup_existing_config_files() {
-  if [[ $OVERWRITE = '' ]]; then
+  if [[ ! $OVERWRITE ]]; then
     local error=''
     for filepath in $(all_paths "$DOT/home" ''); do
       local homepath="$HOME/.$filepath"
       if [[ -e "$homepath" && ! -L "$homepath" ]]; then
-        infcho "Backing up $homepath to $homepath.bak"
-        if mv "$homepath" "$homepath.bak"; then
-          remcho "mv $homepath.bak $homepath"
-        else
-          errcho "Failed to back up $homepath. Run \`mv \"$homepath\" \"$homepath.bak\"\` to retry"
-          error=true
-        fi
+        backup_or_remove "$homepath" || error=true
       fi
     done
     if [[ "$error" != '' ]]; then
@@ -209,18 +201,14 @@ function create_symlinks() {
   for filepath in $(all_paths "$DOT/home" ''); do
     local cfgpath="$DOT/home/$filepath"
     local homepath="$HOME/.$filepath"
-    if [[ -L "$homepath" ]]; then continue; fi
+    [[ -L "$homepath" ]] && continue
     if [[ -f "$homepath" && ! -L "$homepath" ]]; then
-      infcho "Removing $homepath without backup"
-      rm "$homepath"
+      backup_or_remove "$homepath" || continue
     fi
-    infcho "Creating symbolic link at $homepath to $cfgpath"
-    mkdir -p $(dirname "$homepath")
-    if ln -s "$cfgpath" "$homepath"; then
-      remcho "rm $homepath"
-    else
-      errcho "Failed to create symlink. Run \`ln -s \"$cfgpath\" \"$homepath\"\` to retry"
-    fi
+    ensure_dir $(dirname "$homepath")
+    try_to "Create symlink at $homepath to $cfgpath" \
+      "ln -s \"$cfgpath\" \"$homepath\"" \
+      "rm \"$homepath\""
   done
 }
 
@@ -234,13 +222,13 @@ function main() {
 
   git_clone spejamchr/cfg "$DOT"
 
-  create_dir "$CONFIG"
-  if create_dir "$HOME/git"; then
-    create_dir "$HOME/git/work"
-    create_dir "$HOME/git/fun"
-    create_dir "$HOME/git/other"
+  ensure_dir "$CONFIG"
+  if ensure_dir "$HOME/git"; then
+    ensure_dir "$HOME/git/work"
+    ensure_dir "$HOME/git/fun"
+    ensure_dir "$HOME/git/other"
   fi
-  create_dir "$HOMEBIN"
+  ensure_dir "$HOMEBIN"
 
   git_clone romkatv/powerlevel10k "$CONFIG/powerlevel10k"
   git_clone chriskempson/base16-shell "$CONFIG/base16-shell"
