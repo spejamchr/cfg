@@ -6,7 +6,7 @@ function health_checks() {
     exit 1
   fi
 
-  local error=''
+  local error
 
   if ! which git >&-; then
     >&2 echo 'Please install git'
@@ -18,7 +18,7 @@ function health_checks() {
     error=true
   fi
 
-  if [[ "$error" != '' ]]; then
+  if [[ "$error" ]]; then
     exit 1
   fi
 }
@@ -114,7 +114,8 @@ function brew_install() {
   if  [[ ! $(ls /usr/local/Cellar | grep ${1#*/*/}) ]]; then
     try_to "Install $1 with Homebrew" \
       "brew install \"$1\"" \
-      "brew uninstall \"$1\""
+      "brew uninstall \"$1\"" \
+      && [[ "$2" ]] && infcho "$2"
   fi
 }
 
@@ -131,16 +132,14 @@ function brew_cask_install() {
 }
 
 function backup_or_remove() {
-  path="$1"
-  if [[ -e "$path" ]]; then
+  if [[ -e "$1" ]]; then
     if [[ "$OVERWRITE" ]]; then
-      try_to "Remove $path without backup" \
-        "rm -rf \"$path\"" \
-        ''
+      try_to "Remove $1 without backup" \
+        "rm -rf \"$1\""
     else
-      try_to "Back up $path to $path.bak" \
-        "mv \"$path\" \"$path.bak\" \
-        "mv \"$path.bak\" \"$path\"
+      try_to "Back up $1 to $1.bak" \
+        "mv \"$1\" \"$1.bak\" \
+        "mv \"$1.bak\" \"$1\"
     fi
   fi
 }
@@ -167,7 +166,7 @@ function install_kitty() {
 function all_paths() {
   (
     cd $1
-    local paths=''
+    local paths
     local prefix="$2"
     for path in *; do
       if [[ ! -e $path ]]; then continue; fi
@@ -184,21 +183,21 @@ function all_paths() {
 
 function backup_existing_config_files() {
   if [[ ! $OVERWRITE ]]; then
-    local error=''
-    for filepath in $(all_paths "$DOT/home" ''); do
+    local error
+    for filepath in $(all_paths "$DOT/home"); do
       local homepath="$HOME/.$filepath"
       if [[ -e "$homepath" && ! -L "$homepath" ]]; then
         backup_or_remove "$homepath" || error=true
       fi
     done
-    if [[ "$error" != '' ]]; then
+    if [[ "$error" ]]; then
       exit 1
     fi
   fi
 }
 
 function create_symlinks() {
-  for filepath in $(all_paths "$DOT/home" ''); do
+  for filepath in $(all_paths "$DOT/home"); do
     local cfgpath="$DOT/home/$filepath"
     local homepath="$HOME/.$filepath"
     [[ -L "$homepath" ]] && continue
@@ -218,7 +217,7 @@ function main() {
   local DOT="$HOME/.dotfiles"
   local CONFIG="$HOME/.config"
   local HOMEBIN="$HOME/.bin"
-  local LOGGED=''
+  local LOGGED
 
   git_clone spejamchr/cfg "$DOT"
 
@@ -237,22 +236,22 @@ function main() {
   install_command_line_tools
 
   brew_install chruby
-  brew_install koekeishiya/formulae/chunkwm
+  brew_install koekeishiya/formulae/chunkwm 'Post-install configuration required. See `brew info chunkwm`'
   brew_install cmake
   brew_install gnupg
   brew_install htop
   brew_install imagemagick
   brew_install libyaml
   brew_install mpv
-  brew_install mysql@5.7
+  brew_install mysql@5.7 'Post-install configuration required. See `brew info mysql@5.7`'
   brew_install neovim
   brew_install pianobar
   brew_install pkg-config
-  brew_install puma/puma/puma-dev
-  brew_install redis
+  brew_install puma/puma/puma-dev 'Post-install configuration required. See `brew info puma-dev`'
+  brew_install redis 'Run `brew services start redis` to start redis'
   brew_install ripgrep
   brew_install ruby-install
-  brew_install koekeishiya/formulae/skhd
+  brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
   brew_install yarn
   brew_install zsh
   brew_install zsh-completions
