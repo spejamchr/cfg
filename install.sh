@@ -103,7 +103,7 @@ function install_brew() {
 
 function install_command_line_tools() {
   if [[ ! -d '/Library/Developer/CommandLineTools' ]]; then
-    try_to 'Install Apple Command Line Tols. You may have to enter your password in a prompt.' \
+    try_to 'Install Apple Command Line Tools. You may have to enter your password in a prompt.' \
       'xcode-select --install' \
       'rm -rf /Library/Developer/CommandLineTools' \
       && logcho 'More info about uninstalling the Command Line Tools here: https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_'
