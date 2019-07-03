@@ -43,8 +43,16 @@ alias sync_test="rails db:test:prepare"
 
 # It's nicer to open a dir for editing when it's also the cwd
 function edit() {
-  (cd $1; $EDITOR .)
+  if [[ -f $1 ]]; then
+    ( cd $(dirname $1); $EDITOR $1 )
+  elif [[ -d $1 ]]; then
+    ( cd $1; $EDITOR $1 )
+  else
+    echo "$1 not found"
+    return 1
+  fi
 }
+alias e="edit"
 
 # This just simplifies things below
 function rails_command() {
@@ -122,3 +130,14 @@ function ahg_terminal {
 }
 
 alias ahg="ahg_terminal; qute -r ahg; slack"
+
+################################################################################
+export TEE=~/git/work/public_html
+
+function tee_terminal {
+  cd $TEE
+  in_new_kitty_window "source" "edit $TEE \n" && \
+    in_new_kitty_window "php" "php -S localhost:9000 \n"
+}
+
+alias tere="tee_terminal; qute -r tee; slack"
