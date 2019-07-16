@@ -84,7 +84,7 @@
 # ]
 
 # open terminal, blazingly fast compared to iTerm/Hyper
-ctrl - return : ~/.bin/kitty --single-instance --title="zsh" -d ~
+ctrl - return : open ~/git/other/kitty/kitty/launcher/kitty.app
 
 # open qutebrowser
 shift + ctrl - return : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser
