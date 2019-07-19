@@ -148,6 +148,9 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
 Plug 'chriskempson/base16-vim'
 
+" Preview colours in source code while editing
+Plug 'chrisbra/Colorizer'
+
 " Initialize plugin system
 call plug#end()
 " }}}
@@ -241,6 +244,7 @@ nmap <leader>qf  <Plug>(coc-fix-current)
 " Configure base16-vim {{{
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
+  set termguicolors
   source ~/.vimrc_background
 endif
 " }}}
