@@ -1,6 +1,6 @@
 # Authentication
 user = spensterc@yahoo.com
-password_command = cat ~/.config/pianobar/password
+password_command = cat $XDG_CONFIG_HOME/pianobar/password
 
 # Misc
 audio_quality = high
