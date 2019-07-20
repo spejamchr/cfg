@@ -229,7 +229,6 @@ function main() {
   fi
   ensure_dir "$HOMEBIN"
 
-  git_clone romkatv/powerlevel10k "$CONFIG/powerlevel10k"
   git_clone chriskempson/base16-shell "$CONFIG/base16-shell"
 
   install_brew
@@ -253,6 +252,7 @@ function main() {
   brew_install ruby-install
   brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
   brew_install yarn
+  brew_install zplug 'Run `zplug install` to install zsh plugins'
   brew_install zsh
   brew_install zsh-completions
 

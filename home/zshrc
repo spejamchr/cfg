@@ -1,6 +1,10 @@
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.profile ] && source ~/.profile
 
+# Use zplug to manage zsh plugins: https://github.com/zplug/zplug
+export ZPLUG_HOME=/usr/local/opt/zplug
+[ -f $ZPLUG_HOME/init.zsh ] && source $ZPLUG_HOME/init.zsh
+
 # Edit this file more easily
 alias ez="$EDITOR ~/.zshrc; source ~/.zshrc; echo \".zshrc edited and sourced\""
 
@@ -36,4 +40,7 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 source $XDG_CONFIG_HOME/purepower
-source $XDG_CONFIG_HOME/powerlevel10k/powerlevel10k.zsh-theme
+
+zplug "romkatv/powerlevel10k", use:powerlevel10k.zsh-theme
+zplug "lukechilds/zsh-nvm"
+zplug load
