@@ -98,12 +98,16 @@ def hsl_to_rgb(hsl)
     .join
 end
 
+def clamp(num, min, max)
+  [[num, min].max, max].min
+end
+
 def adjust_hsl(color, diffs)
   h, s, l = rgb_to_hsl(color)
 
   h = (h + diffs[0]) % 360
-  s = (s * diffs[1]).clamp(0, 1)
-  l = (l * diffs[2]).clamp(0, 1)
+  s = clamp(s * diffs[1], 0, 1)
+  l = clamp(l * diffs[2], 0, 1)
 
   hsl_to_rgb([h, s, l])
 end
