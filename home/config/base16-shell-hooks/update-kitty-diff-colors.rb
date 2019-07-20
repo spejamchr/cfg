@@ -122,49 +122,52 @@ end
 palette =
   Maybe
   .just({})
-  .assign(:black)        { get_color('color00') }
-  .assign(:red)          { get_color('color01') }
-  .assign(:green)        { get_color('color02') }
-  .assign(:yellow)       { get_color('color03') }
-  .assign(:blue)         { get_color('color04') }
-  .assign(:magenta)      { get_color('color05') }
-  .assign(:cyan)         { get_color('color06') }
-  .assign(:white)        { get_color('color07') }
-  .assign(:bright_black) { get_color('color08') }
-  .assign(:bright_white) { get_color('color15') }
-  .assign(:foreground)   { get_color('color_foreground') }
-  .assign(:background)   { get_color('color_background') }
-  .assign(:filler_bg)    { get_color('color19') }
+  .assign(:base00) { get_color('color00') } # black
+  .assign(:base01) { get_color('color18') }
+  .assign(:base02) { get_color('color19') }
+  .assign(:base03) { get_color('color08') } # bright black
+  .assign(:base04) { get_color('color20') }
+  .assign(:base05) { get_color('color07') } # white
+  .assign(:base06) { get_color('color21') }
+  .assign(:base07) { get_color('color15') } # bright white
+  .assign(:base08) { get_color('color01') } # red
+  .assign(:base09) { get_color('color16') } # orange?
+  .assign(:base0A) { get_color('color03') } # yellow
+  .assign(:base0B) { get_color('color02') } # green
+  .assign(:base0C) { get_color('color06') } # cyan
+  .assign(:base0D) { get_color('color04') } # blue
+  .assign(:base0E) { get_color('color05') } # magenta
+  .assign(:base0F) { get_color('color17') } # brown?
 
 colors = palette.map do |p|
   {
-    foreground:           p[:foreground],
-    background:           p[:background],
+    foreground:           p[:base05],
+    background:           p[:base00],
 
-    title_fg:             p[:bright_white],
-    title_bg:             p[:background],
+    title_fg:             p[:base07],
+    title_bg:             p[:base00],
 
-    margin_bg:            p[:bright_black],
-    margin_fg:            p[:white],
+    margin_bg:            p[:base03],
+    margin_fg:            p[:base05],
 
-    removed_bg:           adjust_hsl(p[:red], [0, 0.5, 0.5]),
-    highlight_removed_bg: adjust_hsl(p[:red], [0, 0.8, 0.6]),
-    removed_margin_bg:    adjust_hsl(p[:red], [0, 0.5, 0.5]),
+    removed_bg:           adjust_hsl(p[:base08], [0, 0.5, 0.5]),
+    highlight_removed_bg: adjust_hsl(p[:base08], [0, 0.8, 0.6]),
+    removed_margin_bg:    adjust_hsl(p[:base08], [0, 0.5, 0.5]),
 
-    added_bg:             adjust_hsl(p[:green], [0, 0.5, 0.5]),
-    highlight_added_bg:   adjust_hsl(p[:green], [0, 0.8, 0.6]),
-    added_margin_bg:      adjust_hsl(p[:green], [0, 0.5, 0.5]),
+    added_bg:             adjust_hsl(p[:base0B], [0, 0.5, 0.5]),
+    highlight_added_bg:   adjust_hsl(p[:base0B], [0, 0.8, 0.6]),
+    added_margin_bg:      adjust_hsl(p[:base0B], [0, 0.5, 0.5]),
 
-    filler_bg:            p[:bright_black],
+    filler_bg:            p[:base03],
 
-    hunk_margin_bg:       adjust_hsl(p[:blue], [0, 0.5, 0.5]),
-    hunk_bg:              adjust_hsl(p[:blue], [0, 0.5, 0.5]),
+    hunk_margin_bg:       adjust_hsl(p[:base0D], [0, 0.5, 0.5]),
+    hunk_bg:              adjust_hsl(p[:base0D], [0, 0.5, 0.5]),
 
-    search_bg:            p[:bright_white],
-    search_fg:            p[:black],
+    search_bg:            p[:base07],
+    search_fg:            p[:base00],
 
-    select_bg:            p[:cyan],
-    select_fg:            p[:black]
+    select_bg:            p[:base0C],
+    select_fg:            p[:base00]
   }
 end
 
