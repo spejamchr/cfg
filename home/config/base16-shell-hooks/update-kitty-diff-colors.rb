@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 THEME = File.read(
   File.join(ENV['BASE16_SHELL'], 'scripts', "base16-#{ENV['BASE16_THEME']}.sh")
@@ -8,9 +9,15 @@ DIFF_COLORS_PATH = File.join(
   ENV['XDG_CONFIG_HOME'], 'kitty', 'diff_colors.conf'
 ).freeze
 
+# Represent a possibly present value
 class Maybe
-  def self.nothing;   self.new(nil); end
-  def self.just(val); self.new(val); end
+  def self.nothing
+    new(nil)
+  end
+
+  def self.just(val)
+    new(val)
+  end
 
   def initialize(val)
     @val = val.nil? ? { kind: :nothing } : { kind: :just, val: val }
@@ -21,7 +28,7 @@ class Maybe
     thing.is_a?(Maybe) ? thing : Maybe.new(thing)
   end
 
-  def do
+  def effect
     just? && yield(val[:val])
     self
   end
@@ -32,14 +39,16 @@ class Maybe
 
     other = yield(val[:val])
     other = other.is_a?(Maybe) ? other : Maybe.new(other)
-    other.map { |ov| val[:val].merge({ name => ov }) }
+    other.map { |ov| val[:val].merge(name => ov) }
   end
 
   private
 
   attr_reader :val
 
-  def just?; val[:kind] == :just; end
+  def just?
+    val[:kind] == :just
+  end
 end
 
 def get_color(color)
@@ -57,29 +66,24 @@ def rgb_to_hsl(rgb)
   hex_pair = /[\da-f]{2}/i
 
   r, g, b = rgb.scan(hex_pair).map { |n| n.to_i(16) / 255.0 }
-  big_m = [r, g, b].max
-  small_m = [r, g, b].min
-  c = big_m - small_m
+  max = [r, g, b].max
+  min = [r, g, b].min
+  c = max - min
 
   h_prime =
-    if c == 0
+    if c.zero?
       0.0
-    elsif big_m == r
+    elsif max == r
       ((g - b) / c) % 6
-    elsif big_m == g
+    elsif max == g
       (b - r) / c + 2
-    elsif big_m == b
+    elsif max == b
       (r - g) / c + 4
     end
 
   h = (60 * h_prime)
-  l = ((big_m + small_m) / 2)
-  s =
-    if l == 0 || l == 1
-      0.0
-    else
-      c / (1 - (2*l - 1).abs)
-    end
+  l = (max + min) / 2
+  s = [0, 1].include?(l) ? 0.0 : (c / (1 - (2 * l - 1).abs))
 
   [h, s, l]
 end
@@ -87,14 +91,17 @@ end
 # Convert an hsl array [h, s, l] to rgb hex string "#RRGGBB"
 def hsl_to_rgb(hsl)
   h, s, l = hsl
-  a = s * [l, 1-l].min
-  f = ->(n) {
+  a = s * [l, 1 - l].min
+  f = lambda do |n|
     k = (n + h / 30.0) % 12
     l - a * [[k - 3, 9 - k, 1].min, -1].max
-  }
-  '#' + [f.(0), f.(8), f.(4)]
+  end
+
+  '#' +
+    [0, 8, 4]
+    .map(&f)
     .map { |n| (n * 255).round.to_s(16) }
-    .map { |s| s.length == 1 ? "0#{s}" : s }
+    .map { |c| c.length == 1 ? "0#{c}" : c }
     .join
 end
 
@@ -112,7 +119,9 @@ def adjust_hsl(color, diffs)
   hsl_to_rgb([h, s, l])
 end
 
-palette = Maybe.just({})
+palette =
+  Maybe
+  .just({})
   .assign(:black)        { get_color('color00') }
   .assign(:red)          { get_color('color01') }
   .assign(:green)        { get_color('color02') }
@@ -127,40 +136,42 @@ palette = Maybe.just({})
   .assign(:background)   { get_color('color_background') }
   .assign(:filler_bg)    { get_color('color19') }
 
-colors = palette.map { |p| {
-  foreground:           p[:foreground],
-  background:           p[:background],
+colors = palette.map do |p|
+  {
+    foreground:           p[:foreground],
+    background:           p[:background],
 
-  title_fg:             p[:bright_white],
-  title_bg:             p[:background],
+    title_fg:             p[:bright_white],
+    title_bg:             p[:background],
 
-  margin_bg:            p[:bright_black],
-  margin_fg:            p[:white],
+    margin_bg:            p[:bright_black],
+    margin_fg:            p[:white],
 
-  removed_bg:           adjust_hsl(p[:red], [0, 0.5, 0.5]),
-  highlight_removed_bg: adjust_hsl(p[:red], [0, 0.8, 0.6]),
-  removed_margin_bg:    adjust_hsl(p[:red], [0, 0.5, 0.5]),
+    removed_bg:           adjust_hsl(p[:red], [0, 0.5, 0.5]),
+    highlight_removed_bg: adjust_hsl(p[:red], [0, 0.8, 0.6]),
+    removed_margin_bg:    adjust_hsl(p[:red], [0, 0.5, 0.5]),
 
-  added_bg:             adjust_hsl(p[:green], [0, 0.5, 0.5]),
-  highlight_added_bg:   adjust_hsl(p[:green], [0, 0.8, 0.6]),
-  added_margin_bg:      adjust_hsl(p[:green], [0, 0.5, 0.5]),
+    added_bg:             adjust_hsl(p[:green], [0, 0.5, 0.5]),
+    highlight_added_bg:   adjust_hsl(p[:green], [0, 0.8, 0.6]),
+    added_margin_bg:      adjust_hsl(p[:green], [0, 0.5, 0.5]),
 
-  filler_bg:            p[:bright_black],
+    filler_bg:            p[:bright_black],
 
-  hunk_margin_bg:       adjust_hsl(p[:blue], [0, 0.5, 0.5]),
-  hunk_bg:              adjust_hsl(p[:blue], [0, 0.5, 0.5]),
+    hunk_margin_bg:       adjust_hsl(p[:blue], [0, 0.5, 0.5]),
+    hunk_bg:              adjust_hsl(p[:blue], [0, 0.5, 0.5]),
 
-  search_bg:            p[:bright_white],
-  search_fg:            p[:black],
+    search_bg:            p[:bright_white],
+    search_fg:            p[:black],
 
-  select_bg:            p[:cyan],
-  select_fg:            p[:black],
-} }
+    select_bg:            p[:cyan],
+    select_fg:            p[:black]
+  }
+end
 
-colors.do { |c|
+colors.effect do |c|
   File.open(DIFF_COLORS_PATH, 'w') do |f|
-    f.puts "# Autogenerated by a base16-shell hook in "
+    f.puts '# Autogenerated by a base16-shell hook in'
     f.puts "# #{__FILE__}"
     f.puts c.map { |kv| kv.join(' ') }.join("\n")
   end
-}
+end
