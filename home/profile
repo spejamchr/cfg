@@ -42,6 +42,19 @@ alias qute='open /Applications/qutebrowser.app/ --args'
 alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 alias sync_test="rails db:test:prepare"
 
+function gitpushnew {
+  BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+  if [[ "$BRANCH" == "master" ]]; then
+    echo "You're on master!"
+    return 1
+  elif [[ $(git config --get branch.$BRANCH.merge) ]]; then
+    echo "This branch already exists upstream"
+    return 1
+  else
+    git push --set-upstream origin $BRANCH
+  fi
+}
+
 # It's nicer to open a dir for editing when it's also the cwd
 function edit() {
   if [[ -f $1 ]]; then
