@@ -101,7 +101,7 @@ play : pgrep pianobar > /dev/null && \
   pianobar > ~/.config/pianobar/out
 
 fast : pgrep pianobar > /dev/null && echo -n 'n' > ~/.config/pianobar/ctl
-rewind : pgrep pianobar > /dev/null && echo -n 'q' > ~/.config/pianobar/ctl
+rewind : pgrep pianobar > /dev/null && pkill pianobar
 
 # eject all external drives
 cmd + alt + ctrl - e : ~/code/scripts/eject
