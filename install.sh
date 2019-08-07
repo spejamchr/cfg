@@ -88,7 +88,7 @@ function ensure_dir() {
   if [[ ! -e "$1" ]]; then
     try_to "Create $1" \
       "mkdir -p \"$1\"" \
-      "rm -r \"$1\""
+      "rm -r \"$1\"" || exit 1
   fi
 }
 
@@ -222,12 +222,11 @@ function main() {
   git_clone spejamchr/cfg "$DOT"
 
   ensure_dir "$CONFIG"
-  if ensure_dir "$HOME/git"; then
-    ensure_dir "$HOME/git/work"
-    ensure_dir "$HOME/git/fun"
-    ensure_dir "$HOME/git/other"
-  fi
   ensure_dir "$HOMEBIN"
+  ensure_dir "$HOME/git"
+  ensure_dir "$HOME/git/work"
+  ensure_dir "$HOME/git/fun"
+  ensure_dir "$HOME/git/other"
 
   git_clone chriskempson/base16-shell "$CONFIG/base16-shell"
 
