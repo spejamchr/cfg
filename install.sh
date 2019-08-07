@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 function health_checks() {
   if [[ ! $(uname -s) = Darwin ]]; then
@@ -54,8 +54,8 @@ function remcho() {
 }
 
 function try_to() {
-  if [[ "$#" -lt 3 ]]; then
-    errcho "Not enough args to \`try_to()\`, expected 3 but got $#"
+  if [[ "$#" -lt 2 ]]; then
+    errcho "Not enough args to \`try_to()\`, expected 2..3 but got $#"
     exit 1
   fi
   local description=$1
@@ -228,8 +228,6 @@ function main() {
   ensure_dir "$HOME/git/fun"
   ensure_dir "$HOME/git/other"
 
-  git_clone chriskempson/base16-shell "$CONFIG/base16-shell"
-
   install_brew
   install_command_line_tools
 
@@ -264,6 +262,9 @@ function main() {
 
   backup_existing_config_files
   create_symlinks
+
+  source "$HOME/.zshrc"
+  zplug check || try_to 'Install zsh plugins' 'zplug install'
 }
 
 main

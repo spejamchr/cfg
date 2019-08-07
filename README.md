@@ -17,16 +17,18 @@ OVERWRITE=true curl -Lks https://raw.githubusercontent.com/spejamchr/cfg/master/
 This script will:
 
 1. Clone this repo to `$HOME/.dotfiles`
-2. Ensure several directories exist: `~/git/work`, `~/git/fun`, `~/git/other`, `~/.bin`, and `~/.config`
+2. Ensure several directories exist
 3. Install a bunch of stuff (see below for the list)
-4. Backup existing dotfiles
+4. Backup existing dotfiles (Unless you specify `OVERWRITE=true`)
 5. Symlink the dotfiles stored in this repo into place
+6. Install `zsh` plugins
 
 ### Prerequisites
 
 1. macOS
-2. `ruby`
-3. `git`
+2. `ruby`, `git`, and `zsh` (installed by default on macOS)
+
+You shouldn't have to install anything to run the install script.
 
 ### Installed Stuff
 
@@ -53,6 +55,7 @@ Installed with `brew install`:
 - [`ruby-install`](https://github.com/postmodern/ruby-install): Install Ruby, JRuby, Rubinius, TruffleRuby, or mruby
 - [`skhd`](https://github.com/koekeishiya/skhd): Simple hotkey daemon for macOS
 - [`yarn`](https://yarnpkg.com/lang/en/): JavaScript package manager
+- [`zplug`](https://github.com/zplug/zplug): The next-generation plugin manager for zsh
 - [`zsh`](https://www.zsh.org/): UNIX shell (command interpreter)
 - [`zsh-completions`](https://github.com/zsh-users/zsh-completions): Additional completion definitions for zsh
 
@@ -66,18 +69,16 @@ Installed with `brew cask install`:
 Cloned repos:
 
 - [`kitty`](https://sw.kovidgoyal.net/kitty/): the fast, featureful, GPU based terminal emulator
-- [`powerlevel10k`](https://github.com/romkatv/powerlevel10k): A fast reimplementation of Powerlevel9k ZSH theme
-- [`base16-shell`](https://github.com/chriskempson/base16-shell): Base16 for Shells
 
 ### Debugging
 
-The script will output information to `STDOUT`, and if the script manages to
-clone this repo it will store a logfile in the repo at `.install.log`.
+The script will output information to `STDOUT`, and if the script successfully
+clones this repo it will store a logfile in the repo at `.install.log`.
 
 ### Organization
 
 The `install.sh` script and the logfile, `.install.log` are both at the root of
-the repo (though the install log is not tracked by git). The `home/` directory
-holds all the dotfiles. It is organized such that a file `home/something` will
-be symlinked to `~/.something`, and `home/dir/descendant` will be symlinked to
+the repo (though the logfile is not tracked by git). The `home/` directory holds
+all the dotfiles. It is organized such that a file `home/something` will be
+symlinked to `~/.something`, and `home/dir/descendant` will be symlinked to
 `~/.dir/descendant`.

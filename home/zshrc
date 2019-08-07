@@ -5,6 +5,13 @@
 export ZPLUG_HOME=/usr/local/opt/zplug
 [ -f $ZPLUG_HOME/init.zsh ] && source $ZPLUG_HOME/init.zsh
 
+# Base16 Shell
+export BASE16_SHELL="$ZPLUG_HOME/repos/chriskempson/base16-shell/"
+[ -n "$PS1" ] && \
+    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+        eval "$("$BASE16_SHELL/profile_helper.sh")"
+export BASE16_SHELL_HOOKS="$XDG_CONFIG_HOME/base16-shell-hooks"
+
 # Edit this file more easily
 alias ez="$EDITOR ~/.zshrc; source ~/.zshrc; echo \".zshrc edited and sourced\""
 
@@ -44,3 +51,6 @@ source $XDG_CONFIG_HOME/purepower
 zplug "romkatv/powerlevel10k", use:powerlevel10k.zsh-theme
 zplug "lukechilds/zsh-nvm"
 zplug load
+
+# Don't `zplug load` this one, since it's a generic shell plugin.
+zplug "chriskempson/base16-shell"
