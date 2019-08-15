@@ -38,6 +38,7 @@ c.content.cache.size = 52428800
 c.content.webgl = False
 c.content.host_blocking.enabled = True
 c.content.cookies.accept = 'no-3rdparty'
+c.content.javascript.can_access_clipboard = True
 c.hints.border = "1px solid #CCCCCC"
 c.hints.mode = "letter"
 c.hints.min_chars = 1
