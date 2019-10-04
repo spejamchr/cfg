@@ -7,46 +7,48 @@ function upgrade_kitty() {
     (
       cd "$kitty_path"
       git fetch
-      if [[ $(git rev-list --count master...master@{upstream}) == 0 ]]; then
-        echo "Already up-to-date\n"
+      local commit_diff=$(git rev-list --count master...master@{upstream})
+      if [[ "$commit_diff" == 0 ]]; then
+        echo "Already up-to-date"
       else
         git pull
+        git log -$commit_diff
         make
       fi
     )
   else
-    echo "Kitty is not available at $kitty_path\n"
+    echo "Kitty is not available at $kitty_path"
   fi
 }
 
 function updgrade_zsh_plugins() {
-  echo "-> Upgrading zsh plugins..."
+  echo "\n-> Upgrading zsh plugins..."
   source "$HOME/.zshrc"
   if which zplug >&-; then
     if zplug check; then
-      echo "Already up-to-date\n"
+      echo "Already up-to-date"
     else
       zplug update
     fi
   else
-    echo "zplug is not available\n"
+    echo "zplug is not available"
   fi
 }
 
 function upgrade_brew_stuff() {
-  echo "-> Upgrading brew..."
+  echo "\n-> Upgrading brew..."
   if which brew >&-; then
     brew update
     echo "\n-> Upgrading brew packages..."
-    [[ $(brew upgrade) ]] || echo "Already up-to-date\n"
-    echo "-> Upgrading brew casks..."
+    [[ $(brew upgrade) ]] || echo "Already up-to-date"
+    echo "\n-> Upgrading brew casks..."
     if [[ $(brew cask outdated) ]]; then
       brew cask upgrade
     else
-      echo "Already up-to-date\n"
+      echo "Already up-to-date"
     fi
   else
-    echo "brew is not available\n"
+    echo "brew is not available"
   fi
 }
 
