@@ -6,11 +6,12 @@ function upgrade_kitty() {
   if [[ -d "$kitty_path" ]]; then
     (
       cd "$kitty_path"
-      if [[ $(git fetch) ]]; then
+      git fetch
+      if [[ $(git rev-list --count master...master@{upstream}) == 0 ]]; then
+        echo "Already up-to-date\n"
+      else
         git pull
         make
-      else
-        echo "Already up-to-date\n"
       fi
     )
   else
