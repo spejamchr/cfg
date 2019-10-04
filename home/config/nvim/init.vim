@@ -17,7 +17,7 @@ set noswapfile     " no swap files
 set updatetime=100
 
 " Tab key inserts 2 spaces
-set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smartindent
+set tabstop=4 softtabstop=0 expandtab shiftwidth=2 smartindent
 
 " Hide line numbers
 set nonu
