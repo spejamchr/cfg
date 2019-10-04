@@ -51,8 +51,9 @@ source $XDG_CONFIG_HOME/purepower
 # zsh plugins
 zplug "romkatv/powerlevel10k", use:powerlevel10k.zsh-theme
 zplug "lukechilds/zsh-nvm"
+zplug load
 # There's a kitty-themes repo that stores a bunch of themes in kitty .conf
 # format. I'd like to transition to using that, but Base16 integrates nicely
 # into (n)vim. See: https://github.com/dexpota/kitty-themes
+# Also, this is *after* `zplug load` because it's not really a zsh plugin...
 zplug "chriskempson/base16-shell"
-zplug load
