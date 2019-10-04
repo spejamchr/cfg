@@ -2,7 +2,7 @@
 
 scriptencoding utf-8
 
-" Use <Space> as my leader
+" Use <Space> as my Leader
 let mapleader=' '
 
 " Simple option settings {{{
@@ -131,7 +131,6 @@ Plug 'junegunn/goyo.vim'
 Plug 'ron89/thesaurus_query.vim'
 
 " For Typescript support
-Plug 'HerringtonDarkholme/yats.vim'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 
 " Linting
@@ -201,10 +200,6 @@ nnoremap <Leader>c :Commands<CR>
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/*"'
 " }}}
 
-" Configure polyglot {{{
-let g:polyglot_disabled = ['typescript', 'typescript.jsx']
-" }}}
-
 " Configure markdown-preview.nvim {{{
 " Do not auto-start when opening markdown files
 let g:mkdp_auto_start = 0
@@ -227,8 +222,8 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " Remap for rename current word
-nmap <leader>rn <Plug>(coc-rename)
-nmap <leader>o :call CocActionAsync('runCommand', 'tsserver.organizeImports')<CR>
+nmap <Leader>rn <Plug>(coc-rename)
+nmap <Leader>o :call CocActionAsync('runCommand', 'tsserver.organizeImports')<CR>
 
 augroup coc-nvim
   autocmd!
@@ -238,7 +233,7 @@ augroup coc-nvim
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 " Fix autofix problem of current line
-nmap <leader>qf  <Plug>(coc-fix-current)
+nmap <Leader>qf  <Plug>(coc-fix-current)
 " }}}
 
 " Configure base16-vim {{{
