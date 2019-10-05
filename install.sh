@@ -238,7 +238,6 @@ function main() {
   brew_install htop
   brew_install imagemagick
   brew_install libyaml
-  brew_install mpv
   brew_install mysql@5.7 'Post-install configuration required. See `brew info mysql@5.7`'
   brew_install neovim
   brew_install pianobar
@@ -256,6 +255,7 @@ function main() {
   brew_cask_install homebrew/cask-fonts/font-firacode-nerd-font
   brew_cask_install flux
   brew_cask_install gpg-suite-no-mail
+  brew_cask_install mpv
   brew_cask_install qutebrowser
 
   install_kitty

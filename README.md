@@ -44,7 +44,6 @@ Installed with `brew install`:
 - [`htop`](https://hisham.hm/htop/): Improved top (interactive process viewer)
 - [`imagemagick`](https://imagemagick.org/index.php): Tools and libraries to manipulate images in many formats
 - [`libyaml`](https://github.com/yaml/libyaml): YAML Parser
-- [`mpv`](https://mpv.io/): Media player based on MPlayer and mplayer2
 - [`mysql@5.7`](https://dev.mysql.com/doc/refman/5.7/en/): Open source relational database management system
 - [`neovim`](https://neovim.io/): Ambitious Vim-fork focused on extensibility and agility
 - [`pianobar`](https://github.com/PromyLOPh/pianobar/): Command-line player for [pandora](https://pandora.com)
@@ -64,6 +63,7 @@ Installed with `brew cask install`:
 - [`firacode`](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FiraCode): Monospaced font with programming ligatures
 - [`flux`](https://justgetflux.com/): Warm up your computer display at night
 - [`gpg-suite-no-mail`](https://gpgtools.org/): Save GPG passwords with GPG Keychain
+- [`mpv`](https://mpv.io/): Media player based on MPlayer and mplayer2
 - [`qutebrowser`](https://www.qutebrowser.org/): A keyboard-driven, vim-like browser based on PyQt5
 
 Cloned repos:
