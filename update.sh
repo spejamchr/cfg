@@ -25,11 +25,11 @@ function updgrade_zsh_plugins() {
   echo "\n-> Upgrading zsh plugins..."
   source "$HOME/.zshrc"
   if which zplug >&-; then
-    if zplug check; then
-      echo "Already up-to-date"
-    else
-      zplug update
-    fi
+    zplug check || zplug install
+
+    # I can't find a nice way of determining in a script if the plugins are
+    # outdated, so just update them every time.
+    zplug update
   else
     echo "zplug is not available"
   fi
