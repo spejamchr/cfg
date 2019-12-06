@@ -231,12 +231,14 @@ function main() {
   install_brew
   install_command_line_tools
 
+  brew_install bat
   brew_install chruby
-  brew_install koekeishiya/formulae/chunkwm 'Post-install configuration required. See `brew info chunkwm`'
   brew_install cmake
   brew_install gnupg
   brew_install htop
   brew_install imagemagick
+  brew_install koekeishiya/formulae/chunkwm 'Post-install configuration required. See `brew info chunkwm`'
+  brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
   brew_install libyaml
   brew_install mysql@5.7 'Post-install configuration required. See `brew info mysql@5.7`'
   brew_install neovim
@@ -246,7 +248,6 @@ function main() {
   brew_install redis 'Run `brew services start redis` to start redis'
   brew_install ripgrep
   brew_install ruby-install
-  brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
   brew_install yarn
   brew_install zplug 'Run `zplug install` to install zsh plugins'
   brew_install zsh

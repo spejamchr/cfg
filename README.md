@@ -37,6 +37,7 @@ You shouldn't have to install anything to run the install script.
 
 Installed with `brew install`:
 
+- [`bat`](https://github.com/sharkdp/bat): A cat(1) clone with wings
 - [`chruby`](https://github.com/postmodern/chruby): Ruby environment tool
 - [`chunkwm`](https://github.com/koekeishiya/chunkwm): Tiling window manager for macOS based on plugin architecture
 - [`cmake`](https://cmake.org/): Cross-platform make
