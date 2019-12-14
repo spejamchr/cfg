@@ -57,11 +57,16 @@ fun! <SID>StripTrailingWhitespaces()
     %s/\($\n\s*\)\+\%$//e
     call cursor(l, c)
 endfun
-autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+" Don't remove whitespace in diff files, it's important there.
+autocmd BufWritePre * if &ft!~?'diff'|:call <SID>StripTrailingWhitespaces()|endif
+
+" Show invisible characters in diff files
+set listchars=tab:»\ ,eol:¬,trail:·
+autocmd FileType diff setlocal list
 
 " Per default, netrw leaves unmodified buffers open. This autocommand
 " deletes netrw's buffer once it's hidden (using ':q', for example)
-autocmd FileType netrw setl bufhidden=delete
+autocmd FileType netrw setlocal bufhidden=delete
 
 " Keep splits equal when resizing vim
 autocmd VimResized * wincmd =
@@ -258,7 +263,7 @@ nmap <Leader>o :call CocActionAsync('runCommand', 'tsserver.organizeImports')<CR
 augroup coc-nvim
   autocmd!
   " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  autocmd FileType typescript,json setlocal formatexpr=CocAction('formatSelected')
   " Update signature help on jump placeholder
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
