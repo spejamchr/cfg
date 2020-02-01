@@ -278,3 +278,7 @@ if filereadable(expand("~/.vimrc_background"))
   source ~/.vimrc_background
 endif
 " }}}
+
+" Configure ron89/thesaurus_query.vim {{{
+let g:tq_openoffice_en_file="~/Documents/OpenOfficeThesaurus/th_en_US_new"
+" }}}
