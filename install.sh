@@ -253,6 +253,7 @@ function main() {
   brew_install zsh
   brew_install zsh-completions
 
+  brew_cask_install dropbox
   brew_cask_install homebrew/cask-fonts/font-firacode-nerd-font
   brew_cask_install flux
   brew_cask_install gpg-suite-no-mail

@@ -61,6 +61,7 @@ Installed with `brew install`:
 
 Installed with `brew cask install`:
 
+- [`dropbox`](https://www.dropbox.com/): Cloud storage
 - [`firacode`](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FiraCode): Monospaced font with programming ligatures
 - [`flux`](https://justgetflux.com/): Warm up your computer display at night
 - [`gpg-suite-no-mail`](https://gpgtools.org/): Save GPG passwords with GPG Keychain
