@@ -90,7 +90,7 @@ ctrl - return : open ~/git/other/kitty/kitty/launcher/kitty.app -n --args --sing
 shift + ctrl - return : /Applications/qutebrowser.app/Contents/MacOS/qutebrowser
 
 # open mpv
-ctrl - m : mpv $(pbpaste)
+# ctrl - m : mpv $(pbpaste)
 
 # open htop
 ctrl - s : ~/.bin/kitty -1 --title="htop" ~/code/scripts/start_htop
