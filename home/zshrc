@@ -27,6 +27,9 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 autoload -Uz compinit
 compinit
 
+# Completion for kitty
+kitty + complete setup zsh | source /dev/stdin
+
 # Report command running time if it is more than 5 seconds
 REPORTTIME=5
 # Keep a lot of history
