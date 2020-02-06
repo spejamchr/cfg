@@ -61,6 +61,7 @@ Installed with `brew install`:
 
 Installed with `brew cask install`:
 
+- [`calibre`](https://calibre-ebook.com/): A powerful and easy to use e-book manager
 - [`dropbox`](https://www.dropbox.com/): Cloud storage
 - [`firacode`](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FiraCode): Monospaced font with programming ligatures
 - [`flux`](https://justgetflux.com/): Warm up your computer display at night
