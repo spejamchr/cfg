@@ -35,10 +35,28 @@ function updgrade_zsh_plugins() {
   fi
 }
 
+function upgrade_yabai() {
+  echo "\n-> Upgrading yabai, will need password soon..."
+  # stop, upgrade, start yabai
+  brew services stop yabai
+  brew upgrade yabai
+  brew services start yabai
+
+  # reinstall the scripting addition
+  sudo yabai --uninstall-sa
+  sudo yabai --install-sa
+
+  # load the scripting addition
+  killall Dock
+}
+
 function upgrade_brew_stuff() {
   echo "\n-> Upgrading brew..."
   if which brew >&-; then
     brew update
+    if brew outdated | grep yabai; then
+      upgrade_yabai
+    fi
     echo "\n-> Upgrading brew packages..."
     [[ $(brew upgrade) ]] || echo "Already up-to-date"
     echo "\n-> Upgrading brew casks..."

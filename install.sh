@@ -237,8 +237,8 @@ function main() {
   brew_install gnupg
   brew_install htop
   brew_install imagemagick
-  brew_install koekeishiya/formulae/chunkwm 'Post-install configuration required. See `brew info chunkwm`'
   brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
+  brew_install koekeishiya/formulae/yabai 'Post-install configuration required. See `brew info yabai`'
   brew_install libyaml
   brew_install mysql@5.7 'Post-install configuration required. See `brew info mysql@5.7`'
   brew_install neovim
