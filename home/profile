@@ -31,7 +31,10 @@ chruby 2.6.2
 # Edit this file more easily
 alias ep="$EDITOR ~/.profile; source ~/.profile; echo \".profile edited and sourced\""
 
+alias slack="open /Applications/Slack.app/"
+alias browser="open /Applications/Firefox.app/"
 alias qute='open /Applications/qutebrowser.app/ --args'
+
 alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 alias sync_test="rails db:test:prepare"
 
@@ -89,8 +92,6 @@ function in_new_kitty_window() {
   [[ "$@" ]] && kitty @ send-text --match title:"$title" "$@"
 }
 
-alias slack="open /Applications/Slack.app/"
-
 ################################################################################
 export TT=~/git/work/TroopTrack
 
@@ -102,7 +103,7 @@ function tt_terminal {
     in_new_kitty_window "resque" "rails_resque $TT \n"
   }
 
-alias tt="tt_terminal; qute -r tt; slack"
+alias tt="tt_terminal; browser; slack"
 
 ################################################################################
 export EO=~/git/work/exec_online
@@ -121,7 +122,7 @@ function eo_terminal {
     in_new_kitty_window "P3_zsh" "cd $P3 \n"
 }
 
-alias eo="eo_terminal; qute -r eo; slack"
+alias eo="eo_terminal; browser; slack"
 
 ################################################################################
 export AHG=~/git/work/ahg_connect
@@ -135,15 +136,4 @@ function ahg_terminal {
     in_new_kitty_window "console" "rails_console $AHG \n"
 }
 
-alias ahg="ahg_terminal; qute -r ahg; slack"
-
-################################################################################
-export TEE=~/git/work/public_html
-
-function tee_terminal {
-  cd $TEE
-  in_new_kitty_window "source" "edit $TEE \n" && \
-    in_new_kitty_window "php" "php -S localhost:9000 \n"
-}
-
-alias tere="tee_terminal; qute -r tee; slack"
+alias ahg="ahg_terminal; browser; slack"
