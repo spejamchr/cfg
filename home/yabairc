@@ -6,7 +6,7 @@ yabai -m config status_bar_text_font         "Helvetica Neue:Bold:12.0"
 yabai -m config status_bar_icon_font         "FiraCode Nerd Font:Retina:12.0"
 yabai -m config status_bar_background_color  0xff202020
 yabai -m config status_bar_foreground_color  0xffa8a8a8
-yabai -m config status_bar_space_icon_strip  I II III IV V VI VII VIII IX X
+yabai -m config status_bar_space_icon_strip  ">" "*" "@"
 yabai -m config status_bar_power_icon_strip   
 yabai -m config status_bar_space_icon        
 yabai -m config status_bar_clock_icon        
@@ -44,8 +44,12 @@ yabai -m config right_padding                20
 yabai -m config window_gap                   20
 
 # Rules for specific apps
-yabai -m rule --add label=FloatFinder app=Finder manage=off
-yabai -m rule --add label=FloatAppStore app='App Store' manage=off
-yabai -m rule --add label=FloatAnki app=Anki manage=off
+yabai -m rule --add app='App Store'            manage=off
+yabai -m rule --add app=Anki                   manage=off
+yabai -m rule --add app="^System Preferences$" manage=off
+
+yabai -m rule --add app=Firefox                space=2
+yabai -m rule --add app=Notes                  space=3
+yabai -m rule --add app=Slack                  space=3
 
 echo "yabai configuration loaded.."
