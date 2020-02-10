@@ -38,6 +38,7 @@ You shouldn't have to install anything to run the install script.
 Installed with `brew install`:
 
 - [`bat`](https://github.com/sharkdp/bat): A cat(1) clone with wings
+- [`blueutil`](https://github.com/toy/blueutil): CLI for bluetooth on OSX
 - [`chruby`](https://github.com/postmodern/chruby): Ruby environment tool
 - [`chunkwm`](https://github.com/koekeishiya/chunkwm): Tiling window manager for macOS based on plugin architecture
 - [`cmake`](https://cmake.org/): Cross-platform make
@@ -68,6 +69,7 @@ Installed with `brew cask install`:
 - [`gpg-suite-no-mail`](https://gpgtools.org/): Save GPG passwords with GPG Keychain
 - [`mpv`](https://mpv.io/): Media player based on MPlayer and mplayer2
 - [`qutebrowser`](https://www.qutebrowser.org/): A keyboard-driven, vim-like browser based on PyQt5
+- [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
 
 Cloned repos:
 

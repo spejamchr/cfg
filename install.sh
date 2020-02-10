@@ -232,6 +232,7 @@ function main() {
   install_command_line_tools
 
   brew_install bat
+  brew_install blueutil
   brew_install chruby
   brew_install cmake
   brew_install gnupg
@@ -260,6 +261,7 @@ function main() {
   brew_cask_install gpg-suite-no-mail
   brew_cask_install mpv
   brew_cask_install qutebrowser
+  brew_cask_install ubersicht
 
   install_kitty
 
