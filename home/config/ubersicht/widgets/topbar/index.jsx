@@ -82,30 +82,4 @@ export const render = ({error, output}) => {
   );
 };
 
-export const command = `
-DATE=$(date "+%a %b %d")
-TIME=$(date "+%H:%M:%S")
-PIANOBAR=$([[ $(pgrep pianobar) ]] && printf 'true' || printf 'false')
-SONG=$(cat ~/.config/pianobar/out | grep ' by ' | grep ' on ' | tail -n 1 | sed -e 's/^.*|> //')
-SONG=\${SONG//'"'/'\\"'}
-PLUGGED=$([[ $(pmset -g ps | head -1) =~ 'AC' ]] && printf 'true' || printf 'false')
-BATTERY=$(pmset -g batt | egrep '(\\d+)\%' -o)
-BLUETOOTH_POWER=$([[ $(blueutil --power) = 1 ]] && printf 'true' || printf 'false')
-BLUETOOTH_CONNECTED=$([[ $(blueutil --paired | grep ', connected') ]] && printf 'true' || printf 'false')
-SPACES=$(yabai -m query --spaces 2>/dev/null || echo [])
-
-echo $(cat <<-EOF
-{
-	"date": "$DATE",
-	"time": "$TIME",
-    "pianobar": $PIANOBAR,
-	"song": "$SONG",
-    "plugged": $PLUGGED,
-    "battery": "$BATTERY",
-    "bluetoothPower":  $BLUETOOTH_POWER,
-    "bluetoothConnected":  $BLUETOOTH_CONNECTED,
-    "spaces": $SPACES
-}
-EOF
-);
-`;
+export const command = `./topbar/command`;
