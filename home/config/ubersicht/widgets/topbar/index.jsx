@@ -73,6 +73,7 @@ export const render = ({error, output}) => {
       <Item text={spacesString} hide={parsed.spaces.length === 0} />
       <Item text={song || 'Starting...'} hide={!parsed.pianobar} />
       <span>
+        <Item text={parsed.cpu} />
         <Item text={bluetooth} />
         <Item text={battery} />
         <Item text={date} />
