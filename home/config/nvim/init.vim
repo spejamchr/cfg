@@ -201,6 +201,12 @@ nnoremap <Leader>/ :BLines<CR>
 " Fuzzy find Vim commands
 nnoremap <Leader>c :Commands<CR>
 
+" Fuzzy find buffers
+nnoremap <Leader>b :Buffers<CR>
+
+" Fuzzy find history
+nnoremap <Leader>h :History<CR>
+
 " Use rg with FZF, showing hidden files but ignoring .git/
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/*"'
 
