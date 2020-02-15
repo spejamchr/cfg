@@ -3,7 +3,7 @@
 DATE=$(date "+%a %b %d")
 TIME=$(date "+%H:%M:%S")
 
-PIANOBAR=$([[ $(pgrep pianobar) ]] && printf 'true' || printf 'false')
+PIANOBAR_ON=$([[ $(pgrep pianobar) ]] && printf 'true' || printf 'false')
 SONG=$(cat ~/.config/pianobar/out | grep ' by ' | grep ' on ' | tail -n 1 | sed -e 's/^.*|> //')
 SONG=${SONG//'"'/'\"'}
 
@@ -15,19 +15,41 @@ BLUETOOTH_CONNECTED=$([[ $(blueutil --paired | grep ', connected') ]] && printf 
 
 SPACES=$(yabai -m query --spaces 2>/dev/null || printf '[]')
 
-CPU=$(sysctl -n vm.loadavg | awk '{print $2}')
+CPUS=$(sysctl -n hw.ncpu)
+PERCENT_CPU=$(ps -A -o %cpu | awk '{s+=$1} END {print s}')
+LOADAVG=$(sysctl -n vm.loadavg | awk '{print $2}')
+
+# Update the bar colors based on the current base16 theme
+COLORS=$(cat ~/.base16_theme |
+  grep -e '"../../..".* - ' |
+  sed -e 's/.*\(".*"\).* - \(.*\)/"\2":\1/' \
+  -e 's/:"/:"#/' \
+  -e 's/[\/ ]//g' |
+  tr '\n' ',')
+COLORS=${COLORS%,} # Remove last comma
 
 cat <<-EOF
 {
-	"date": "$DATE",
-	"time": "$TIME",
-    "pianobar": $PIANOBAR,
-	"song": "$SONG",
-    "plugged": $PLUGGED,
-    "battery": "$BATTERY",
-    "bluetoothPower":  $BLUETOOTH_POWER,
-    "bluetoothConnected":  $BLUETOOTH_CONNECTED,
+    "dateTime": {
+      "date": "$DATE",
+      "time": "$TIME"
+    },
+    "pianobar": {
+      "on": $PIANOBAR_ON,
+      "song": "$SONG"
+    },
+    "power": {
+      "plugged": $PLUGGED,
+      "battery": "$BATTERY"
+    },
+    "bluetooth": {
+      "on": $BLUETOOTH_POWER,
+      "connected": $BLUETOOTH_CONNECTED
+    },
     "spaces": $SPACES,
-    "cpu": "$CPU"
+    "cpus": $CPUS,
+    "percentCpu": $PERCENT_CPU,
+    "loadavg": "$LOADAVG",
+    "colors": {$COLORS}
 }
 EOF
