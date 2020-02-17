@@ -6,13 +6,14 @@ import DateTime from "./Components/DateTime.jsx";
 import LoadAvg from "./Components/LoadAvg.jsx";
 import Pianobar from "./Components/Pianobar.jsx";
 import Spaces from "./Components/Spaces.jsx";
+import prepare from "./Utils/Prepare.jsx";
 import styledContainer from "./Utils/StyledContainer.jsx";
 
 export const refreshFrequency = 1000;
 
+export const command = `./topbar/command`;
+
 export const className = {
-  top: 0,
-  left: 0,
   width: "100%",
   height: "20px",
   backgroundColor: "#202020",
@@ -22,27 +23,9 @@ export const className = {
   whitespace: "nowrap"
 };
 
-export const render = ({ error, output }) => {
-  if (error !== undefined) {
-    console.error("[topbar]: ", error);
-    return "";
-  }
-
-  if (output === "") {
-    // First render, before the command has been run
-    return "";
-  }
-
-  let parsed;
-  try {
-    parsed = JSON.parse(output);
-  } catch (err) {
-    console.error("[topbar]: ", err);
-    console.dir(output);
-    return "Error Parsing JSON";
-  }
-
-  const {
+export const render = prepare(
+  "topbar",
+  ({
     bluetooth,
     colors,
     cpus,
@@ -52,23 +35,21 @@ export const render = ({ error, output }) => {
     pianobar,
     power,
     spaces
-  } = parsed;
+  }) => {
+    const Container = styledContainer(colors);
 
-  const Container = styledContainer(colors);
-
-  return (
-    <Container>
-      <Spaces spaces={spaces} colors={colors} />
-      <Pianobar pianobar={pianobar} />
-      <span>
-        <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
-        <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
-        <Bluetooth bluetooth={bluetooth} colors={colors} />
-        <Battery power={power} colors={colors} />
-        <DateTime dateTime={dateTime} />
-      </span>
-    </Container>
-  );
-};
-
-export const command = `./topbar/command`;
+    return (
+      <Container>
+        <Spaces spaces={spaces} colors={colors} />
+        <Pianobar pianobar={pianobar} />
+        <span>
+          <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
+          <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
+          <Bluetooth bluetooth={bluetooth} colors={colors} />
+          <Battery power={power} colors={colors} />
+          <DateTime dateTime={dateTime} />
+        </span>
+      </Container>
+    );
+  }
+);
