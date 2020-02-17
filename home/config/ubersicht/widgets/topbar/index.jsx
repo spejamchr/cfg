@@ -6,10 +6,11 @@ import DateTime from "./Components/DateTime.jsx";
 import LoadAvg from "./Components/LoadAvg.jsx";
 import Pianobar from "./Components/Pianobar.jsx";
 import Spaces from "./Components/Spaces.jsx";
+import Window from "./Components/Window.jsx";
 import prepare from "./Utils/Prepare.jsx";
 import styledContainer from "./Utils/StyledContainer.jsx";
 
-export const refreshFrequency = 1000;
+export const refreshFrequency = 300;
 
 export const command = `./topbar/command`;
 
@@ -34,7 +35,8 @@ export const render = prepare(
     percentCpu,
     pianobar,
     power,
-    spaces
+    spaces,
+    windows
   }) => {
     const Container = styledContainer(colors);
 
@@ -42,6 +44,7 @@ export const render = prepare(
       <Container>
         <Spaces spaces={spaces} colors={colors} />
         <Pianobar pianobar={pianobar} />
+        <Window windows={windows} colors={colors} />
         <span>
           <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
           <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />

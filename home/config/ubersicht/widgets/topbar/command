@@ -14,6 +14,7 @@ BLUETOOTH_POWER=$([[ $(blueutil --power) = 1 ]] && printf 'true' || printf 'fals
 BLUETOOTH_CONNECTED=$([[ $(blueutil --paired | grep ', connected') ]] && printf 'true' || printf 'false')
 
 SPACES=$(yabai -m query --spaces 2>/dev/null || printf '[]')
+WINDOWS=$(yabai -m query --windows 2>/dev/null || printf '[]')
 
 CPUS=$(sysctl -n hw.ncpu)
 PERCENT_CPU=$(ps -A -o %cpu | awk '{s+=$1} END {print s}')
@@ -47,6 +48,7 @@ cat <<-EOF
       "connected": $BLUETOOTH_CONNECTED
     },
     "spaces": $SPACES,
+    "windows": $WINDOWS,
     "cpus": $CPUS,
     "percentCpu": $PERCENT_CPU,
     "loadavg": "$LOADAVG",
