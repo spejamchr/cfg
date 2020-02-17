@@ -1,4 +1,5 @@
 import { React } from "uebersicht";
+import genRandColor from "../Utils/GenRandColor.jsx";
 import prepare from "../Utils/Prepare.jsx";
 
 export const refreshFrequency = 1000 * 60 * 60 * 24;
@@ -32,21 +33,11 @@ const randPoints = () => {
 export const render = prepare("body", ({ colors }) => {
   const bodyStyle = {
     backgroundColor: colors.Black,
-    height: "100vh",
+    height: "100%",
     width: "100%"
   };
 
-  const randColor = () =>
-    [
-      colors.Red,
-      colors.Blue,
-      colors.Green,
-      colors.Magenta,
-      colors.Cyan,
-      colors.Yellow,
-      colors.BrightBlack,
-      colors.White
-    ][(Math.random() * 8).toFixed()];
+  const randColor = genRandColor(colors);
 
   return (
     <div style={bodyStyle}>
