@@ -15,8 +15,8 @@ const Window = ({ windows, colors }) => (
 
         return (
           <span key={w.id}>
-            <Item key={w.id} color={colors.BrightWhite} text={w.app} />
-            <Item key={w.id} color={colors.BrightWhite} text={title} />
+            <Item color={colors.BrightWhite} text={w.app} />
+            <Item color={colors.BrightWhite} text={title} />
           </span>
         );
       })}
