@@ -1,3 +1,15 @@
+// Set a Desktop Background using Base16 colors
+//
+// Looks nicer with a clean desktop:
+//
+//   defaults write com.apple.finder CreateDesktop -bool FALSE;killall Finder
+//
+// If you need to re-enable the desktop at some point:
+//
+//   defaults delete com.apple.finder CreateDesktop;killall Finder
+//
+// (From https://github.com/blahsd/supernerd.widget#usage)
+
 import { React } from "uebersicht";
 import genRandColor from "../Utils/GenRandColor.jsx";
 import prepare from "../Utils/Prepare.jsx";
