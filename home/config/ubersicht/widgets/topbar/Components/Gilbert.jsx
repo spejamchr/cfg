@@ -136,9 +136,12 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
 
   const randColor = genRandColor(colors);
   const stars = [];
-  for (let i = 0; i < 400; i++) {
+  const nStars = 400;
+  for (let i = 0; i < nStars; i++) {
     stars.push(i);
   }
+
+  const starChance = 1 - (1 / nStars) ** (1 / 7);
 
   return (
     <div style={bodyStyle}>
@@ -151,13 +154,13 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
               cy={minX + rand() * (minY - minX)}
               r={rand() * rand() * 1.4 + 0.4}
               fill={
-                rand() > 0.7
-                  ? rand() > 0.7
-                    ? rand() > 0.7
-                      ? rand() > 0.7
-                        ? rand() > 0.7
-                          ? rand() > 0.7
-                            ? rand() > 0.7
+                rand() > starChance
+                  ? rand() > starChance
+                    ? rand() > starChance
+                      ? rand() > starChance
+                        ? rand() > starChance
+                          ? rand() > starChance
+                            ? rand() > starChance
                               ? colors.Cyan
                               : colors.Magenta
                             : colors.Red

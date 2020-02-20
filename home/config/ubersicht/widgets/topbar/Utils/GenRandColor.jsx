@@ -1,5 +1,8 @@
-export default colors => () =>
-  [
+const randSelection = array => () =>
+  array[Math.floor(Math.random() * (array.length - 1))];
+
+export default colors =>
+  randSelection([
     colors.Red,
     colors.Blue,
     colors.Green,
@@ -8,4 +11,4 @@ export default colors => () =>
     colors.Yellow,
     colors.BrightBlack,
     colors.White
-  ][(Math.random() * 7).toFixed()];
+  ]);
