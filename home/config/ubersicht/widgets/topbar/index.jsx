@@ -10,7 +10,7 @@ import Window from "./Components/Window.jsx";
 import prepare from "./Utils/Prepare.jsx";
 import styledContainer from "./Utils/StyledContainer.jsx";
 
-export const refreshFrequency = 300;
+export const refreshFrequency = 5000;
 
 export const command = `./topbar/command`;
 

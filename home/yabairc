@@ -52,4 +52,10 @@ yabai -m rule --add app=Firefox                space=2
 yabai -m rule --add app=Notes                  space=3
 yabai -m rule --add app=Slack                  space=3
 
+# signals
+yabai -m signal --add event=space_changed \
+    action="osascript -e 'tell application \"Übersicht\" to refresh widget id \"topbar-index-jsx\"'"
+yabai -m signal --add event=application_front_switched \
+    action="osascript -e 'tell application \"Übersicht\" to refresh widget id \"topbar-index-jsx\"'"
+
 echo "yabai configuration loaded.."

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 DATE=$(date "+%a %b %d")
-TIME=$(date "+%H:%M:%S")
+TIME=$(date "+%H:%M")
 
 PIANOBAR_ON=$([[ $(pgrep pianobar) ]] && printf 'true' || printf 'false')
 SONG=$(cat ~/.config/pianobar/out | grep ' by ' | grep ' on ' | tail -n 1 | sed -e 's/^.*|> //')

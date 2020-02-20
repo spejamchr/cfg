@@ -1,4 +1,4 @@
-const genRandColor = colors => () =>
+export default colors => () =>
   [
     colors.Red,
     colors.Blue,
@@ -9,5 +9,3 @@ const genRandColor = colors => () =>
     colors.BrightBlack,
     colors.White
   ][(Math.random() * 7).toFixed()];
-
-export default genRandColor;

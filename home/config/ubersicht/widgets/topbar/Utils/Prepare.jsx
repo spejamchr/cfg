@@ -1,6 +1,6 @@
 // Parse the output
 
-const prepare = (name, fn) => ({ error, output }) => {
+export default (name, fn) => ({ error, output }) => {
   if (error !== undefined) {
     console.error(`[${name}]: `, error);
     return "";
@@ -22,5 +22,3 @@ const prepare = (name, fn) => ({ error, output }) => {
 
   return fn(parsed);
 };
-
-export default prepare;

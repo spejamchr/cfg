@@ -2,7 +2,7 @@ import { styled } from "uebersicht";
 
 const sidePadding = 5; // px
 
-const styledContainer = colors =>
+export default colors =>
   styled.div({
     height: "100%",
     width: `calc(100% - ${sidePadding * 2}px)`,
@@ -15,5 +15,3 @@ const styledContainer = colors =>
     backgroundColor: colors.Black,
     color: colors.White
   });
-
-export default styledContainer;
