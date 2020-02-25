@@ -23,6 +23,11 @@ function health_checks() {
   fi
 }
 
+function personal_computer() {
+  # How can I detect this more flexibly?
+  [[ whoami = 'spencer' ]]
+}
+
 function logit {
   local logfile="$DOT/.install.log"
   if [[ ! -e $logfile ]]; then
@@ -254,7 +259,6 @@ function main() {
   brew_install zsh
   brew_install zsh-completions
 
-  brew_cask_install calibre
   brew_cask_install dropbox
   brew_cask_install homebrew/cask-fonts/font-firacode-nerd-font
   brew_cask_install flux
@@ -263,6 +267,10 @@ function main() {
   brew_cask_install qutebrowser
   brew_cask_install sequel-pro
   brew_cask_install ubersicht
+
+  if personal_computer; then
+    brew_cask_install calibre
+  fi
 
   install_kitty
 
