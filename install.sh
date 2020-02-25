@@ -264,7 +264,6 @@ function main() {
   brew_cask_install flux
   brew_cask_install gpg-suite-no-mail
   brew_cask_install mpv
-  brew_cask_install qutebrowser
   brew_cask_install sequel-pro
   brew_cask_install ubersicht
 

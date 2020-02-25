@@ -33,7 +33,6 @@ alias ep="$EDITOR ~/.profile; source ~/.profile; echo \".profile edited and sour
 
 alias slack="open /Applications/Slack.app/"
 alias browser="open /Applications/Firefox.app/"
-alias qute='open /Applications/qutebrowser.app/ --args'
 
 alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 alias sync_test="rails db:test:prepare"
