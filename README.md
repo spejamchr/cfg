@@ -69,6 +69,7 @@ Installed with `brew cask install`:
 - [`gpg-suite-no-mail`](https://gpgtools.org/): Save GPG passwords with GPG Keychain
 - [`mpv`](https://mpv.io/): Media player based on MPlayer and mplayer2
 - [`qutebrowser`](https://www.qutebrowser.org/): A keyboard-driven, vim-like browser based on PyQt5
+- [`sequel-pro`](https://www.sequelpro.com/): MySQL/MariaDB database management for macOS
 - [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
 
 Cloned repos:
