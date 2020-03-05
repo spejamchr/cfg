@@ -213,7 +213,7 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/*"'
 " Use bat to preview files found with fzf
 let g:bat_alias='bat --style=changes,numbers --color always --theme=base16'
 let g:bat_context=5
-let g:preview='if test -f {}; then if file -i {}|grep -q binary; then file -b {}; else ' . g:bat_alias . ' {}; fi; else if [[ -f $(echo {} | sed "s/:.*$//g") ]]; then line=$(echo {} | sed "s/^[^:]*://g" | sed "s/:.*$//g"); ' . g:bat_alias . ' -H $line -r $([[ $((line - ' . g:bat_context . ')) -gt 0 ]] && echo $((line - ' . g:bat_context . ')) || echo 1):$(($line + ' . g:bat_context . ')) $(echo {} | sed "s/:.*$//g"); fi; fi'
+let g:preview='if test -f {}; then if file -i {}|grep -q binary; then file -b {}; else ' . g:bat_alias . ' {}; fi; else; file=$(echo {} | sed "s/:.*$//g"); if [[ -f $file ]]; then line=$(echo {} | sed "s/^[^:]*://g" | sed "s/:.*$//g"); ' . g:bat_alias . ' -H $line -r $([[ $((line - ' . g:bat_context . ')) -gt 0 ]] && echo $((line - ' . g:bat_context . ')) || echo 1):$(($line + ' . g:bat_context . ')) $file; else; file=$(echo {} | sed "s/\[[^ ]*\]//g" | tr -d "[:blank:]"); if [[ -f $file ]]; then ' . g:bat_alias . ' $file; else if [[ -d $file ]]; then echo "$file:\n\n$(ls -1AFG $file)"; fi; fi; fi; fi'
 
 let $FZF_DEFAULT_OPTS=" --color=16,border:8,bg:0 --border --layout=reverse --preview '".preview."'"
 
