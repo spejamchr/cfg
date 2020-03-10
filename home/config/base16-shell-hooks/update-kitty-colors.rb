@@ -178,6 +178,15 @@ kitty_colors = palette.map do |p|
     active_tab_background: p[:base01],
     inactive_tab_foreground: p[:base05],
     inactive_tab_background: p[:base01],
+
+    cursor: p[:base07],
+    cursor_text_color: p[:base00],
+
+    url_color: p[:base0C],
+
+    active_border_color: p[:base0B],
+    inactive_border_color: p[:base03],
+    bell_border_color: p[:base08],
   }
 end
 
