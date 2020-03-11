@@ -63,62 +63,29 @@ def get_color(color)
   end
 end
 
-# Take an rgb hex string "#RRGGBB" and convert to hsl array [h, s, l]
-def rgb_to_hsl(rgb)
+# Get array of integers (0-255) from hex string (#RRGGBB)
+def rgb_integers(rgb_str)
   hex_pair = /[\da-f]{2}/i
 
-  r, g, b = rgb.scan(hex_pair).map { |n| n.to_i(16) / 255.0 }
-  max = [r, g, b].max
-  min = [r, g, b].min
-  c = max - min
-
-  h_prime =
-    if c.zero?
-      0.0
-    elsif max == r
-      ((g - b) / c) % 6
-    elsif max == g
-      (b - r) / c + 2
-    elsif max == b
-      (r - g) / c + 4
-    end
-
-  h = (60 * h_prime)
-  l = (max + min) / 2
-  s = [0, 1].include?(l) ? 0.0 : (c / (1 - (2 * l - 1).abs))
-
-  [h, s, l]
+  rgb_str.scan(hex_pair).map { |n| n.to_i(16) }
 end
 
-# Convert an hsl array [h, s, l] to rgb hex string "#RRGGBB"
-def hsl_to_rgb(hsl)
-  h, s, l = hsl
-  a = s * [l, 1 - l].min
-  f = lambda do |n|
-    k = (n + h / 30.0) % 12
-    l - a * [[k - 3, 9 - k, 1].min, -1].max
-  end
-
+# Get hex string (#RRGGBB) from array of integers (0-255)
+def rgb_string(rgb_ints)
   '#' +
-    [0, 8, 4]
-    .map(&f)
-    .map { |n| (n * 255).round.to_s(16) }
+    rgb_ints
+    .map { |n| n.to_i.to_s(16) }
     .map { |c| c.length == 1 ? "0#{c}" : c }
     .join
 end
 
-def clamp(num, min, max)
-  [[num, min].max, max].min
-end
-
-def adjust_hsl(color, diffs)
-  h, s, l = rgb_to_hsl(color)
-
-  h = (h + diffs[0]) % 360
-  s = clamp(s * diffs[1], 0, 1)
-  l = clamp(l * diffs[2], 0, 1)
-
-  hsl_to_rgb([h, s, l])
+# Combine two colors with an alpha
+def with_alpha(alpha, color, background)
+  rgb_string(
+    rgb_integers(color).zip(rgb_integers(background))
+    .map { |c, b| alpha * c + (1 - alpha) * b }
+    .map(&:round)
+  )
 end
 
 # See https://github.com/chriskempson/base16/blob/master/styling.md
@@ -199,20 +166,20 @@ kitty_diff_colors = palette.map do |p|
     title_bg:             p[:base01],
 
     margin_fg:            p[:base04],
-    margin_bg:            p[:base01],
+    margin_bg:            p[:base02],
 
-    removed_bg:           adjust_hsl(p[:base08], [0, 0.5, 0.5]),
-    highlight_removed_bg: adjust_hsl(p[:base08], [0, 0.8, 0.6]),
-    removed_margin_bg:    adjust_hsl(p[:base08], [0, 0.5, 0.5]),
+    removed_bg:           with_alpha(0.1, p[:base08], p[:base00]),
+    highlight_removed_bg: with_alpha(0.2, p[:base08], p[:base00]),
+    removed_margin_bg:    with_alpha(0.1, p[:base08], p[:base01]),
 
-    added_bg:             adjust_hsl(p[:base0B], [0, 0.5, 0.5]),
-    highlight_added_bg:   adjust_hsl(p[:base0B], [0, 0.8, 0.6]),
-    added_margin_bg:      adjust_hsl(p[:base0B], [0, 0.5, 0.5]),
+    added_bg:             with_alpha(0.1, p[:base0B], p[:base00]),
+    highlight_added_bg:   with_alpha(0.2, p[:base0B], p[:base00]),
+    added_margin_bg:      with_alpha(0.1, p[:base0B], p[:base01]),
 
     filler_bg:            p[:base01],
 
-    hunk_margin_bg:       adjust_hsl(p[:base0D], [0, 0.5, 0.5]),
-    hunk_bg:              adjust_hsl(p[:base0D], [0, 0.5, 0.5]),
+    hunk_margin_bg:       with_alpha(0.2, p[:base0D], p[:base00]),
+    hunk_bg:              with_alpha(0.2, p[:base0D], p[:base01]),
 
     search_fg:            p[:base05],
     search_bg:            p[:base02],
