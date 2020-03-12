@@ -19,7 +19,6 @@ export const refreshFrequency = 1000 * 60 * 60 * 24;
 export const command = `./topbar/command`;
 
 export const className = {
-  top: 20,
   width: "100%",
   height: "100%"
 };
@@ -131,7 +130,7 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
   const border = 100;
   const minX = display.frame.x + border;
   const maxX = display.frame.w - border;
-  const minY = display.frame.y + border * 2;
+  const minY = display.frame.y + border * 2 + 30;
   const maxY = display.frame.h - border;
 
   const randColor = genRandColor(colors);
@@ -151,7 +150,7 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
             <circle
               key={i}
               cx={minX + rand() * (maxX - minX)}
-              cy={minX + rand() * (minY - minX)}
+              cy={20 + minX + rand() * (minY - minX)}
               r={rand() * rand() * 1.4 + 0.4}
               fill={
                 rand() > starChance
@@ -189,13 +188,6 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
               stroke={randColor()}
             />
           ))}
-          <line
-            x1={0}
-            y1={1}
-            x2={display.frame.w}
-            y2={1}
-            stroke={colors.BrightBlack}
-          />
         </g>
       </svg>
     </div>
