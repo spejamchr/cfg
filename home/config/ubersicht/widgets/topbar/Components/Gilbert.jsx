@@ -150,7 +150,7 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
             <circle
               key={i}
               cx={minX + rand() * (maxX - minX)}
-              cy={20 + minX + rand() * (minY - minX)}
+              cy={20 + minX + rand() * (minY - minX - 20)}
               r={rand() * rand() * 1.4 + 0.4}
               fill={
                 rand() > starChance
