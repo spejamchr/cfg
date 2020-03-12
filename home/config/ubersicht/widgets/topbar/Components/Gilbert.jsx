@@ -20,7 +20,8 @@ export const command = `./topbar/command`;
 
 export const className = {
   width: "100%",
-  height: "100%"
+  height: "100%",
+  zIndex: 0
 };
 
 const rand = Math.random;

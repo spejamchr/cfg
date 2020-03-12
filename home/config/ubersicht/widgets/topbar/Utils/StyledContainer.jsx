@@ -12,6 +12,5 @@ export default colors =>
     whiteSpace: "nowrap",
     paddingLeft: `${sidePadding}px`,
     paddingRight: `${sidePadding}px`,
-    backgroundColor: colors.Black,
     color: colors.White
   });

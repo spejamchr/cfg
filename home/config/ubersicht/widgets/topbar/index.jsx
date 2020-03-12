@@ -17,11 +17,11 @@ export const command = `./topbar/command`;
 export const className = {
   width: "100%",
   height: "20px",
-  backgroundColor: "#202020",
-  color: "#a8a8a8",
+  color: "white",
   fontFamily: "FiraCode Nerd Font",
   fontSize: "11px",
-  whitespace: "nowrap"
+  whitespace: "nowrap",
+  zIndex: 1
 };
 
 export const render = prepare(
