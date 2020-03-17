@@ -216,6 +216,20 @@ function create_symlinks() {
   done
 }
 
+function install_sleepwatcher_plist() {
+  sleepwatcher_dir=$(brew --prefix sleepwatcher)
+  ensure_dir "$sleepwatcher_dir"
+  filename="de.bernhard-baehr.sleepwatcher-20compatibility-localuser.plist"
+  plist_path="$sleepwatcher_dir/$filename"
+  if [[ -f "$plist_path" && ! -L "$plist_path" ]]; then
+    backup_or_remove "$plist_path" || exit 1
+  fi
+  from_path="$DOT/system/sleepwatcher/$filename"
+  try_to "Create symlink at $plist_path to $from_path" \
+    "ln -s \"$from_path\" \"$plist_path\"" \
+    "rm \"$plist_path\""
+}
+
 function main() {
   health_checks
 
@@ -254,6 +268,7 @@ function main() {
   brew_install redis 'Run `brew services start redis` to start redis'
   brew_install ripgrep
   brew_install ruby-install
+  brew_install sleepwatcher 'Run `brew services start sleepwatcher` to start sleepwatcher'
   brew_install yarn
   brew_install zplug 'Run `zplug install` to install zsh plugins'
   brew_install zsh
@@ -275,6 +290,8 @@ function main() {
 
   backup_existing_config_files
   create_symlinks
+
+  install_sleepwatcher_plist
 
   source "$HOME/.zshrc"
   zplug check || try_to 'Install zsh plugins' 'zplug install'

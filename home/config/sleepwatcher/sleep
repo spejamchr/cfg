@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+[[ -f /tmp/connected ]] && rm /tmp/connected
+[[ $(blueutil --is-connected 38-18-4c-3d-94-08) = 1 ]] && touch /tmp/connected
+
+blueutil -p 0
+
+pgrep pianobar > /dev/null && pkill pianobar

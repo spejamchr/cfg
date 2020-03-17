@@ -55,6 +55,7 @@ Installed with `brew install`:
 - [`ripgrep`](https://github.com/BurntSushi/ripgrep): Search tool like grep and The Silver Searcher
 - [`ruby-install`](https://github.com/postmodern/ruby-install): Install Ruby, JRuby, Rubinius, TruffleRuby, or mruby
 - [`skhd`](https://github.com/koekeishiya/skhd): Simple hotkey daemon for macOS
+- [`sleepwatcher`](https://www.bernhard-baehr.de/): Monitors sleep, wakeup, and idleness of a Mac
 - [`yarn`](https://yarnpkg.com/lang/en/): JavaScript package manager
 - [`zplug`](https://github.com/zplug/zplug): The next-generation plugin manager for zsh
 - [`zsh`](https://www.zsh.org/): UNIX shell (command interpreter)
