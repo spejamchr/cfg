@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
-blueutil -p 1
+tmpfile='/tmp/sleepwatcher.bluetooth.info'
 
-# sleep to give bluetooth time to turn on before connecting
-[[ -f /tmp/connected ]] && sleep 0.5 && blueutil --connect 38-18-4c-3d-94-08
+if [[ -f "$tmpfile" ]]; then
+  blueutil -p 1
+  # sleep to give bluetooth time to turn on before connecting
+  sleep 1
+  for id in $(cat "$tmpfile"); do
+    blueutil --connect "$id"
+  done
+fi
+
+rm "$tmpfile"

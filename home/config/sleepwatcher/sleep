@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
-[[ -f /tmp/connected ]] && rm /tmp/connected
-[[ $(blueutil --is-connected 38-18-4c-3d-94-08) = 1 ]] && touch /tmp/connected
+tmpfile='/tmp/sleepwatcher.bluetooth.info'
 
-blueutil -p 0
+[[ -f "$tmpfile" ]] && rm "$tmpfile"
+
+if [[ "$(blueutil --power)" = 1 ]]; then
+  blueutil --paired |
+    grep ', connected' |
+    sed -e 's/,.*//g' -e 's/address: //g' > "$tmpfile"
+
+  blueutil --power 0
+fi
 
 pgrep pianobar > /dev/null && pkill pianobar
