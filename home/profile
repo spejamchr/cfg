@@ -37,6 +37,8 @@ alias browser="open /Applications/Firefox.app/"
 alias start_resque="bundle exec rake environment resque:work QUEUE='*'"
 alias sync_test="rails db:test:prepare"
 
+alias pumatail="tail -f ~/Library/Logs/puma-dev.log | bat --paging=never -l log"
+
 function gitpushnew {
   BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
   if [[ "$BRANCH" == "master" ]]; then
@@ -119,7 +121,9 @@ function eo_terminal {
     in_new_kitty_window "eo_console" "rails_console $EO \n" && \
     in_new_kitty_window "yarn" "cd $P3; yarn start \n" && \
     in_new_kitty_window "P3_source" "edit $P3 \n" && \
-    in_new_kitty_window "P3_zsh" "cd $P3 \n"
+    in_new_kitty_window "P3_zsh" "cd $P3 \n" \
+    in_new_kitty_window "pianoctl" "pianoctl \n" \
+    in_new_kitty_window "pumatail" "pumatail \n"
 }
 
 alias eo="eo_terminal; browser; slack"
