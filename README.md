@@ -51,6 +51,7 @@ Installed with `brew install`:
 - [`pianobar`](https://github.com/PromyLOPh/pianobar/): Command-line player for [pandora](https://pandora.com)
 - [`pkg-config`](https://freedesktop.org/wiki/Software/pkg-config/): Manage compile and link flags for libraries
 - [`puma-dev`](https://github.com/puma/puma-dev): A tool to manage rack apps in development with puma
+- [`rbenv/tap/openssl@1.0`](https://github.com/rbenv/homebrew-tap): For installing rubies older than 2.4. [See also](https://github.com/postmodern/ruby-install/issues/363#issuecomment-580699347).
 - [`redis`](https://redis.io/): Persistent key-value database, with built-in net interface
 - [`ripgrep`](https://github.com/BurntSushi/ripgrep): Search tool like grep and The Silver Searcher
 - [`ruby-install`](https://github.com/postmodern/ruby-install): Install Ruby, JRuby, Rubinius, TruffleRuby, or mruby

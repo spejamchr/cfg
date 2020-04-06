@@ -265,6 +265,7 @@ function main() {
   brew_install pianobar
   brew_install pkg-config
   brew_install puma/puma/puma-dev 'Post-install configuration required. See `brew info puma-dev`'
+  brew_install rbenv/tap/openssl@1.0
   brew_install redis 'Run `brew services start redis` to start redis'
   brew_install ripgrep
   brew_install ruby-install
