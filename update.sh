@@ -58,7 +58,7 @@ function upgrade_brew_stuff() {
       upgrade_yabai
     fi
     echo "\n-> Upgrading brew packages..."
-    [[ $(brew upgrade) ]] || echo "Already up-to-date"
+    brew upgrade
     echo "\n-> Upgrading brew casks..."
     if [[ $(brew cask outdated) ]]; then
       brew cask upgrade
