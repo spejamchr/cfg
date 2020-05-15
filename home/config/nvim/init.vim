@@ -136,10 +136,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'ron89/thesaurus_query.vim'
 
 " For Typescript support
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
-
-" Linting
-Plug 'neomake/neomake'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " post install (yarn install | npm install) then load plugin only for editing supported files
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
@@ -157,16 +154,6 @@ Plug 'chrisbra/Colorizer'
 
 " Initialize plugin system
 call plug#end()
-" }}}
-
-" Configure deoplete {{{
-" Enable deoplete at startup
-let g:deoplete#enable_at_startup = 1
-" }}}
-
-" Configure neomake {{{
-" Lint on writes
-call neomake#configure#automake('w')
 " }}}
 
 " Configure prettier {{{
