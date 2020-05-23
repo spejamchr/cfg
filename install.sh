@@ -224,10 +224,13 @@ function install_sleepwatcher_plist() {
   if [[ -f "$plist_path" && ! -L "$plist_path" ]]; then
     backup_or_remove "$plist_path" || exit 1
   fi
-  from_path="$DOT/system/sleepwatcher/$filename"
-  try_to "Create symlink at $plist_path to $from_path" \
-    "ln -s \"$from_path\" \"$plist_path\"" \
-    "rm \"$plist_path\""
+
+  if [[ ! -L "$plist_path" ]]; then
+    from_path="$DOT/system/sleepwatcher/$filename"
+    try_to "Create symlink at $plist_path to $from_path" \
+      "ln -s \"$from_path\" \"$plist_path\"" \
+      "rm \"$plist_path\""
+  fi
 }
 
 function main() {
