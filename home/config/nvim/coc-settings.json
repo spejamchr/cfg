@@ -1,0 +1,7 @@
+{
+  "solargraph.completion": true,
+  "solargraph.formatting": true,
+  "solargraph.definitions": true,
+  "solargraph.references": true,
+  "solargraph.diagnostics": true
+}

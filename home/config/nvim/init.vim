@@ -135,8 +135,15 @@ Plug 'junegunn/goyo.vim'
 " Get synonyms for writing
 Plug 'ron89/thesaurus_query.vim'
 
-" For Typescript support
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Intellisense engine. Language Server Protocol support as full as VSCode
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+
+" coc.nvim plugins
+Plug 'neoclide/coc-json', { 'do': 'yarn install --frozen-lockfile' }
+Plug 'neoclide/coc-tsserver', { 'do': 'yarn install --frozen-lockfile' }
+Plug 'neoclide/coc-css', { 'do': 'yarn install --frozen-lockfile' }
+Plug 'neoclide/coc-rls', { 'do': 'yarn install --frozen-lockfile' }
+Plug 'neoclide/coc-solargraph', { 'do': 'yarn install --frozen-lockfile' }
 
 " post install (yarn install | npm install) then load plugin only for editing supported files
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
