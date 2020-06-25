@@ -2258,7 +2258,7 @@ Security/YAMLLoad:
 
 Style/AccessModifierDeclarations:
   Description: 'Checks style of how access modifiers are used.'
-  Enabled: true
+  Enabled: false
   VersionAdded: '0.57'
   VersionChanged: '0.81'
   EnforcedStyle: group
