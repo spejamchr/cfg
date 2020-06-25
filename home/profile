@@ -90,7 +90,7 @@ function in_new_kitty_window() {
 
   kitty @ new-window --new-tab --tab-title "$title" --title "$title" --keep-focus
 
-  [[ "$@" ]] && kitty @ send-text --match title:"$title" "$@"
+  [[ "$@" ]] && kitty @ send-text --match title:"^$title$" "$@"
 }
 
 ################################################################################
