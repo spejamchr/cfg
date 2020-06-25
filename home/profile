@@ -116,7 +116,7 @@ alias rubodiff='bundle exec pronto run --commit=$(git rev-parse origin/master) -
 function eo_terminal {
   cd $EO
   in_new_kitty_window "eo_source" "edit $EO \n" && \
-    in_new_kitty_window "eo_yarn" "cd $EO/components/enterprise_portal/client; yarn start \n" && \
+    in_new_kitty_window "eo_yarn" "cd $EO/components/enterprise_portal/client; nvm use 8; yarn start \n" && \
     in_new_kitty_window "eo_log" "rails_log $EO \n" && \
     in_new_kitty_window "eo_console" "rails_console $EO \n" && \
     in_new_kitty_window "yarn" "cd $P3; yarn start \n" && \
