@@ -127,12 +127,16 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
     width: "100%"
   };
 
-  const display = displays[0];
+  // Try to use the frame provided by yabai, since it's exact, but otherwise
+  // fall back to the frame on my 13" screen. The SVG will be scaled so it'll
+  // look nice either way.
+  const display = displays[0] || { frame: { x: 0, w: 1440, y: 0, h: 900 } };
+  const { x: dfx, y: dfy, w: dfw, h: dfh } = display.frame;
   const border = 100;
-  const minX = display.frame.x + border;
-  const maxX = display.frame.w - border;
-  const minY = display.frame.y + border * 2 + 30;
-  const maxY = display.frame.h - border;
+  const minX = dfx + border;
+  const maxX = dfw - border;
+  const minY = dfy + border * 2 + 30;
+  const maxY = dfh - border;
 
   const randColor = genRandColor(colors);
   const stars = [];
@@ -145,7 +149,13 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
 
   return (
     <div style={bodyStyle}>
-      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        viewBox={`${dfx} ${dfy} ${dfw} ${dfh}`}
+        preserveAspectRatio="none"
+        width="100%"
+        height="100%"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <g strokeWidth={2} strokeLinecap="round" fill="none">
           {stars.map(i => (
             <circle
