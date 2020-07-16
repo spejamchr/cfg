@@ -1,0 +1,27 @@
+extends typescript
+priority 1
+
+global !p
+def argsFromProps(propString):
+  props= [prop.split('?')[0].split(':')[0].split(' ')[-1]
+  for line in propString.splitlines()
+  for prop in line.split(';') if prop]
+
+  if props:
+    return '{ ' + ', '.join(props) + ' }'
+  else:
+    return '';
+endglobal
+
+snippet rfc "react functional component" b
+import { observer } from 'mobx-react';
+import React, {useState} from "react"
+
+interface Props {${2}}
+
+const ${1:Component}: React.SFC<Props> = (`!p snip.rv = argsFromProps(t[2])`) => (
+  ${3:<p>Body</p>}
+)
+
+export default observer(`!p snip.rv = t[1]`)
+endsnippet

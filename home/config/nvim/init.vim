@@ -73,15 +73,11 @@ autocmd VimResized * wincmd =
 " }}}
 
 " Custom mappings {{{
-" Use `CTRL+{h,j,k,l}` to navigate windows from any mode:
+" Use `CTRL+{h,j,k,l}` to navigate windows from normal and terminal modes:
 tnoremap <C-h> <C-\><C-N><C-w>h
 tnoremap <C-j> <C-\><C-N><C-w>j
 tnoremap <C-k> <C-\><C-N><C-w>k
 tnoremap <C-l> <C-\><C-N><C-w>l
-inoremap <C-h> <C-\><C-N><C-w>h
-inoremap <C-j> <C-\><C-N><C-w>j
-inoremap <C-k> <C-\><C-N><C-w>k
-inoremap <C-l> <C-\><C-N><C-w>l
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -137,6 +133,10 @@ Plug 'ron89/thesaurus_query.vim'
 
 " Intellisense engine. Language Server Protocol support as full as VSCode
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+
+" Snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 " coc.nvim plugins
 Plug 'neoclide/coc-json', { 'do': 'yarn install --frozen-lockfile' }
@@ -281,4 +281,15 @@ endif
 
 " Configure ron89/thesaurus_query.vim {{{
 let g:tq_openoffice_en_file="~/Documents/OpenOfficeThesaurus/th_en_US_new"
+" }}}
+
+" Configure SirVer/ultisnips {{{
+let g:UltiSnipsExpandTrigger='<c-j>'
+
+" shortcut to go to next position
+let g:UltiSnipsJumpForwardTrigger='<c-j>'
+
+" shortcut to go to previous position
+let g:UltiSnipsJumpBackwardTrigger='<c-k>'
+
 " }}}
