@@ -1,0 +1,9 @@
+snippet decoder "JSON Decoder"
+export const ${1:some}Decoder: Decoder<`!p snip.rv = t[1][0].capitalize() + t[1][1:]`> = succeed({})
+$0
+endsnippet
+
+snippet .assign "Assign to a JSON Decoder"
+.assign('${1:prop}', field('`!p snip.rv = re.sub(r'(?<!^)(?=[A-Z])', '_', t[1]).lower()`', ${2:string}))
+$0
+endsnippet
