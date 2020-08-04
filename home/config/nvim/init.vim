@@ -139,11 +139,14 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " coc.nvim plugins
-Plug 'neoclide/coc-json', { 'do': 'yarn install --frozen-lockfile' }
-Plug 'neoclide/coc-tsserver', { 'do': 'yarn install --frozen-lockfile' }
-Plug 'neoclide/coc-css', { 'do': 'yarn install --frozen-lockfile' }
-Plug 'neoclide/coc-rls', { 'do': 'yarn install --frozen-lockfile' }
-Plug 'neoclide/coc-solargraph', { 'do': 'yarn install --frozen-lockfile' }
+let g:coc_global_extensions=[
+\  'coc-css',
+\  'coc-json',
+\  'coc-rls',
+\  'coc-solargraph',
+\  'coc-tsserver',
+\  'coc-ultisnips',
+\]
 
 " post install (yarn install | npm install) then load plugin only for editing supported files
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
