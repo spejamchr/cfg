@@ -43,11 +43,10 @@ set inccommand=split
 
 " Custom autocmds {{{
 " Make long lines more apparent
-let &colorcolumn=join(range(81,999),",")
-autocmd BufNewFile,BufRead *.jsx,*.js,*.tsx,*.ts let &l:colorcolumn=join(range(101,999),",")
+let &colorcolumn=join(range(101,999),",")
 
-" Spellcheck markdown and text files, and wrap at 80th column
-autocmd BufNewFile,BufRead *.md,*.txt setlocal spell spelllang=en_us textwidth=80
+" Spellcheck markdown and text files, and wrap at 100th column
+autocmd BufNewFile,BufRead *.md,*.txt setlocal spell spelllang=en_us textwidth=100
 
 " Remove trailing whitespace on save
 fun! <SID>StripTrailingWhitespaces()
