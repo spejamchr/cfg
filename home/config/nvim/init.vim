@@ -135,7 +135,6 @@ Plug 'vim-airline/vim-airline-themes'
 " tpope is the man
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-fugitive'
@@ -181,6 +180,9 @@ Plug 'chriskempson/base16-vim'
 
 " Preview colours in source code while editing
 Plug 'chrisbra/Colorizer'
+
+" Replace netrw
+Plug 'lambdalisue/fern.vim'
 
 " Initialize plugin system
 call plug#end()
@@ -314,5 +316,83 @@ let g:UltiSnipsJumpForwardTrigger='<c-j>'
 
 " shortcut to go to previous position
 let g:UltiSnipsJumpBackwardTrigger='<c-k>'
+
+" }}}
+
+" Configure lambdalisue/fern.vim {{{
+
+" Open Fern in the current dir and highlight the current file
+nmap - :Fern %:h -reveal=%:p<CR>
+
+" Show hidden files by default
+let g:fern#default_hidden = 1
+
+" Only use my mappings
+let g:fern#disable_default_mappings = 1
+
+let g:fern#renderer#default#leaf_symbol = '| '
+let g:fern#renderer#default#collapsed_symbol = '+ '
+let g:fern#renderer#default#expanded_symbol = '- '
+
+" Perform 'open' on leaf node, 'expand' on collapsed node, and 'collapse' on
+" expanded node. From fern's docs.
+nmap <silent><expr>
+      \ <Plug>(fern-action-open-or-expand-or-collapse)
+      \ fern#smart#leaf(
+      \   "\<Plug>(fern-action-open)",
+      \   "\<Plug>(fern-action-expand)",
+      \   "\<Plug>(fern-action-collapse)",
+      \ )
+
+" Define my mappings {{{
+function! s:init_fern() abort
+  "Splits
+  nmap <buffer> <C-x> <Plug>(fern-action-open:split)
+  nmap <buffer> <C-v> <Plug>(fern-action-open:vsplit)
+
+  " Navigation
+  nmap <buffer> - <Plug>(fern-action-leave)
+  nmap <buffer> _ <Plug>(fern-action-enter)
+  nmap <buffer> r <Plug>(fern-action-reload)
+  nmap <buffer> z <Plug>(fern-action-expand)
+
+  nmap <buffer> <Return> <Plug>(fern-action-open-or-expand-or-collapse)
+
+  " CRUD
+  nmap <buffer> <Leader>n <Plug>(fern-action-new-path)
+  nmap <buffer> <Leader>d <Plug>(fern-action-remove)
+  nmap <buffer> <Leader>m <Plug>(fern-action-rename)
+
+  " Marks
+  nmap <buffer> <C-n> <Plug>(fern-action-mark-toggle)j
+  nmap <buffer> <C-p> <Plug>(fern-action-mark-toggle)k
+  nmap <buffer> <C-e> <Plug>(fern-action-mark-clear)
+endfunction
+
+augroup fern-custom
+  autocmd! *
+  autocmd FileType fern call s:init_fern()
+augroup END
+" }}}
+
+" Use fern as a default directory browser (hijack netrw) {{{
+" SEE: https://github.com/lambdalisue/fern.vim/wiki/Tips#use-fern-as-a-default-directory-browser-hijack-netrw
+" NOTE: Leave out the bit from there ^ that disables netrw completely.
+" fugitive's :Gbrowse command uses netrw.
+
+augroup my-fern-hijack
+  autocmd!
+  autocmd BufEnter * ++nested call s:hijack_directory()
+augroup END
+
+function! s:hijack_directory() abort
+  let path = expand('%:p')
+  if !isdirectory(path)
+    return
+  endif
+  bwipeout %
+  execute printf('Fern %s', fnameescape(path))
+endfunction
+" }}}
 
 " }}}
