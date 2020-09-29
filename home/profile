@@ -57,7 +57,11 @@ function edit() {
   if [[ -f $1 ]]; then
     $EDITOR $1
   elif [[ -d $1 ]]; then
-    ( cd $1; $EDITOR . )
+    (
+      cd $1
+      [[ -f .ruby-version ]] && chruby `cat .ruby-version`
+      $EDITOR .
+    )
   else
     echo "$1 not found"
     return 1
