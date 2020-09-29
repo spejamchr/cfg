@@ -10,6 +10,9 @@ Layout/LineLength:
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 
+Naming/MethodParameterName:
+  Enabled: false
+
 Style/AccessModifierDeclarations:
   Enabled: false
 
@@ -24,3 +27,6 @@ Style/TrailingCommaInArrayLiteral:
 
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
+
+Style/AsciiComments:
+  Enabled: false
