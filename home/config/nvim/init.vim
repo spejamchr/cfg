@@ -364,9 +364,9 @@ function! s:init_fern() abort
   nmap <buffer> <Leader>m <Plug>(fern-action-rename)
 
   " Marks
-  nmap <buffer> <C-n> <Plug>(fern-action-mark-toggle)j
-  nmap <buffer> <C-p> <Plug>(fern-action-mark-toggle)k
-  nmap <buffer> <C-e> <Plug>(fern-action-mark-clear)
+  nmap <buffer> <C-n> <Plug>(fern-action-mark:toggle)j
+  nmap <buffer> <C-p> <Plug>(fern-action-mark:toggle)k
+  nmap <buffer> <C-c> <Plug>(fern-action-mark:clear)
 endfunction
 
 augroup fern-custom
