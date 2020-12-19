@@ -54,14 +54,18 @@ function upgrade_brew_stuff() {
   echo "\n-> Upgrading brew..."
   if which brew >&-; then
     brew update
-    if brew outdated | grep yabai; then
+    if brew outdated --formula | grep yabai; then
       upgrade_yabai
     fi
     echo "\n-> Upgrading brew packages..."
-    brew upgrade
+    if [[ $(brew outdated --formula) ]]; then
+      brew upgrade --formula
+    else
+      echo "Already up-to-date"
+    fi
     echo "\n-> Upgrading brew casks..."
-    if [[ $(brew cask outdated) ]]; then
-      brew cask upgrade
+    if [[ $(brew outdated --cask) ]]; then
+      brew upgrade --cask
     else
       echo "Already up-to-date"
     fi
