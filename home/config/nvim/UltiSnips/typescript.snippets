@@ -7,3 +7,39 @@ snippet .assign "Assign to a JSON Decoder"
 .assign('${1:prop}', field('`!p snip.rv = re.sub(r'(?<!^)(?=[A-Z])', '_', t[1]).lower()`', ${2:string}))
 $0
 endsnippet
+
+snippet storeTypes "Types for a basic store"
+interface Waiting {
+  kind: 'waiting';
+}
+
+export interface Loading {
+  kind: 'loading';
+}
+
+interface Ready {
+  kind: 'ready';
+}
+
+interface Error {
+  kind: 'error';
+}
+
+export const waiting = (): Waiting => ({
+  kind: 'waiting',
+});
+
+export const loading = (): Loading => ({
+  kind: 'loading',
+});
+
+export const ready = (): Ready => ({
+  kind: 'ready',
+});
+
+export const error = (): Error => ({
+  kind: 'error',
+})
+
+export type $1State = Waiting | Loading | Ready | Error;
+endsnippet

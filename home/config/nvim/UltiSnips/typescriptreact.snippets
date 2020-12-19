@@ -13,7 +13,7 @@ def argsFromProps(propString):
     return '';
 endglobal
 
-snippet rfc "react functional component" b
+snippet fc "react functional component" b
 import { observer } from 'mobx-react';
 import * as React from "react"
 
@@ -24,4 +24,30 @@ const ${1:Component}: React.FC<Props> = (`!p snip.rv = argsFromProps(t[2])`) => 
 )
 
 export default observer(`!p snip.rv = t[1]`)
+endsnippet
+
+snippet rc "react class component" b
+import { observer } from 'mobx-react';
+import * as React from 'react';
+
+interface Props {
+  ${2}
+}
+
+interface State {
+  ${3}
+}
+
+@observer
+class ${1:Component} extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+  }
+
+  render() {
+    return ${4:<p>Body</p>};
+  }
+}
+
+export default `!p snip.rv = t[1]`;
 endsnippet
