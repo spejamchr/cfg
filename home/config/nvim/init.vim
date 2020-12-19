@@ -296,12 +296,23 @@ augroup end
 nmap <Leader>qf  <Plug>(coc-fix-current)
 " }}}
 
-" Configure base16-vim {{{
+" Configure colorscheme w/base16-vim {{{
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   set termguicolors
   source ~/.vimrc_background
 endif
+
+" Configure highlighting (must be done after initializing the colorscheme) {{{
+" Italicize comments
+highlight Comment cterm=italic gui=italic
+" Italicize and bold markdown stuff
+highlight htmlItalic cterm=italic gui=italic
+highlight htmlBold cterm=bold gui=bold
+" Conceal things that can be concealed
+set conceallevel=2
+" }}}
+
 " }}}
 
 " Configure ron89/thesaurus_query.vim {{{
