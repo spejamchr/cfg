@@ -4,6 +4,9 @@
 # For rubocop's defaults, see:
 # https://github.com/rubocop-hq/rubocop/blob/master/config/default.yml
 
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
+
 Layout/LineLength:
   Enabled: false
 
