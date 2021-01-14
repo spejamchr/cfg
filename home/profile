@@ -54,7 +54,9 @@ function gitpushnew {
 
 # It's nicer to open a dir for editing when it's also the cwd
 function edit() {
-  if [[ -f $1 ]]; then
+  if [[ $# = 0 ]]; then
+    $EDITOR .
+  elif [[ -f $1 ]]; then
     $EDITOR $1
   elif [[ -d $1 ]]; then
     (
