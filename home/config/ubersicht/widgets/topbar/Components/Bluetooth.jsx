@@ -2,7 +2,7 @@ import { React } from "uebersicht";
 import Item from "./item.jsx";
 
 const Bluetooth = ({ bluetooth, colors }) => {
-  const string = bluetooth.connected ? " Paired" : " On";
+  const string = bluetooth.connected ? " ペア" : " オン";
 
   const bluetoothColor = bluetooth.connected ? colors.Blue : colors.Green;
 

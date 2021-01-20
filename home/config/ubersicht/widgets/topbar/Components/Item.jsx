@@ -5,7 +5,7 @@ const Item = ({ text, hide, color }) =>
     ""
   ) : (
     <span>
-      ( <span style={color ? { color } : {}}>{text}</span> )
+      「 <span style={color ? { color } : {}}>{text}</span> 」
     </span>
   );
 

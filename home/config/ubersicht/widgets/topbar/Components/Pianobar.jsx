@@ -8,7 +8,7 @@ const Pianobar = ({ pianobar }) => {
       ? pianobar.song.substring(0, maxLength - 3) + "..."
       : pianobar.song;
 
-  return <Item text={song || "Starting..."} hide={!pianobar.on} />;
+  return <Item text={song || "音楽を始める..."} hide={!pianobar.on} />;
 };
 
 export default Pianobar;
