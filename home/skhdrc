@@ -15,6 +15,14 @@ play : pgrep pianobar > /dev/null && \
 fast : pgrep pianobar > /dev/null && echo -n 'n' > ~/.config/pianobar/ctl
 rewind : pgrep pianobar > /dev/null && pkill pianobar
 
+# Control pianobar with external keyboard, too
+cmd + alt + ctrl + shift - p : pgrep pianobar > /dev/null && \
+  echo -n 'p' > ~/.config/pianobar/ctl || \
+  pianobar > ~/.config/pianobar/out
+
+cmd + alt + ctrl + shift - n : pgrep pianobar > /dev/null && echo -n 'n' > ~/.config/pianobar/ctl
+cmd + alt + ctrl + shift - b : pgrep pianobar > /dev/null && pkill pianobar
+
 # eject all external drives
 cmd + alt + ctrl - e : ~/code/scripts/eject
 
