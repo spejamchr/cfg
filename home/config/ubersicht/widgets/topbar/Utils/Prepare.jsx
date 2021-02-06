@@ -16,7 +16,7 @@ export default (name, fn) => ({ error, output }) => {
     parsed = JSON.parse(output);
   } catch (err) {
     console.error("[topbar]: ", err);
-    console.dir(output);
+    console.log(output);
     return "Error Parsing JSON";
   }
 
