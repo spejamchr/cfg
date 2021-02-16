@@ -153,6 +153,9 @@ Plug 'ron89/thesaurus_query.vim'
 " Intellisense engine. Language Server Protocol support as full as VSCode
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
+" Use FZF instead of coc.nvim's built-in fuzzy finder.
+Plug 'antoinemadec/coc-fzf'
+
 " Snippets
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
@@ -284,6 +287,16 @@ nmap <silent> gr <Plug>(coc-references)
 " Remap for rename current word
 nmap <Leader>rn <Plug>(coc-rename)
 nmap <Leader>o :call CocActionAsync('runCommand', 'tsserver.organizeImports')<CR>
+
+" Remap <C-f> and <C-b> for scroll float windows/popups.
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
 
 augroup coc-nvim
   autocmd!
