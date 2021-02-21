@@ -232,35 +232,7 @@ nnoremap <Leader>h :History<CR>
 " Use rg with FZF, showing hidden files but ignoring .git/
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/*"'
 
-" Use bat to preview files found with fzf
-let g:bat_alias='bat --style=changes,numbers --color always --theme=base16'
-let g:bat_context=5
-let g:preview='if test -f {}; then if file -i {}|grep -q binary; then file -b {}; else ' . g:bat_alias . ' {}; fi; else; file=$(echo {} | sed "s/:.*$//g"); if [[ -f $file ]]; then line=$(echo {} | sed "s/^[^:]*://g" | sed "s/:.*$//g"); ' . g:bat_alias . ' -H $line -r $([[ $((line - ' . g:bat_context . ')) -gt 0 ]] && echo $((line - ' . g:bat_context . ')) || echo 1):$(($line + ' . g:bat_context . ')) $file; else; file=$(echo {} | sed "s/\[[^ ]*\]//g" | tr -d "[:blank:]"); if [[ -f $file ]]; then ' . g:bat_alias . ' $file; else if [[ -d $file ]]; then echo "$file:\n\n$(ls -1AFG $file)"; fi; fi; fi; fi'
-
-let $FZF_DEFAULT_OPTS=" --color=16,border:8,bg:0 --border --layout=reverse --preview '".preview."'"
-
-" FZF opens in a floating window
-let g:fzf_layout = { 'window': 'call FloatingFZF()' }
-
-function! FloatingFZF()
-  let buf = nvim_create_buf(v:false, v:true)
-  call setbufvar(buf, '&signcolumn', 'no')
-
-  let height = float2nr(30)
-  let width = float2nr(&columns * 3 / 4)
-  let horizontal = float2nr((&columns - width) / 2)
-  let vertical = float2nr((&lines - height) / 2)
-
-  let opts = {
-        \ 'relative': 'editor',
-        \ 'row': vertical,
-        \ 'col': horizontal,
-        \ 'width': width,
-        \ 'height': height,
-        \ }
-
-  call nvim_open_win(buf, v:true, opts)
-endfunction
+let $FZF_DEFAULT_OPTS="--layout=reverse"
 " }}}
 
 " Configure markdown-preview.nvim {{{

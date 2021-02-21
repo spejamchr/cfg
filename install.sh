@@ -126,13 +126,13 @@ function brew_install() {
 
 function brew_cask_install() {
   if [[ ! "$brew_cask_list" ]]; then
-    brew_cask_list=$(brew cask list)
+    brew_cask_list=$(brew list --cask)
   fi
 
   if [[ ! $(echo "$brew_cask_list" | grep ${1#*/*/}) ]]; then
     try_to "Install $1 with Homebrew Cask" \
-      "brew cask install \"$1\"" \
-      "brew cask uninstall \"$1\""
+      "brew install --cask \"$1\"" \
+      "brew uninstall --cask \"$1\""
   fi
 }
 

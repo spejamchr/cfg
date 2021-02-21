@@ -1,5 +1,5 @@
 # open kitty
-ctrl - return : open ~/git/other/kitty/kitty/launcher/kitty.app -n --args --single-instance --title="zsh"
+ctrl - return : open ~/git/other/kitty/kitty/launcher/kitty.app -n --args --single-instance --title="zsh" --listen-on unix:/tmp/mykitty
 
 # open mpv
 # ctrl - m : mpv $(pbpaste)

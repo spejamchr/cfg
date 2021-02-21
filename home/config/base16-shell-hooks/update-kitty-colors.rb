@@ -1,9 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-THEME = File.read(
-  File.join(ENV['BASE16_SHELL'], 'scripts', "base16-#{ENV['BASE16_THEME']}.sh")
-).freeze
+THEME = File.read(File.join(ENV['HOME'], '.base16_theme')).freeze
 
 KITTY_DIR = File.join(ENV['XDG_CONFIG_HOME'], 'kitty').freeze
 
@@ -195,7 +193,7 @@ kitty_colors.effect do |colors|
     f.puts "# #{__FILE__}"
     colors.each { |kv| f.puts kv.join(' ') }
   end
-  `kitty @ set-colors --all --configured "#{KITTY_COLORS_PATH}"`
+  `kitty @ --to unix:/tmp/mykitty set-colors --all --configured "#{KITTY_COLORS_PATH}"`
 end
 
 kitty_diff_colors.effect do |colors|

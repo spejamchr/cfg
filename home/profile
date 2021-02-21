@@ -24,6 +24,9 @@ export HISTSIZE=5000
 
 export GPG_TTY=$(tty)
 
+# Set bat to use the base16 theme so it always matches the terminal
+export BAT_THEME="base16"
+
 source /usr/local/opt/chruby/share/chruby/chruby.sh
 source /usr/local/opt/chruby/share/chruby/auto.sh
 chruby 2.6.3
