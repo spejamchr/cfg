@@ -170,15 +170,13 @@ let g:coc_global_extensions=[
 \  'coc-ultisnips',
 \]
 
-" post install (yarn install | npm install) then load plugin only for editing supported files
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-
-" Format Haskell on save
-Plug 'alx741/vim-hindent'
+" Format code
+Plug 'sbdchd/neoformat'
 
 " Markdown
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
+" Themes
 Plug 'chriskempson/base16-vim'
 
 " Preview colours in source code while editing
@@ -191,10 +189,39 @@ Plug 'lambdalisue/fern.vim'
 call plug#end()
 " }}}
 
-" Configure prettier {{{
-" Autoformat with Prettier on save
-let g:prettier#autoformat = 0
-autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
+" Configure code auto-formatting with Neoformat {{{
+let s:javascript_yarn = {
+            \ 'exe': 'yarn',
+            \ 'args': ['run', '-s', 'prettier', '--stdin-filepath', '"%:p"'],
+            \ 'stdin': 1,
+            \ }
+
+let s:typescript_yarn = {
+            \ 'exe': 'yarn',
+            \ 'args': ['run', '-s', 'prettier', '--stdin', '--stdin-filepath', '"%:p"', '--parser', 'typescript'],
+            \ 'stdin': 1,
+            \ }
+
+let g:neoformat_javascript_yarn = s:javascript_yarn
+let g:neoformat_enabled_javascript = ['yarn']
+
+let g:neoformat_javascriptreact_yarn = s:javascript_yarn
+let g:neoformat_enabled_javascriptreact = ['yarn']
+
+let g:neoformat_typescript_yarn = s:typescript_yarn
+let g:neoformat_enabled_typescript = ['yarn']
+
+let g:neoformat_typescriptreact_yarn = s:typescript_yarn
+let g:neoformat_enabled_typescriptreact = ['yarn']
+
+augroup fmt
+  autocmd!
+
+" Autoformat with Neoformat on save
+  autocmd BufWritePre * Neoformat
+augroup END
+
+nnoremap <Leader>p :Neoformat<CR>
 " }}}
 
 " Configure airline {{{
