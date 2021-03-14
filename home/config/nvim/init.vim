@@ -218,7 +218,7 @@ augroup fmt
   autocmd!
 
 " Autoformat with Neoformat on save
-  autocmd BufWritePre * Neoformat
+  autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.rs Neoformat
 augroup END
 
 nnoremap <Leader>p :Neoformat<CR>
