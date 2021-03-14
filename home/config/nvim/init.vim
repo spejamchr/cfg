@@ -121,6 +121,9 @@ endif
 " Install plugins {{{
 call plug#begin('~/.local/share/nvim/plugged')
 
+" Fix neovim CusorHold and CursorHoldI autocmd events performance bug
+Plug 'antoinemadec/FixCursorHold.nvim'
+
 " Fuzzy finder
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -187,6 +190,12 @@ Plug 'lambdalisue/fern.vim'
 
 " Initialize plugin system
 call plug#end()
+" }}}
+
+" Configure FixCursorHold {{{
+" in millisecond, used for both CursorHold and CursorHoldI,
+" use updatetime instead if not defined
+let g:cursorhold_updatetime = 100
 " }}}
 
 " Configure code auto-formatting with Neoformat {{{
