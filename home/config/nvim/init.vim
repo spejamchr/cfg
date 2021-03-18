@@ -212,16 +212,16 @@ let s:typescript_yarn = {
             \ }
 
 let g:neoformat_javascript_yarn = s:javascript_yarn
-let g:neoformat_enabled_javascript = ['yarn']
+let g:neoformat_enabled_javascript = ['yarn', 'prettier']
 
 let g:neoformat_javascriptreact_yarn = s:javascript_yarn
-let g:neoformat_enabled_javascriptreact = ['yarn']
+let g:neoformat_enabled_javascriptreact = ['yarn', 'prettier']
 
 let g:neoformat_typescript_yarn = s:typescript_yarn
-let g:neoformat_enabled_typescript = ['yarn']
+let g:neoformat_enabled_typescript = ['yarn', 'prettier']
 
 let g:neoformat_typescriptreact_yarn = s:typescript_yarn
-let g:neoformat_enabled_typescriptreact = ['yarn']
+let g:neoformat_enabled_typescriptreact = ['yarn', 'prettier']
 
 augroup fmt
   autocmd!
