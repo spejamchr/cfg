@@ -38,3 +38,5 @@
   cmd = kitty kitty +kitten diff $LOCAL $REMOTE
 [pull]
 	ff = only
+[init]
+	defaultBranch = main
