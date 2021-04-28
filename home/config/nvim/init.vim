@@ -39,6 +39,9 @@ let g:netrw_banner = 0
 
 " Show incremental commands
 set inccommand=split
+
+" Use one space when joining sentences with J or gqip instead of two spaces
+set nojoinspaces
 " }}}
 
 " Custom autocmds {{{
