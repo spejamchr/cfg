@@ -199,6 +199,7 @@ Plug 'chrisbra/Colorizer'
 
 " Replace netrw
 Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/fern-git-status.vim'
 
 " Initialize plugin system
 call plug#end()
