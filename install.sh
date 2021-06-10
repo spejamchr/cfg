@@ -282,6 +282,7 @@ function main() {
   brew_cask_install homebrew/cask-fonts/font-firacode-nerd-font
   brew_cask_install flux
   brew_cask_install gpg-suite-no-mail
+  brew_cask_install keepassxc
   brew_cask_install mpv
   brew_cask_install sequel-pro
   brew_cask_install ubersicht
