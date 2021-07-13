@@ -10,8 +10,8 @@ SONG=${SONG//'"'/'\"'}
 PLUGGED=$([[ $(pmset -g ps | head -1) =~ 'AC' ]] && printf 'true' || printf 'false')
 BATTERY=$(pmset -g batt | egrep '(\d+)\%' -o)
 
-BLUETOOTH_POWER=$([[ $(blueutil --power) = 1 ]] && printf 'true' || printf 'false')
-BLUETOOTH_CONNECTED=$([[ $(blueutil --paired | grep ', connected') ]] && printf 'true' || printf 'false')
+BLUETOOTH_POWER=$([[ $(/usr/local/bin/blueutil --power) = 1 ]] && printf 'true' || printf 'false')
+BLUETOOTH_CONNECTED=$([[ $(/usr/local/bin/blueutil --paired | grep ', connected') ]] && printf 'true' || printf 'false')
 
 SPACES=$(yabai -m query --spaces 2>/dev/null || printf '[]')
 WINDOWS=$(yabai -m query --windows 2>/dev/null || printf '[]')
