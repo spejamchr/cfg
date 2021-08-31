@@ -30,6 +30,7 @@ function personal_computer() {
 
 function logit {
   local logfile="$DOT/.install.log"
+  touch $logfile
   if [[ ! -e $logfile ]]; then
     return 1
   fi
@@ -100,7 +101,7 @@ function ensure_dir() {
 function install_brew() {
   if [[ ! $(which brew) ]]; then
     try_to 'Install Homebrew' \
-      'yes | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" > /dev/null' \
+      'yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /dev/null' \
       '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"' \
       && logcho 'More info about uninstalling Homebrew here: https://github.com/Homebrew/install'
   fi
@@ -256,20 +257,20 @@ function main() {
   brew_install bat
   brew_install blueutil
   brew_install chruby
-  brew_install cmake
+  # brew_install cmake
   brew_install gnupg
   brew_install htop
   brew_install imagemagick
   brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
   brew_install koekeishiya/formulae/yabai 'Post-install configuration required. See `brew info yabai`'
-  brew_install libyaml
-  brew_install mysql@5.7 'Post-install configuration required. See `brew info mysql@5.7`'
+  # brew_install libyaml
+  # brew_install mysql@5.7 'Post-install configuration required. See `brew info mysql@5.7`'
   brew_install neovim
   brew_install pianobar
-  brew_install pkg-config
-  brew_install puma/puma/puma-dev 'Post-install configuration required. See `brew info puma-dev`'
-  brew_install rbenv/tap/openssl@1.0
-  brew_install redis 'Run `brew services start redis` to start redis'
+  # brew_install pkg-config
+  # brew_install puma/puma/puma-dev 'Post-install configuration required. See `brew info puma-dev`'
+  # brew_install rbenv/tap/openssl@1.0
+  # brew_install redis 'Run `brew services start redis` to start redis'
   brew_install ripgrep
   brew_install ruby-install
   brew_install sleepwatcher 'Run `brew services start sleepwatcher` to start sleepwatcher'
@@ -279,16 +280,17 @@ function main() {
   brew_install zsh-completions
 
   brew_cask_install dropbox
-  brew_cask_install homebrew/cask-fonts/font-firacode-nerd-font
-  brew_cask_install flux
+  brew_cask_install homebrew/cask-fonts/font-fira-code-nerd-font
+  # brew_cask_install flux
   brew_cask_install gpg-suite-no-mail
-  brew_cask_install keepassxc
-  brew_cask_install mpv
-  brew_cask_install sequel-pro
+  # brew_cask_install mpv
+  # brew_cask_install sequel-pro
   brew_cask_install ubersicht
+  brew_cask_install slack
 
   if personal_computer; then
     brew_cask_install calibre
+    brew_cask_install keepassxc
   fi
 
   install_kitty
