@@ -29,7 +29,7 @@ export BAT_THEME="base16"
 
 source /usr/local/opt/chruby/share/chruby/chruby.sh
 source /usr/local/opt/chruby/share/chruby/auto.sh
-chruby 2.6.3
+# chruby 2.6.7
 
 # Edit this file more easily
 alias ep="$EDITOR ~/.profile; source ~/.profile; echo \".profile edited and sourced\""
@@ -145,3 +145,4 @@ alias be='de bundle exec'
 # alias rlog='de tail -f log/development.log'
 
 # alias dbmigrate='be rake db:migrate'
+. "$HOME/.cargo/env"

@@ -1,3 +1,29 @@
+# zmodload zsh/zprof
+
+# Use vi mode
+# This has to be done early so that other settings apply in vi mode
+bindkey -v
+
+# Enable autocompletion
+fpath=(/usr/local/share/zsh-completions $fpath)
+autoload -Uz compinit
+
+# For speeding up the autocompletion start.
+# See https://gist.github.com/ctechols/ca1035271ad134841284?permalink_comment_id=2767420#gistcomment-2767420
+setopt EXTENDEDGLOB
+for dump in $HOME/.zcompdump(#qN.m1); do
+  compinit
+  if [[ -s "$dump" && (! -s "$dump.zwc" || "$dump" -nt "$dump.zwc") ]]; then
+    zcompile "$dump"
+  fi
+done
+unsetopt EXTENDEDGLOB
+compinit -C
+
+zstyle ':completion:*' completer _complete _correct _approximate
+zstyle ':completion:*' menu select
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.profile ] && source ~/.profile
 
@@ -20,11 +46,6 @@ bindkey '^P' up-line-or-history
 bindkey '^N' down-line-or-history
 bindkey '^[^M' self-insert-unmeta # Insert newline w/out running command
 
-# Enable autocompletion
-fpath=(/usr/local/share/zsh-completions $fpath)
-autoload -Uz compinit
-compinit
-
 # Completion for kitty
 kitty + complete setup zsh | source /dev/stdin
 
@@ -42,16 +63,12 @@ setopt EXTENDED_HISTORY
 setopt HIST_IGNORE_ALL_DUPS
 # Do not remember commands that start with a whitespace
 setopt HIST_IGNORE_SPACE
-# Enable autocompletion
-zstyle ':completion:*' completer _complete _correct _approximate
-zstyle ':completion:*' menu select
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 source $XDG_CONFIG_HOME/purepower
 
 # zsh plugins
 zplug "romkatv/powerlevel10k", use:powerlevel10k.zsh-theme
-zplug "lukechilds/zsh-nvm"
+# zplug "lukechilds/zsh-nvm"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug load
 # There's a kitty-themes repo that stores a bunch of themes in kitty .conf
@@ -59,3 +76,10 @@ zplug load
 # into (n)vim. See: https://github.com/dexpota/kitty-themes
 # Also, this is *after* `zplug load` because it's not really a zsh plugin...
 zplug "chriskempson/base16-shell"
+
+
+# BEGIN_KITTY_SHELL_INTEGRATION
+if test -e "$HOME/git/other/kitty/shell-integration/kitty.zsh"; then source "$HOME/git/other/kitty/shell-integration/kitty.zsh"; fi
+# END_KITTY_SHELL_INTEGRATION
+
+# zprof
