@@ -4,4 +4,8 @@ Include work_config
 Host *
     AddKeysToAgent yes
     UseKeychain yes
-    IdentityFile ~/.ssh/id_rsa
+    IdentityFile ~/.ssh/id_ed25519
+
+Host pi
+    HostName 192.168.0.175
+    User pi
