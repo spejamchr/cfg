@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+PATH="$PATH:/usr/local/bin" # So yabai will be in our path
+
 DATE=$(date "+%a %b %d")
 TIME=$(date "+%H:%M")
 
