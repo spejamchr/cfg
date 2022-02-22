@@ -40,3 +40,10 @@
 	ff = only
 [init]
 	defaultBranch = main
+[merge]
+	tool = nvimdiff
+	conflictstyle = diff3
+[mergetool]
+	keepBackup = false
+[mergetool.nvimdiff]
+	trustExitCode = false
