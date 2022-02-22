@@ -17,7 +17,7 @@
 [credential]
   helper = osxkeychain
 [commit]
-  gpgsign = true
+  gpgsign = false
 [diff]
   tool = kitty
   guitool = kitty.gui

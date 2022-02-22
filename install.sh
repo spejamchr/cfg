@@ -258,7 +258,7 @@ function main() {
   brew_install blueutil
   brew_install chruby
   # brew_install cmake
-  brew_install gnupg
+  # brew_install gnupg
   brew_install htop
   brew_install imagemagick
   brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
@@ -282,7 +282,7 @@ function main() {
   brew_cask_install dropbox
   brew_cask_install homebrew/cask-fonts/font-fira-code-nerd-font
   # brew_cask_install flux
-  brew_cask_install gpg-suite-no-mail
+  # brew_cask_install gpg-suite-no-mail
   # brew_cask_install mpv
   # brew_cask_install sequel-pro
   brew_cask_install ubersicht
