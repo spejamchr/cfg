@@ -42,6 +42,19 @@ set inccommand=split
 
 " Use one space when joining sentences with J or gqip instead of two spaces
 set nojoinspaces
+
+" Keep undo history across sessions by storing it in a file
+if has('persistent_undo')
+  let vimDir = '$XDG_CONFIG_HOME/nvim'
+  let myUndoDir = expand(vimDir . '/undodir')
+
+  " Create dirs
+  call system('mkdir ' . vimDir)
+  call system('mkdir ' . myUndoDir)
+
+  let &undodir = myUndoDir
+  set undofile
+endif
 " }}}
 
 " Custom autocmds {{{
