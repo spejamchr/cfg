@@ -10,7 +10,7 @@ import Window from "./Components/Window.jsx";
 import prepare from "./Utils/Prepare.jsx";
 import styledContainer from "./Utils/StyledContainer.jsx";
 
-export const refreshFrequency = 5000;
+export const refreshFrequency = 1000;
 
 export const command = `./topbar/command`;
 
@@ -51,6 +51,7 @@ export const render = prepare(
           <Bluetooth bluetooth={bluetooth} colors={colors} />
           <Battery power={power} colors={colors} />
           <DateTime dateTime={dateTime} />
+          &nbsp;
         </span>
       </Container>
     );

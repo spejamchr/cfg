@@ -21,7 +21,7 @@ export const command = `./topbar/command`;
 export const className = {
   width: "100%",
   height: "100%",
-  zIndex: 0
+  zIndex: 0,
 };
 
 const rand = Math.random;
@@ -63,7 +63,7 @@ const genSeeds = ({ minX, maxX, minY, maxY }) => {
         (y / maxY) ** 1.5,
       // a: (rand() - 0.5) * 0.5,
       // a: (rand() - 0.5) * 0.6 * (y / maxY),
-      l: [SX * 10, SX * 10]
+      l: [SX * 10, SX * 10],
     });
   }
 
@@ -97,15 +97,15 @@ const genSeeds = ({ minX, maxX, minY, maxY }) => {
     });
 
   // Boundaries/page clipping
-  seeds.forEach(s => {
+  seeds.forEach((s) => {
     const top = minY; //- rand() * 10;
     const dirSeeds = [
       { x: minX, y: top, a: 0, l: [SX, 0] }, // top
       { x: minX, y: maxY, a: 0, l: [SX, 0] }, // bottom
       { x: minX, y: top, a: Math.PI / 2, l: [SY, 0] }, // left
-      { x: maxX, y: top, a: Math.PI / 2, l: [SY, 0] } // right
+      { x: maxX, y: top, a: Math.PI / 2, l: [SY, 0] }, // right
     ];
-    dirSeeds.forEach(dir => {
+    dirSeeds.forEach((dir) => {
       const { intersects, ti } = calcIntersection(s, dir);
       if (intersects) {
         if (ti > 0) {
@@ -124,7 +124,7 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
   const bodyStyle = {
     backgroundColor: colors.Black,
     height: "100%",
-    width: "100%"
+    width: "100%",
   };
 
   // Try to use the frame provided by yabai, since it's exact, but otherwise
@@ -157,7 +157,7 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
         xmlns="http://www.w3.org/2000/svg"
       >
         <g strokeWidth={2} strokeLinecap="round" fill="none">
-          {stars.map(i => (
+          {stars.map((i) => (
             <circle
               key={i}
               cx={minX + rand() * (maxX - minX)}
@@ -189,7 +189,7 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
             y2={minY}
             stroke={colors.Yellow}
           />
-          {genSeeds({ minX, maxX, minY, maxY }).map(s => (
+          {genSeeds({ minX, maxX, minY, maxY }).map((s) => (
             <line
               key={`${s.x},${s.y}`}
               x1={s.x + s.l[0] * Math.cos(s.a)}
