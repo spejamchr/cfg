@@ -212,6 +212,7 @@ Plug 'chrisbra/Colorizer'
 
 " Replace netrw
 Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/fern-hijack.vim'
 Plug 'lambdalisue/fern-git-status.vim'
 
 " Initialize plugin system
@@ -433,24 +434,6 @@ augroup fern-custom
 augroup END
 " }}}
 
-" Use fern as a default directory browser (hijack netrw) {{{
-" SEE: https://github.com/lambdalisue/fern.vim/wiki/Tips#use-fern-as-a-default-directory-browser-hijack-netrw
-" NOTE: Leave out the bit from there ^ that disables netrw completely.
-" fugitive's :Gbrowse command uses netrw.
-
-augroup my-fern-hijack
-  autocmd!
-  autocmd BufEnter * ++nested call s:hijack_directory()
-augroup END
-
-function! s:hijack_directory() abort
-  let path = expand('%:p')
-  if !isdirectory(path)
-    return
-  endif
-  bwipeout %
-  execute printf('Fern %s', fnameescape(path))
-endfunction
 " }}}
 
 " }}}
