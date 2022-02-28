@@ -2,3 +2,4 @@
 BUNDLE_GEM__TEST: "minitest"
 BUNDLE_GEM__MIT: "true"
 BUNDLE_GEM__COC: "false"
+BUNDLE_BUILD__THERUBYRACER: "--with-v8-dir=/usr/local/opt/v8@3.15"
