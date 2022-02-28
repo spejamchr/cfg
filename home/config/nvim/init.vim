@@ -215,6 +215,9 @@ Plug 'lambdalisue/fern.vim'
 Plug 'lambdalisue/fern-hijack.vim'
 Plug 'lambdalisue/fern-git-status.vim'
 
+" Has lots of stuff. I'm using its indentscope module
+Plug 'echasnovski/mini.nvim'
+
 " Initialize plugin system
 call plug#end()
 " }}}
@@ -436,4 +439,8 @@ augroup END
 
 " }}}
 
+" Configure echasnovski/mini.vim {{{
+lua << EOF
+require('mini.indentscope').setup()
+EOF
 " }}}
