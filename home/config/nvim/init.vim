@@ -345,6 +345,7 @@ augroup coc-nvim
 augroup end
 " Fix autofix problem of current line
 nmap <Leader>qf  <Plug>(coc-fix-current)
+nmap <Leader>a  :CocAction<CR>
 " }}}
 
 " Configure colorscheme w/base16-vim {{{
