@@ -196,6 +196,7 @@ let g:coc_global_extensions=[
 \  'coc-solargraph',
 \  'coc-tsserver',
 \  'coc-ultisnips',
+\  '@yaegassy/coc-tailwindcss3',
 \]
 
 " Format code
