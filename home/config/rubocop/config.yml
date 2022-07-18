@@ -4,8 +4,12 @@
 # For rubocop's defaults, see:
 # https://github.com/rubocop-hq/rubocop/blob/master/config/default.yml
 
+
 Layout/EmptyLinesAroundClassBody:
   Enabled: false
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
 
 Layout/LineLength:
   Enabled: false
@@ -25,6 +29,9 @@ Style/Documentation:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
+Style/MultilineTernaryOperator:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: false
 
@@ -38,4 +45,20 @@ Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
 Style/AsciiComments:
+  Enabled: false
+
+Style/WordArray:
+  EnforcedStyle: brackets
+
+Lint/SafeNavigationChain:
+  AllowedMethods:
+    - present?
+    - blank?
+    - presence
+    - try
+    - try!
+    - in?
+    - to_maybe
+
+Naming/AccessorMethodName:
   Enabled: false
