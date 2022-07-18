@@ -47,3 +47,53 @@ endsnippet
 snippet sjc "Debugging logger"
 console.log(\`[SJC] ${1:message}\`);
 endsnippet
+
+snippet store "Basic store"
+import assertNever from 'exo_modules/AssertNever';
+import { action, observable } from 'mobx';
+import { State, waiting } from './Types';
+
+class Store {
+  @observable
+  state: State = waiting();
+
+  @action
+  ready = (): void => {
+    switch (this.state.kind) {
+      default:
+        assertNever(this.state);
+    }
+  };
+}
+
+export default Store;
+endsnippet
+
+snippet reactions "Basic Reactions component"
+import { warn } from '@execonline-inc/logging';
+import assertNever from 'exo_modules/AssertNever';
+import ReactionComponent, { RCProps } from 'javascripts/ReactionComponent';
+import Store from './Store';
+import { State } from './Types';
+
+class Reactions extends ReactionComponent<Store, State, RCProps<Store>> {
+  tester = () => this.props.store.state;
+  effect = (state: State) => {
+    switch (state.kind) {
+      case 'waiting':
+        break;
+      case 'loading':
+        break;
+      case 'ready':
+        break;
+      case 'error':
+        warn(state.message);
+        break;
+      default:
+        assertNever(state);
+    }
+  };
+}
+
+export default Reactions;
+endsnippet
