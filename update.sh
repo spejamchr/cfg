@@ -1,5 +1,11 @@
 #!/usr/bin/env zsh
 
+if [[ $(arch) = 'i386' ]]; then
+  HOMEBREW_PREFIX="/usr/local"
+else
+  HOMEBREW_PREFIX="/opt/homebrew"
+fi
+
 function upgrade_kitty() {
   echo "-> Upgrading kitty..."
   local kitty_path="$HOME/git/other/kitty"
@@ -13,25 +19,11 @@ function upgrade_kitty() {
       else
         git pull
         git log -$commit_diff
-        make
+        LDFLAGS=-L$HOMEBREW_PREFIX/lib python3 setup.py  --extra-include-dirs $HOMEBREW_PREFIX/Cellar/librsync/2.3.2/include
       fi
     )
   else
     echo "Kitty is not available at $kitty_path"
-  fi
-}
-
-function updgrade_zsh_plugins() {
-  echo "\n-> Upgrading zsh plugins..."
-  source "$HOME/.zshrc"
-  if which zplug >&-; then
-    zplug check || zplug install
-
-    # I can't find a nice way of determining in a script if the plugins are
-    # outdated, so just update them every time.
-    zplug update
-  else
-    echo "zplug is not available"
   fi
 }
 
@@ -75,5 +67,4 @@ function upgrade_brew_stuff() {
 }
 
 upgrade_kitty
-updgrade_zsh_plugins
 upgrade_brew_stuff

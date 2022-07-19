@@ -99,7 +99,7 @@ function ensure_dir() {
 }
 
 function install_brew() {
-  if [[ ! $(which brew) ]]; then
+  if [[ ! $(brew --version 2>&-) ]]; then
     try_to 'Install Homebrew' \
       'yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /dev/null' \
       '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"' \
@@ -116,8 +116,14 @@ function install_command_line_tools() {
   fi
 }
 
+if [[ $(arch) = 'i386' ]]; then
+  HOMEBREW_PREFIX="/usr/local"
+else
+  HOMEBREW_PREFIX="/opt/homebrew"
+fi
+
 function brew_install() {
-  if  [[ ! $(ls /usr/local/Cellar | grep ${1#*/*/}) ]]; then
+  if  [[ ! $(ls $HOMEBREW_PREFIX/bin | grep ${1#*/*/}) ]]; then
     try_to "Install $1 with Homebrew" \
       "brew install \"$1\"" \
       "brew uninstall \"$1\"" \
@@ -154,8 +160,9 @@ function install_kitty() {
   local kitty_path="$HOME/git/other/kitty"
   if [[ ! -d "$kitty_path" ]]; then
     git_clone kovidgoyal/kitty "$kitty_path"
+    command="LDFLAGS=-L$HOMEBREW_PREFIX/lib python3 setup.py  --extra-include-dirs $HOMEBREW_PREFIX/Cellar/librsync/2.3.2/include"
     try_to 'Build kitty' \
-      "( cd \"$kitty_path\" && make )" \
+      "( cd \"$kitty_path\" && $command )" \
       "rm -rf \"$kitty_path\""
   fi
 
@@ -256,11 +263,16 @@ function main() {
 
   brew_install bat
   brew_install blueutil
-  brew_install chruby
+  brew_install chruby-fish
+  brew_install node
+  brew_install fzf
+  brew_install librsync # for Kitty
+  brew_install zlib # for Kitty
+  brew_install pygments # for Kitty
   # brew_install cmake
   # brew_install gnupg
   brew_install htop
-  brew_install imagemagick
+  brew_install imagemagick # for Kitty
   brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
   brew_install koekeishiya/formulae/yabai 'Post-install configuration required. See `brew info yabai`'
   # brew_install libyaml
@@ -275,9 +287,6 @@ function main() {
   brew_install ruby-install
   brew_install sleepwatcher 'Run `brew services start sleepwatcher` to start sleepwatcher'
   brew_install yarn
-  brew_install zplug 'Run `zplug install` to install zsh plugins'
-  brew_install zsh
-  brew_install zsh-completions
 
   brew_cask_install dropbox
   brew_cask_install homebrew/cask-fonts/font-fira-code-nerd-font
@@ -287,6 +296,7 @@ function main() {
   # brew_cask_install sequel-pro
   brew_cask_install ubersicht
   brew_cask_install slack
+  brew_cask_install joplin
 
   if personal_computer; then
     brew_cask_install calibre
@@ -299,9 +309,6 @@ function main() {
   create_symlinks
 
   install_sleepwatcher_plist
-
-  source "$HOME/.zshrc"
-  zplug check || try_to 'Install zsh plugins' 'zplug install'
 }
 
 main
