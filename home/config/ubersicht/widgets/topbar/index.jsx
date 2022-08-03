@@ -16,12 +16,14 @@ export const command = `./topbar/command`;
 
 export const className = {
   width: "100%",
-  height: "20px",
+  height: "35px",
   color: "white",
   fontFamily: "FiraCode Nerd Font",
-  fontSize: "11px",
+  fontSize: "12px",
+  userSelect: "none",
+  cursor: "default",
   whitespace: "nowrap",
-  zIndex: 1
+  zIndex: 1,
 };
 
 export const render = prepare(
@@ -36,7 +38,7 @@ export const render = prepare(
     pianobar,
     power,
     spaces,
-    windows
+    windows,
   }) => {
     const Container = styledContainer(colors);
 
