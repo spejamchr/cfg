@@ -44,17 +44,22 @@ export const render = prepare(
 
     return (
       <Container>
-        <Spaces spaces={spaces} colors={colors} />
-        <Pianobar pianobar={pianobar} />
-        <Window windows={windows} colors={colors} />
-        <span>
-          <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
-          <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
-          <Bluetooth bluetooth={bluetooth} colors={colors} />
-          <Battery power={power} colors={colors} />
-          <DateTime dateTime={dateTime} />
-          &nbsp;
-        </span>
+        <Container>
+          <Spaces spaces={spaces} colors={colors} />
+          <Pianobar pianobar={pianobar} />
+        </Container>
+        <span style={{ width: "400px" }}>{/* The M1 notch goes here */}</span>
+        <Container>
+          <Window windows={windows} colors={colors} />
+          <span>
+            <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
+            <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
+            <Bluetooth bluetooth={bluetooth} colors={colors} />
+            <Battery power={power} colors={colors} />
+            <DateTime dateTime={dateTime} />
+            &nbsp;
+          </span>
+        </Container>
       </Container>
     );
   }

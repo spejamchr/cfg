@@ -1,16 +1,14 @@
 import { styled } from "uebersicht";
 
-const sidePadding = 5; // px
-
-export default colors =>
+export default (colors) =>
   styled.div({
     height: "100%",
-    width: `calc(100% - ${sidePadding * 2}px)`,
+    width: "100%",
+    boxSizing: "border-box",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     whiteSpace: "nowrap",
-    paddingLeft: `${sidePadding}px`,
-    paddingRight: `${sidePadding}px`,
-    color: colors.White
+    padding: "0px 5px",
+    color: colors.White,
   });
