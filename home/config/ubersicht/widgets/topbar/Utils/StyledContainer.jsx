@@ -1,9 +1,10 @@
 import { styled } from "uebersicht";
 
-export default (colors) =>
+export default (colors, width) =>
   styled.div({
     height: "100%",
-    width: "100%",
+    width: width,
+    maxWidth: width,
     boxSizing: "border-box",
     display: "flex",
     justifyContent: "space-between",
@@ -11,4 +12,5 @@ export default (colors) =>
     whiteSpace: "nowrap",
     padding: "0px 5px",
     color: colors.White,
+    overflow: "hidden",
   });

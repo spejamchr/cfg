@@ -40,16 +40,17 @@ export const render = prepare(
     spaces,
     windows,
   }) => {
-    const Container = styledContainer(colors);
+    const OuterContainer = styledContainer(colors, "100%");
+    const InnerContainer = styledContainer(colors, "1700px");
 
     return (
-      <Container>
-        <Container>
+      <OuterContainer>
+        <InnerContainer>
           <Spaces spaces={spaces} colors={colors} />
           <Pianobar pianobar={pianobar} />
-        </Container>
+        </InnerContainer>
         <span style={{ width: "400px" }}>{/* The M1 notch goes here */}</span>
-        <Container>
+        <InnerContainer>
           <Window windows={windows} colors={colors} />
           <span>
             <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
@@ -59,8 +60,8 @@ export const render = prepare(
             <DateTime dateTime={dateTime} />
             &nbsp;
           </span>
-        </Container>
-      </Container>
+        </InnerContainer>
+      </OuterContainer>
     );
   }
 );
