@@ -1,4 +1,4 @@
-import { React } from "uebersicht";
+import { styled } from "uebersicht";
 import Battery from "./Components/Battery.jsx";
 import Bluetooth from "./Components/Bluetooth.jsx";
 import CpuMeter from "./Components/CpuMeter.jsx";
@@ -8,7 +8,7 @@ import Pianobar from "./Components/Pianobar.jsx";
 import Spaces from "./Components/Spaces.jsx";
 import Window from "./Components/Window.jsx";
 import prepare from "./Utils/Prepare.jsx";
-import styledContainer from "./Utils/StyledContainer.jsx";
+import Item from "./Components/Item.jsx";
 
 export const refreshFrequency = 1000;
 
@@ -26,6 +26,20 @@ export const className = {
   zIndex: 1,
 };
 
+const containerStyles = (colors, width) => ({
+  height: "100%",
+  width: width,
+  maxWidth: width,
+  boxSizing: "border-box",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  whiteSpace: "nowrap",
+  padding: "0px 5px",
+  color: colors.White,
+  overflow: "hidden",
+});
+
 export const render = prepare(
   "topbar",
   ({
@@ -40,27 +54,36 @@ export const render = prepare(
     spaces,
     windows,
   }) => {
-    const OuterContainer = styledContainer(colors, "100%");
-    const InnerContainer = styledContainer(colors, "1700px");
+    const OuterContainer = styled.div(containerStyles(colors, "100%"));
+    const InnerContainerLeft = styled.div(containerStyles(colors, "1700px"));
+    const InnerContainerRight = styled.div({
+      ...containerStyles(colors, "1700px"),
+      flexDirection: "row-reverse",
+    });
+    const M1Notch = styled.div({ width: "400px" });
+    const OverflowTester = styled.div({
+      overflow: "hidden",
+      whiteSpace: "nowrap",
+      textOverflow: "ellipsis",
+    });
 
     return (
       <OuterContainer>
-        <InnerContainer>
+        <InnerContainerLeft>
           <Spaces spaces={spaces} colors={colors} />
           <Pianobar pianobar={pianobar} />
-        </InnerContainer>
-        <span style={{ width: "400px" }}>{/* The M1 notch goes here */}</span>
-        <InnerContainer>
-          <Window windows={windows} colors={colors} />
+        </InnerContainerLeft>
+        <M1Notch />
+        <InnerContainerRight>
           <span>
             <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
             <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
             <Bluetooth bluetooth={bluetooth} colors={colors} />
             <Battery power={power} colors={colors} />
             <DateTime dateTime={dateTime} />
-            &nbsp;
           </span>
-        </InnerContainer>
+          <Window windows={windows} colors={colors} />
+        </InnerContainerRight>
       </OuterContainer>
     );
   }
