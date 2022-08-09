@@ -160,14 +160,13 @@ function install_kitty() {
   local kitty_path="$HOME/git/other/kitty"
   if [[ ! -d "$kitty_path" ]]; then
     git_clone kovidgoyal/kitty "$kitty_path"
-    command="LDFLAGS=-L$HOMEBREW_PREFIX/lib python3 setup.py  --extra-include-dirs $HOMEBREW_PREFIX/Cellar/librsync/2.3.2/include"
-    try_to 'Build kitty' \
-      "( cd \"$kitty_path\" && $command )" \
+    try_to 'Install kitty' \
+      "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin installer=nightly launch=n" \
       "rm -rf \"$kitty_path\""
   fi
 
   local kitty_bin="$HOMEBIN/kitty"
-  local kitty_launcher="$kitty_path/kitty/launcher/kitty"
+  local kitty_launcher="$kitty_path/Contents/MacOS/kitty"
   if [[ ! -L "$kitty_bin" ]]; then
     backup_or_remove "$kitty_bin" || return 1
     try_to "Symlink kitty launcher to $kitty_bin" \

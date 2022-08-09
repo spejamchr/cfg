@@ -8,20 +8,9 @@ fi
 
 function upgrade_kitty() {
   echo "-> Upgrading kitty..."
-  local kitty_path="$HOME/git/other/kitty"
+  local kitty_path="/Applications/kitty.app"
   if [[ -d "$kitty_path" ]]; then
-    (
-      cd "$kitty_path"
-      git fetch
-      local commit_diff=$(git rev-list --count master...master@{upstream})
-      if [[ "$commit_diff" == 0 ]]; then
-        echo "Already up-to-date"
-      else
-        git pull
-        git log -$commit_diff
-        LDFLAGS=-L$HOMEBREW_PREFIX/lib python3 setup.py  --extra-include-dirs $HOMEBREW_PREFIX/Cellar/librsync/2.3.2/include
-      fi
-    )
+    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin installer=nightly launch=n
   else
     echo "Kitty is not available at $kitty_path"
   fi

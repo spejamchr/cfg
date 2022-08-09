@@ -73,7 +73,7 @@ Installed with `brew cask install`:
 - [`sequel-pro`](https://www.sequelpro.com/): MySQL/MariaDB database management for macOS
 - [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
 
-Cloned repos:
+Other:
 
 - [`kitty`](https://sw.kovidgoyal.net/kitty/): the fast, featureful, GPU based terminal emulator
 
