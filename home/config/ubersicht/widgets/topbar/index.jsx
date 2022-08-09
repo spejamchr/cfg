@@ -81,6 +81,7 @@ export const render = prepare(
             <Bluetooth bluetooth={bluetooth} colors={colors} />
             <Battery power={power} colors={colors} />
             <DateTime dateTime={dateTime} />
+            &nbsp; {/* For the orange dot on mic/camera usage */}
           </span>
           <Window windows={windows} colors={colors} />
         </InnerContainerRight>
