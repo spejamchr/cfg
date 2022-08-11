@@ -123,7 +123,9 @@ else
 fi
 
 function brew_install() {
-  if  [[ ! $(ls $HOMEBREW_PREFIX/bin | grep ${1#*/*/}) ]]; then
+  if brew list $1 &>/dev/null; then
+    infcho "$1 is already installed with brew"
+  else
     try_to "Install $1 with Homebrew" \
       "brew install \"$1\"" \
       "brew uninstall \"$1\"" \
@@ -157,9 +159,8 @@ function backup_or_remove() {
 }
 
 function install_kitty() {
-  local kitty_path="$HOME/git/other/kitty"
+  local kitty_path="/Applications/kitty.app"
   if [[ ! -d "$kitty_path" ]]; then
-    git_clone kovidgoyal/kitty "$kitty_path"
     try_to 'Install kitty' \
       "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin installer=nightly launch=n" \
       "rm -rf \"$kitty_path\""
