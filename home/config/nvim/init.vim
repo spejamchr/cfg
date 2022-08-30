@@ -359,6 +359,8 @@ endif
 " Configure highlighting (must be done after initializing the colorscheme) {{{
 " Italicize comments
 highlight Comment cterm=italic gui=italic
+" Make coc.nvim's selected text visible
+highlight CocMenuSel guibg=DarkMagenta
 " Italicize and bold markdown stuff
 highlight htmlItalic cterm=italic gui=italic
 highlight htmlBold cterm=bold gui=bold
