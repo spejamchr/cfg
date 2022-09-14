@@ -4,11 +4,16 @@
 # For rubocop's defaults, see:
 # https://github.com/rubocop-hq/rubocop/blob/master/config/default.yml
 
+AllCops:
+  NewCops: enable
 
 Layout/EmptyLinesAroundClassBody:
   Enabled: false
 
 Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
 
 Layout/LineLength:
