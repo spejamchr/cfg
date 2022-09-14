@@ -11,7 +11,7 @@
 [color]
   ui = auto
 [core]
-  editor = nvim
+  editor = lvim
 [web]
   browser = open
 [credential]

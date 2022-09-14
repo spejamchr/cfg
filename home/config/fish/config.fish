@@ -1,6 +1,6 @@
 set -gx fish_greeting '' # turn off https://fishshell.com/docs/current/cmds/fish_greeting.html
 set -gx XDG_CONFIG_HOME ~/.config
-set -gx EDITOR nvim
+set -gx EDITOR lvim
 set -gx EO ~/git/work/exec_online
 
 fish_add_path ~/code/scripts
