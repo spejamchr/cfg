@@ -65,10 +65,10 @@ lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.notify.active = true
 lvim.builtin.nvimtree.active = false
-lvim.builtin.lualine.sections.lualine_a = {}
+lvim.builtin.lualine.sections.lualine_a = nil
 lvim.builtin.lualine.sections.lualine_b = { 'branch', 'diff', 'diagnostics' }
 lvim.builtin.lualine.sections.lualine_c = { 'filename' }
-lvim.builtin.lualine.sections.lualine_x = { 'encoding', 'filetype' }
+lvim.builtin.lualine.sections.lualine_x = nil
 lvim.builtin.lualine.sections.lualine_y = { 'progress' }
 lvim.builtin.lualine.sections.lualine_z = { 'location' }
 
