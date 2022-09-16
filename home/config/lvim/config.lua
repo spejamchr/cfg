@@ -8,9 +8,11 @@ an executable
 ]]
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
 
+require("base16-colorscheme").with_config { telescope = false }
+
 -- general
 lvim.log.level = "warn"
-lvim.format_on_save = true
+lvim.format_on_save = false
 -- lvim.colorscheme = "onedarker"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
@@ -20,7 +22,8 @@ lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["-"] = ":Neotree reveal current dir=%:p:h<CR>"
-lvim.keys.normal_mode["<space>e"] = ":Neotree reveal current dir=%:p:h<CR>"
+lvim.keys.normal_mode["<Leader>e"] = ":Neotree reveal current dir=%:p:h<CR>"
+lvim.keys.normal_mode["<Leader>gl"] = ":Git blame<CR>"
 -- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 -- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- unmap a default keymapping
@@ -30,24 +33,16 @@ lvim.keys.normal_mode["<space>e"] = ":Neotree reveal current dir=%:p:h<CR>"
 
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 -- we use protected-mode (pcall) just in case the plugin wasn't loaded yet.
--- local _, actions = pcall(require, "telescope.actions")
--- lvim.builtin.telescope.defaults.mappings = {
---   -- for input mode
---   i = {
---     ["<C-j>"] = actions.move_selection_next,
---     ["<C-k>"] = actions.move_selection_previous,
---     ["<C-n>"] = actions.cycle_history_next,
---     ["<C-p>"] = actions.cycle_history_prev,
---   },
---   -- for normal mode
---   n = {
---     ["<C-j>"] = actions.move_selection_next,
---     ["<C-k>"] = actions.move_selection_previous,
---   },
--- }
+local _, actions = pcall(require, "telescope.actions")
+lvim.builtin.telescope.defaults.mappings = {
+  -- for input mode
+  i = {
+    ["<esc>"] = actions.close, -- disable normal mode
+  },
+}
 
 -- Use which-key to add extra bindings with the leader-key prefix
--- lvim.builtin.which_key.mappings["e"] = false
+lvim.builtin.which_key.mappings["gl"] = { "<cmd>Git blame<cr>", "Blame" }
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 -- lvim.builtin.which_key.mappings["t"] = {
 --   name = "+Trouble",
@@ -61,13 +56,17 @@ lvim.keys.normal_mode["<space>e"] = ":Neotree reveal current dir=%:p:h<CR>"
 
 -- TODO: User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
+lvim.builtin.nvimtree.active = false
+lvim.builtin.bufferline.active = false
+lvim.builtin.project.active = false
+
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.notify.active = true
-lvim.builtin.nvimtree.active = false
+
 lvim.builtin.lualine.sections.lualine_a = nil
-lvim.builtin.lualine.sections.lualine_b = { 'branch', 'diff', 'diagnostics' }
-lvim.builtin.lualine.sections.lualine_c = { 'filename' }
+lvim.builtin.lualine.sections.lualine_b = { 'diagnostics' }
+lvim.builtin.lualine.sections.lualine_c = { '%f%m' }
 lvim.builtin.lualine.sections.lualine_x = nil
 lvim.builtin.lualine.sections.lualine_y = { 'progress' }
 lvim.builtin.lualine.sections.lualine_z = { 'location' }
@@ -176,9 +175,11 @@ lvim.plugins = {
     --  vim.o.timeoutlen = 500
     -- end
   },
-  { "ggandor/leap.nvim", config = function()
-    require('leap').set_default_keymaps()
-  end, },
+  {
+    "ggandor/leap.nvim", config = function()
+      require('leap').set_default_keymaps()
+    end,
+  },
   {
     "tpope/vim-fugitive",
     cmd = {
@@ -198,6 +199,8 @@ lvim.plugins = {
     },
     ft = { "fugitive" }
   },
+  { "tpope/vim-rhubarb" },
+  { 'stevearc/dressing.nvim' },
   {
     "norcalli/nvim-colorizer.lua",
     config = function()
@@ -216,7 +219,9 @@ lvim.plugins = {
     "folke/lsp-colors.nvim",
     event = "BufRead",
   },
-  { "RRethy/nvim-base16" },
+  {
+    "RRethy/nvim-base16",
+  },
   {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v2.x",
@@ -297,9 +302,15 @@ vim.opt.colorcolumn = vim.api.nvim_eval('join(range(101, 999), ",")')
 vim.opt.number = false
 vim.opt.wrap = true
 vim.opt.scrolloff = 0
+vim.opt.sidescrolloff = 0
 vim.opt.cmdheight = 1
 vim.opt.clipboard = nil
-vim.opt.mouse = nil
+vim.opt.mouse = ""
+vim.opt.whichwrap = "b,s"
+vim.opt.formatoptions = 'jcroql'
+vim.opt.textwidth = 100
+vim.opt.titlestring = 'lvim'
+vim.api.nvim_del_augroup_by_name("_format_options")
 
 vim.cmd([[
 if filereadable(expand("~/.vimrc_background"))
