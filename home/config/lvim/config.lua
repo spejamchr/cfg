@@ -235,45 +235,25 @@ lvim.plugins = {
 
 
       local config = {
+        use_default_mappings = false,
         window = {
-          position = "current", -- left, right, top, bottom, float, current
-          mappings = {
-            ["s"] = "open_split",
-            ["v"] = "open_vsplit",
-          },
+          position = "current",
         },
         filesystem = {
           window = {
             mappings = {
               ["-"] = "navigate_up",
+              ["<cr>"] = "open",
+              ["H"] = "toggle_hidden",
+              ["r"] = "refresh",
+              ["a"] = "add",
+              ["m"] = "move",
+              ["?"] = "show_help",
             }
           },
-          bind_to_cwd = false, -- true creates a 2-way binding between vim's cwd and neo-tree's root
-          cwd_target = {
-            sidebar = "tab", -- sidebar is when position = left or right
-            current = "window" -- current is when position = current
-          },
-          -- The renderer section provides the renderers that will be used to render the tree.
-          --   The first level is the node type.
-          --   For each node type, you can specify a list of components to render.
-          --       Components are rendered in the order they are specified.
-          --         The first field in each component is the name of the function to call.
-          --         The rest of the fields are passed to the function as the "config" argument.
+          bind_to_cwd = false,
           filtered_items = {
             hide_gitignored = false,
-          },
-          hijack_netrw_behavior = "open_current", -- netrw disabled, opening a directory opens neo-tree
-          -- in whatever position is specified in window.position
-          -- "open_current",-- netrw disabled, opening a directory opens within the
-          -- window like netrw would, regardless of window.position
-          -- "disabled",    -- netrw left alone, neo-tree does not handle opening dirs
-        },
-        buffers = {
-          bind_to_cwd = false,
-          window = {
-            mappings = {
-              ["-"] = "navigate_up",
-            },
           },
         },
       }
