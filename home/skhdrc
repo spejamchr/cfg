@@ -1,11 +1,11 @@
 # open kitty
-ctrl - return : ~/.bin/kitty -1 --listen-on unix:/tmp/mykitty
+ctrl - return : ~/.bin/kitty -1 --directory=$HOME --listen-on unix:/tmp/mykitty
 
 # open mpv
 # ctrl - m : mpv $(pbpaste)
 
 # open htop
-ctrl - s : ~/.bin/kitty -1 --title="htop" ~/code/scripts/start_htop
+ctrl - s : ~/.bin/kitty -1 --directory=$HOME --title="htop" ~/code/scripts/start_htop
 
 # Control pianobar with the media keys
 play : pgrep pianobar > /dev/null && \
