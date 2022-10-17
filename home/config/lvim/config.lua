@@ -26,6 +26,8 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["-"] = ":Neotree reveal current dir=%:p:h<CR>"
 lvim.keys.normal_mode["<Leader>e"] = ":Neotree reveal current dir=%:p:h<CR>"
 lvim.keys.normal_mode["<Leader>gl"] = ":Git blame<CR>"
+lvim.lsp.buffer_mappings.normal_mode["gd"] = { ":Telescope lsp_definitions<CR>", "LSP Definitions" }
+lvim.lsp.buffer_mappings.normal_mode["gr"] = { ":Telescope lsp_references<CR>", "LSP References" }
 -- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 -- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- unmap a default keymapping
@@ -44,7 +46,7 @@ lvim.builtin.telescope.defaults.mappings = {
 }
 
 -- Use which-key to add extra bindings with the leader-key prefix
-lvim.builtin.which_key.mappings["gl"] = { "<cmd>Git blame<cr>", "Blame" }
+lvim.builtin.which_key.mappings["gm"] = { "<cmd>Git blame<cr>", "Blame" }
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 -- lvim.builtin.which_key.mappings["t"] = {
 --   name = "+Trouble",
