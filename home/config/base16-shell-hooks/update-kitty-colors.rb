@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-THEME = File.read(File.join(ENV['HOME'], '.base16_theme')).freeze
+THEME = File.read(File.join(Dir.home, '.base16_theme')).freeze
 
-KITTY_DIR = File.join(ENV['XDG_CONFIG_HOME'], 'kitty').freeze
+KITTY_DIR = File.join(ENV.fetch('XDG_CONFIG_HOME', nil), 'kitty').freeze
 
 KITTY_COLORS_PATH = File.join(KITTY_DIR, 'colors.conf').freeze
 
@@ -57,7 +57,7 @@ def get_color(color)
     puts "Can't find color '#{color}'"
     Maybe.nothing
   else
-    Maybe.just('#' + rgb_matches.first.first.split('/').join)
+    Maybe.just(rgb_matches.first.first.split('/').unshift('#').join)
   end
 end
 
@@ -70,10 +70,10 @@ end
 
 # Get hex string (#RRGGBB) from array of integers (0-255)
 def rgb_string(rgb_ints)
-  '#' +
-    rgb_ints
+  rgb_ints
     .map { |n| n.to_i.to_s(16) }
     .map { |c| c.length == 1 ? "0#{c}" : c }
+    .unshift('#')
     .join
 end
 
@@ -81,31 +81,31 @@ end
 def with_alpha(alpha, color, background)
   rgb_string(
     rgb_integers(color).zip(rgb_integers(background))
-    .map { |c, b| alpha * c + (1 - alpha) * b }
-    .map(&:round)
+    .map { |c, b| (alpha * c) + ((1 - alpha) * b) }
+    .map(&:round),
   )
 end
 
 # See https://github.com/chriskempson/base16/blob/master/styling.md
 palette =
   Maybe
-  .just({})
-  .assign(:base00) { get_color('color00') } # black
-  .assign(:base01) { get_color('color18') }
-  .assign(:base02) { get_color('color19') }
-  .assign(:base03) { get_color('color08') } # bright black
-  .assign(:base04) { get_color('color20') }
-  .assign(:base05) { get_color('color07') } # white
-  .assign(:base06) { get_color('color21') }
-  .assign(:base07) { get_color('color15') } # bright white
-  .assign(:base08) { get_color('color01') } # red
-  .assign(:base09) { get_color('color16') } # orange?
-  .assign(:base0A) { get_color('color03') } # yellow
-  .assign(:base0B) { get_color('color02') } # green
-  .assign(:base0C) { get_color('color06') } # cyan
-  .assign(:base0D) { get_color('color04') } # blue
-  .assign(:base0E) { get_color('color05') } # magenta
-  .assign(:base0F) { get_color('color17') } # brown?
+    .just({})
+    .assign(:base00) { get_color('color00') } # black
+    .assign(:base01) { get_color('color18') }
+    .assign(:base02) { get_color('color19') }
+    .assign(:base03) { get_color('color08') } # bright black
+    .assign(:base04) { get_color('color20') }
+    .assign(:base05) { get_color('color07') } # white
+    .assign(:base06) { get_color('color21') }
+    .assign(:base07) { get_color('color15') } # bright white
+    .assign(:base08) { get_color('color01') } # red
+    .assign(:base09) { get_color('color16') } # orange?
+    .assign(:base0A) { get_color('color03') } # yellow
+    .assign(:base0B) { get_color('color02') } # green
+    .assign(:base0C) { get_color('color06') } # cyan
+    .assign(:base0D) { get_color('color04') } # blue
+    .assign(:base0E) { get_color('color05') } # magenta
+    .assign(:base0F) { get_color('color17') } # brown?
 
 kitty_colors = palette.map do |p|
   {
@@ -157,33 +157,33 @@ end
 
 kitty_diff_colors = palette.map do |p|
   {
-    foreground:           p[:base05],
-    background:           p[:base00],
+    foreground: p[:base05],
+    background: p[:base00],
 
-    title_fg:             p[:base04],
-    title_bg:             p[:base01],
+    title_fg: p[:base04],
+    title_bg: p[:base01],
 
-    margin_fg:            p[:base04],
-    margin_bg:            p[:base02],
+    margin_fg: p[:base04],
+    margin_bg: p[:base02],
 
-    removed_bg:           with_alpha(0.1, p[:base08], p[:base00]),
+    removed_bg: with_alpha(0.1, p[:base08], p[:base00]),
     highlight_removed_bg: with_alpha(0.2, p[:base08], p[:base00]),
-    removed_margin_bg:    with_alpha(0.1, p[:base08], p[:base01]),
+    removed_margin_bg: with_alpha(0.1, p[:base08], p[:base01]),
 
-    added_bg:             with_alpha(0.1, p[:base0B], p[:base00]),
-    highlight_added_bg:   with_alpha(0.2, p[:base0B], p[:base00]),
-    added_margin_bg:      with_alpha(0.1, p[:base0B], p[:base01]),
+    added_bg: with_alpha(0.1, p[:base0B], p[:base00]),
+    highlight_added_bg: with_alpha(0.2, p[:base0B], p[:base00]),
+    added_margin_bg: with_alpha(0.1, p[:base0B], p[:base01]),
 
-    filler_bg:            p[:base01],
+    filler_bg: p[:base01],
 
-    hunk_margin_bg:       with_alpha(0.2, p[:base0D], p[:base00]),
-    hunk_bg:              with_alpha(0.2, p[:base0D], p[:base01]),
+    hunk_margin_bg: with_alpha(0.2, p[:base0D], p[:base00]),
+    hunk_bg: with_alpha(0.2, p[:base0D], p[:base01]),
 
-    search_fg:            p[:base05],
-    search_bg:            p[:base02],
+    search_fg: p[:base05],
+    search_bg: p[:base02],
 
-    select_fg:            p[:base05],
-    select_bg:            p[:base02],
+    select_fg: p[:base05],
+    select_bg: p[:base02],
   }
 end
 
