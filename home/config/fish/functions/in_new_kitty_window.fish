@@ -8,5 +8,5 @@ function in_new_kitty_window
 
   set -l id $(kitty @ launch --type tab --tab-title $title --title $title --keep-focus)
 
-  [ (count $argv) -gt 1 ] && kitty @ send-text --match id:"$id" $argv[2..] "\n"
+  [ (count $argv) -gt 1 ] && kitty @ send-text -m id:"$id" $argv[2..] \n
 end

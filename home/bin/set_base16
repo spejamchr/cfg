@@ -57,11 +57,10 @@ endif
 # Tell all nvim sessions to reload ~/.vimrc_background
 #
 # This is a little brittle. The escape sequences--\033\033--are sent to exit
-# insert/visual mode and return to normal mode, but it doesn't seem to work for
-# visual mode.
+# insert/visual mode and return to normal mode.
 for id in $(pgrep nvim); do
   pid=$(ps -o ppid= -p $id | sed -e 's/ //')
   kitty @ --to unix:/tmp/mykitty send-text \
-    --match pid:"$pid" \
-    "\033\033:source ~/.vimrc_background\n"
+    -m pid:"$pid" \
+    $'\033\033:source ~/.vimrc_background\n'
 done
