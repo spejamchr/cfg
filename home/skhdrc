@@ -123,7 +123,7 @@ shift + alt - f : yabai -m window --toggle native-fullscreen
 
 # float / unfloat window and center on screen
 alt - t : yabai -m window --toggle float;\
-          yabai -m window --grid 4:4:1:1:2:2
+          yabai -m window --grid 7:7:1:1:5:5
 
 # toggle sticky
 alt - s : yabai -m window --toggle sticky
