@@ -52,9 +52,6 @@ Style/TrailingCommaInHashLiteral:
 Style/AsciiComments:
   Enabled: false
 
-Style/WordArray:
-  EnforcedStyle: brackets
-
 Lint/SafeNavigationChain:
   AllowedMethods:
     - present?
