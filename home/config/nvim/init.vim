@@ -6,14 +6,13 @@ scriptencoding utf-8
 let mapleader=' '
 
 " Simple option settings {{{
-" If hidden is not set, coc.nvim's TextEdit might fail
 set hidden
 
 set nobackup       " no backup files
 set nowritebackup  " only in case you don't want a backup file while editing
 set noswapfile     " no swap files
 
-" More frequent updates for CursorHold events (GitGutter, coc.nvim)
+" More frequent updates for CursorHold events (GitGutter)
 set updatetime=100
 
 " Tab key inserts 2 spaces
@@ -27,6 +26,9 @@ set ignorecase smartcase
 
 set splitbelow
 set splitright
+
+" disable the mouse
+set mouse=
 
 " Highlight the cursor's line
 set cursorline
@@ -75,7 +77,7 @@ fun! <SID>StripTrailingWhitespaces()
     let @/ = s " Restore the search
 endfun
 " Don't remove whitespace in diff files, it's important there.
-autocmd BufWritePre * if &ft!~?'diff'|:call <SID>StripTrailingWhitespaces()|endif
+" autocmd BufWritePre * if &ft!~?'diff'|:call <SID>StripTrailingWhitespaces()|endif
 
 " Show invisible characters in diff files
 set listchars=tab:»\ ,eol:¬,trail:·
@@ -129,7 +131,7 @@ fun! <SID>FixMostRecentSpellingError()
 endfun
 
 " Correct spelling mistake under the cursor
-nnoremap <Leader>s :call <Sid>FixMostRecentSpellingError()<CR>
+" nnoremap <Leader>s :call <Sid>FixMostRecentSpellingError()<CR>
 
 " Delete all hidden buffers (clearing up the buffer list)
 nnoremap <Leader>d :call DeleteHiddenBuffers()<CR>
@@ -154,7 +156,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " Many languages (including Crystal and JSX)
-Plug 'sheerun/vim-polyglot'
+" Plug 'sheerun/vim-polyglot'
 
 " Statusline
 Plug 'vim-airline/vim-airline'
@@ -166,38 +168,40 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-repeat'
 
 " Show git diff marks
-Plug 'airblade/vim-gitgutter'
+" Plug 'airblade/vim-gitgutter'
+Plug 'lewis6991/gitsigns.nvim'
 
-" Show number of search matches
-Plug 'google/vim-searchindex'
-
+" Even fewer distractions
 Plug 'junegunn/goyo.vim'
 
 " Get synonyms for writing
 Plug 'ron89/thesaurus_query.vim'
 
 " Intellisense engine. Language Server Protocol support as full as VSCode
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+Plug 'neovim/nvim-lspconfig'
 
-" Use FZF instead of coc.nvim's built-in fuzzy finder.
-Plug 'antoinemadec/coc-fzf'
+Plug 'folke/lsp-trouble.nvim'
+
+Plug 'nvim-lua/plenary.nvim'
+Plug 'stevearc/dressing.nvim'
+
+" Use FZF with the LSP
+Plug 'gfanto/fzf-lsp.nvim'
+
+" Autocompletion
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
 
 " Snippets
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
-
-" coc.nvim plugins
-let g:coc_global_extensions=[
-\  'coc-css',
-\  'coc-json',
-\  'coc-rls',
-\  'coc-solargraph',
-\  'coc-tsserver',
-\  'coc-ultisnips',
-\  '@yaegassy/coc-tailwindcss3',
-\]
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 
 " Format code
 Plug 'sbdchd/neoformat'
@@ -206,7 +210,7 @@ Plug 'sbdchd/neoformat'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
 " Themes
-Plug 'chriskempson/base16-vim'
+Plug 'RRethy/nvim-base16'
 
 " Preview colours in source code while editing
 Plug 'chrisbra/Colorizer'
@@ -216,11 +220,121 @@ Plug 'lambdalisue/fern.vim'
 Plug 'lambdalisue/fern-hijack.vim'
 Plug 'lambdalisue/fern-git-status.vim'
 
-" Has lots of stuff. I'm using its indentscope module
-Plug 'echasnovski/mini.nvim'
+" Jetpack navigation
+Plug 'ggandor/leap.nvim'
+
+Plug 'windwp/nvim-autopairs'
+
+" Treesitter...
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'JoosepAlviste/nvim-ts-context-commentstring'
 
 " Initialize plugin system
 call plug#end()
+" }}}
+
+" Configure autocompletions with nvim-cmp {{{
+set completeopt=menu,menuone,noselect
+
+lua <<EOF
+  -- Setup nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      expand = function(args)
+        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    window = {
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<C-j>'] = cmp.mapping.confirm({ select = true }),
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'ultisnips' }, -- For ultisnips users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline('/', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+EOF
+
+" }}}
+
+" Configure LSP {{{
+lua << EOF
+-- Mappings.
+-- See `:help vim.diagnostic.*` for documentation on any of the below functions
+local opts = { noremap=true, silent=true }
+vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, opts)
+vim.keymap.set('n', '<Leader>lk', vim.diagnostic.goto_prev, opts)
+vim.keymap.set('n', '<Leader>lj', vim.diagnostic.goto_next, opts)
+vim.keymap.set('n', '<Leader>q', vim.diagnostic.setloclist, opts)
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+ local on_attach = function(client, bufnr)
+   -- Enable completion triggered by <c-x><c-o>
+   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+   -- Mappings.
+   -- See `:help vim.lsp.*` for documentation on any of the below functions
+   local bufopts = { noremap=true, silent=true, buffer=bufnr }
+   vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+   vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, bufopts)
+   vim.keymap.set('n', '<Leader>qf', vim.lsp.buf.code_action, bufopts)
+   vim.keymap.set('n', '<Leader>rf', vim.lsp.buf.format, bufopts)
+ end
+
+local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+require('lspconfig').tsserver.setup{
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
+require('lspconfig').solargraph.setup{
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
+
+require('lspconfig').rust_analyzer.setup{
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
+EOF
 " }}}
 
 " Configure FixCursorHold {{{
@@ -277,29 +391,34 @@ let g:airline_skip_empty_sections=1
 " Configure fzf {{{
 " Fuzzy find files in the working directory
 nnoremap <Leader>f :Files<CR>
+nnoremap <Leader>sf :Files<CR>
 
 " Search for the word under the cursor
-nnoremap <Leader>g :Rg <C-r><C-w><CR>
+nnoremap <Leader>sg :Rg <C-r><C-w><CR>
 
 " Fuzzy find text in the working directory
-nnoremap <Leader>G :Rg<CR>
+nnoremap <Leader>sG :Rg<CR>
 
 " Fuzzy find lines in the current file
-nnoremap <Leader>/ :BLines<CR>
+nnoremap <Leader>s/ :BLines<CR>
 
-" Fuzzy find Vim commands
-nnoremap <Leader>c :Commands<CR>
+" Fuzzy find Vim uommands
+nnoremap <Leader>sc :Commands<CR>
 
 " Fuzzy find buffers
-nnoremap <Leader>b :Buffers<CR>
+nnoremap <Leader>sb :Buffers<CR>
 
 " Fuzzy find history
-nnoremap <Leader>h :History<CR>
+nnoremap <Leader>sh :History<CR>
 
 " Use rg with FZF, showing hidden files but ignoring .git/
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/*"'
 
 let $FZF_DEFAULT_OPTS="--layout=reverse"
+
+" Configure FZF with LSP
+nnoremap gd :Definitions<CR>
+nnoremap gr :References<CR>
 " }}}
 
 " Configure markdown-preview.nvim {{{
@@ -310,46 +429,9 @@ let g:mkdp_auto_start = 0
 let g:mkdp_auto_close = 0
 " }}}
 
-" Configure coc.nvim {{{
-inoremap <silent><expr> <C-space> coc#refresh()
+" Configure colorscheme w/base16 {{{
+lua require("base16-colorscheme").with_config { telescope = false }
 
-" Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [e <Plug>(coc-diagnostic-prev)
-nmap <silent> ]e <Plug>(coc-diagnostic-next)
-
-" Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Remap for rename current word
-nmap <Leader>rn <Plug>(coc-rename)
-nmap <Leader>o :call CocActionAsync('runCommand', 'tsserver.organizeImports')<CR>
-
-" Remap <C-f> and <C-b> for scroll float windows/popups.
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-endif
-
-augroup coc-nvim
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setlocal formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-" Fix autofix problem of current line
-nmap <Leader>qf  <Plug>(coc-fix-current)
-nmap <Leader>a  :CocAction<CR>
-" }}}
-
-" Configure colorscheme w/base16-vim {{{
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   set termguicolors
@@ -359,13 +441,9 @@ endif
 " Configure highlighting (must be done after initializing the colorscheme) {{{
 " Italicize comments
 highlight Comment cterm=italic gui=italic
-" Make coc.nvim's selected text visible
-highlight CocMenuSel guibg=DarkMagenta
 " Italicize and bold markdown stuff
 highlight htmlItalic cterm=italic gui=italic
 highlight htmlBold cterm=bold gui=bold
-" Conceal things that can be concealed
-set conceallevel=2
 " }}}
 
 " }}}
@@ -443,8 +521,172 @@ augroup END
 
 " }}}
 
-" Configure echasnovski/mini.vim {{{
+" Configure ggandor/leap {{{
+lua require('leap').add_default_mappings()
+" }}}
+
+" Configure windwp/nvim-autopairs {{{
 lua << EOF
-require('mini.indentscope').setup()
+require("nvim-autopairs").setup {}
 EOF
+" }}}
+
+" Configure Treesitter {{{
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  auto_install = true,
+  highlight = { enable = true },
+  incremental_selection = { enable = true },
+  textobjects = { enable = true },
+  indent = { enable = true },
+  context_commentstring = { enable = false },
+}
+EOF
+" }}}
+
+" Configure lewis6991/gitsigns.nvim {{{
+" See https://github.com/lewis6991/gitsigns.nvim#keymaps
+lua <<EOF
+require('gitsigns').setup({
+  on_attach = function(bufnr)
+    local gs = package.loaded.gitsigns
+
+    local function map(mode, l, r, opts)
+      opts = opts or {}
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+
+    -- Navigation
+    map('n', '<leader>gj', function()
+      if vim.wo.diff then return '<leader>gj' end
+      vim.schedule(function() gs.next_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    map('n', '<leader>gk', function()
+      if vim.wo.diff then return '<leader>gk' end
+      vim.schedule(function() gs.prev_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+  end
+})
+EOF
+" }}}
+
+" Custom highlight groups for old themes {{{
+fun! <SID>HighlightOldGroups()
+  " Misc {{{
+  hi link @comment Comment
+  hi link @error Error
+  hi link @none NONE
+  hi link @preproc PreProc
+  hi link @define Define
+  hi link @operator Operator
+  " }}}
+
+  " Punctuation {{{
+  hi link @punctuation.delimiter Delimiter
+  hi link @punctuation.bracket Delimiter
+  hi link @punctuation.special Delimiter
+  " }}}
+
+  " Literals {{{
+  hi link @string String
+  hi link @string.regex String
+  hi link @string.escape SpecialChar
+  hi link @string.special SpecialChar
+
+  hi link @character Character
+  hi link @character.special SpecialChar
+
+  hi link @boolean Boolean
+  hi link @number Number
+  hi link @float Float
+  " }}}
+
+  " Functions {{{
+  hi link @function Function
+  hi link @function.call Function
+  hi link @function.builtin Special
+  hi link @function.macro Macro
+
+  hi link @method Function
+  hi link @method.call Function
+
+  hi link @constructor Special
+  hi link @parameter Identifier
+  " }}}
+
+  " Keywords {{{
+  hi link @keyword Keyword
+  hi link @keyword.function Keyword
+  hi link @keyword.operator Keyword
+  hi link @keyword.return Keyword
+
+  hi link @conditional Conditional
+  hi link @repeat Repeat
+  hi link @debug Debug
+  hi link @label Label
+  hi link @include Include
+  hi link @exception Exception
+  " }}}
+
+  " Types {{{
+  hi link @type Type
+  hi link @type.builtin Type
+  hi link @type.qualifier Type
+  hi link @type.definition Typedef
+
+  hi link @storageclass StorageClass
+  hi link @attribute PreProc
+  hi link @field Identifier
+  hi link @property Identifier
+  " }}}
+
+  " Identifiers {{{
+  hi link @variable Normal
+  hi link @variable.builtin Special
+
+  hi link @constant Constant
+  hi link @constant.builtin Special
+  hi link @constant.macro Define
+
+  hi link @namespace Include
+  hi link @symbol Identifier
+  " }}}
+
+  " Text {{{
+  hi link @text Normal
+  hi @text.strong gui=bold
+  hi @text.emphasis gui=italic
+  hi @text.underline gui=underline
+  hi link @text.title Title
+  hi link @text.literal String
+  hi link @text.uri Underlined
+  hi link @text.math Special
+  hi link @text.environment Macro
+  hi link @text.environment.name Type
+  hi link @text.reference Constant
+
+  hi link @text.todo Todo
+  hi link @text.note SpecialComment
+  hi link @text.warning WarningMsg
+  hi link @text.danger ErrorMsg
+  " }}}
+
+  " Tags {{{
+  hi link @tag Tag
+  hi link @tag.attribute Identifier
+  hi link @tag.delimiter Delimiter
+  " }}}
+endfun
+
+augroup highlight_old_groups
+  autocmd!
+
+  autocmd ColorScheme * :call <SID>HighlightOldGroups()
+augroup END
+
+call <SID>HighlightOldGroups()
 " }}}

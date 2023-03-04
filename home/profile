@@ -15,8 +15,7 @@ export PATH="$PATH:$HOME/.bin" # My own scripts (managed by ~/.dotfiles/install.
 
 export CLICOLOR=1
 
-# Use LunarVim
-export VISUAL=lvim
+export VISUAL=nvim
 export EDITOR="$VISUAL"
 
 # More History

@@ -10,8 +10,6 @@
   dif = difftool --no-symlinks --dir-diff
 [color]
   ui = auto
-[core]
-  editor = lvim
 [web]
   browser = open
 [credential]
