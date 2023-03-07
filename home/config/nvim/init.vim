@@ -425,7 +425,7 @@ nnoremap <Leader>sf :Files<CR>
 nnoremap <Leader>sg :Rg <C-r><C-w><CR>
 
 " Fuzzy find text in the working directory
-nnoremap <Leader>sG :Rg<CR>
+nnoremap <Leader>st :Rg<CR>
 
 " Fuzzy find lines in the current file
 nnoremap <Leader>s/ :BLines<CR>
