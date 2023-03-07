@@ -8,6 +8,12 @@ let mapleader=' '
 " Simple option settings {{{
 set hidden
 
+" fish is great for interactive shells, but for editing use zsh
+set shell=/opt/homebrew/bin/zsh
+
+" Always show the signcolumn to prevent the text from bouncing
+set signcolumn=yes
+
 set nobackup       " no backup files
 set nowritebackup  " only in case you don't want a backup file while editing
 set noswapfile     " no swap files
