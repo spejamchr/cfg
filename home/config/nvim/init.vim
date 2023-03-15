@@ -186,7 +186,11 @@ Plug 'junegunn/goyo.vim'
 " Get synonyms for writing
 Plug 'ron89/thesaurus_query.vim'
 
-" Intellisense engine. Language Server Protocol support as full as VSCode
+" Mason makes it easy to install LSP servers and stuff (things outside of nvim)
+" lspconfig makes it easy to configure nvim's builtin LSP stuff
+" mason-lspconfig helps link them
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
 
 Plug 'folke/lsp-trouble.nvim'
@@ -306,6 +310,9 @@ EOF
 
 " Configure LSP {{{
 lua << EOF
+require("mason").setup()
+require("mason-lspconfig").setup()
+
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap=true, silent=true }
@@ -331,20 +338,25 @@ vim.keymap.set('n', '<Leader>q', vim.diagnostic.setloclist, opts)
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-require("typescript").setup{
-  server = {
-    on_attach = on_attach,
-    capabilities = capabilities,
-  },
-}
-require('lspconfig').solargraph.setup{
-  on_attach = on_attach,
-  capabilities = capabilities,
-}
-
-require('lspconfig').rust_analyzer.setup{
-  on_attach = on_attach,
-  capabilities = capabilities,
+require("mason-lspconfig").setup_handlers {
+  -- The first entry (without a key) will be the default handler
+  -- and will be called for each installed server that doesn't have
+  -- a dedicated handler.
+  function (server_name) -- default handler (optional)
+    require("lspconfig")[server_name].setup {
+      on_attach = on_attach,
+      capabilities = capabilities,
+    }
+  end,
+  -- next, you can provide a dedicated handler for specific servers.
+  ["tsserver"] = function ()
+    require("typescript").setup{
+      server = {
+        on_attach = on_attach,
+        capabilities = capabilities,
+      },
+    }
+  end
 }
 
 local _border = "rounded"
