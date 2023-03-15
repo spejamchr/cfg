@@ -217,6 +217,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
 " Themes
 Plug 'RRethy/nvim-base16'
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 
 " Preview colours in source code while editing
 Plug 'chrisbra/Colorizer'
