@@ -17,7 +17,8 @@ Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
 
 Layout/LineLength:
-  Enabled: false
+  Enabled: true
+  Max: 100
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
@@ -32,13 +33,19 @@ Style/Documentation:
   Enabled: false
 
 Style/FrozenStringLiteralComment:
-  Enabled: false
+  Enabled: true
 
 Style/MultilineTernaryOperator:
   Enabled: false
 
 Style/StringLiterals:
   Enabled: false
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/WordArray:
+  EnforcedStyle: brackets
 
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
