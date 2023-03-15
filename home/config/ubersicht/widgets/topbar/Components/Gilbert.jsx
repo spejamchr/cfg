@@ -183,6 +183,7 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
             />
           ))}
           <line
+            strokeWidth={0.7}
             x1={minX}
             y1={minY}
             x2={maxX}
@@ -191,6 +192,7 @@ export const render = prepare("gilbert", ({ displays, colors }) => {
           />
           {genSeeds({ minX, maxX, minY, maxY }).map((s) => (
             <line
+              strokeWidth={(3 * s.y) / maxY}
               key={`${s.x},${s.y}`}
               x1={s.x + s.l[0] * Math.cos(s.a)}
               y1={s.y + s.l[0] * Math.sin(s.a)}
