@@ -236,6 +236,9 @@ Plug 'windwp/nvim-autopairs'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'JoosepAlviste/nvim-ts-context-commentstring'
 
+" Nicer Typescript support
+Plug 'jose-elias-alvarez/typescript.nvim'
+
 " Initialize plugin system
 call plug#end()
 " }}}
@@ -328,9 +331,11 @@ vim.keymap.set('n', '<Leader>q', vim.diagnostic.setloclist, opts)
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-require('lspconfig').tsserver.setup{
-  on_attach = on_attach,
-  capabilities = capabilities,
+require("typescript").setup{
+  server = {
+    on_attach = on_attach,
+    capabilities = capabilities,
+  },
 }
 require('lspconfig').solargraph.setup{
   on_attach = on_attach,
