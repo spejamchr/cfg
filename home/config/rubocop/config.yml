@@ -32,8 +32,14 @@ Style/AccessModifierDeclarations:
 Style/Documentation:
   Enabled: false
 
+Style/FormatStringToken:
+  Enabled: false
+
 Style/FrozenStringLiteralComment:
   Enabled: true
+
+Style/Lambda:
+  Enabled: false
 
 Style/MultilineTernaryOperator:
   Enabled: false
