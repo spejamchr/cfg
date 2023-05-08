@@ -27,8 +27,8 @@ set tabstop=4 softtabstop=0 expandtab shiftwidth=2 smartindent
 " Hide line numbers
 set nonu
 
-" `word` finds `word`, `Word`, and `WORD`. `WORD` only finds `WORD`.
-set ignorecase smartcase
+" `word` finds `word`. `Word` finds `Word`. `WORD` finds `WORD`.
+set noignorecase smartcase
 
 set splitbelow
 set splitright
