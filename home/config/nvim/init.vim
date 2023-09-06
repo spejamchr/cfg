@@ -37,7 +37,7 @@ set splitright
 set mouse=
 
 " Highlight the cursor's line
-set cursorline
+" set cursorline
 highlight CursorLine cterm=undercurl
 
 " Use tree view in netrw directory browser
@@ -220,7 +220,7 @@ Plug 'sbdchd/neoformat'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
 " Themes
-Plug 'RRethy/nvim-base16'
+Plug 'freddiehaddad/base16-nvim'
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 
 " Preview colours in source code while editing
@@ -432,6 +432,7 @@ let g:airline_powerline_fonts = 1
 let g:airline_section_b=''
 let g:airline_section_y=''
 let g:airline_skip_empty_sections=1
+let g:airline_theme='base16_harmonic_dark'
 " }}}
 
 " Configure fzf {{{
@@ -476,13 +477,16 @@ let g:mkdp_auto_close = 0
 " }}}
 
 " Configure colorscheme w/base16 {{{
-lua require("base16-colorscheme").with_config { telescope = false }
+" lua require("base16-nvim").setup({})
 
-if filereadable(expand("~/.vimrc_background"))
-  let base16colorspace=256
-  set termguicolors
-  source ~/.vimrc_background
-endif
+" let base16colorspace=256
+" set termguicolors
+
+" if filereadable(expand("~/.vimrc_background"))
+"   source ~/.vimrc_background
+" endif
+
+colorscheme tokyonight-night
 
 " Configure highlighting (must be done after initializing the colorscheme) {{{
 " Italicize comments
