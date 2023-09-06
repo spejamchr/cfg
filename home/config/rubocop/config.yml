@@ -7,7 +7,13 @@
 AllCops:
   NewCops: enable
 
-Layout/EmptyLinesAroundClassBody:
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Style/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Style/QuotedSymbols:
   Enabled: false
 
 Layout/FirstArrayElementIndentation:
