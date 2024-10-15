@@ -1,6 +1,6 @@
 
 function gitpushnew
-  set BRANCH $(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+  set BRANCH $(git branch --show-current)
   if [ $BRANCH = "master" -o $BRANCH = "main" -o $BRANCH = "staging" -o $BRANCH = "production" ]
     echo "You're on $BRANCH!"
     return 1

@@ -45,3 +45,5 @@
 	keepBackup = false
 [mergetool.nvimdiff]
 	trustExitCode = false
+[rerere]
+	enabled = true

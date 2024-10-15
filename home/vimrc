@@ -11,13 +11,14 @@ syntax enable
 set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab smartindent autoindent
 
 " Hide line numbers
-set nonu
+" set nonu
+set nu
 
 " `word` finds `word`, `Word`, and `WORD`. `WORD` only finds `WORD`.
 set ignorecase smartcase
 
 " Color the 81'st column, to show lines that are too long
-set colorcolumn=81
+" set colorcolumn=81
 
 " Auto-indent
 filetype indent plugin on

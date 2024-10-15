@@ -83,7 +83,7 @@ fun! <SID>StripTrailingWhitespaces()
     let @/ = s " Restore the search
 endfun
 " Don't remove whitespace in diff files, it's important there.
-" autocmd BufWritePre * if &ft!~?'diff'|:call <SID>StripTrailingWhitespaces()|endif
+ autocmd BufWritePre * if &ft!~?'diff'|:call <SID>StripTrailingWhitespaces()|endif
 
 " Show invisible characters in diff files
 set listchars=tab:»\ ,eol:¬,trail:·
@@ -154,12 +154,11 @@ endif
 " Install plugins {{{
 call plug#begin('~/.local/share/nvim/plugged')
 
-" Fix neovim CusorHold and CursorHoldI autocmd events performance bug
-Plug 'antoinemadec/FixCursorHold.nvim'
-
 " Fuzzy finder
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf.vim'
+" Plug 'ibhagwan/fzf-lua', {'branch': 'main'} " SJC TODO: Switch to this?
 
 " Many languages (including Crystal and JSX)
 " Plug 'sheerun/vim-polyglot'
@@ -177,7 +176,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 
 " Show git diff marks
-" Plug 'airblade/vim-gitgutter'
 Plug 'lewis6991/gitsigns.nvim'
 
 " Even fewer distractions
@@ -193,7 +191,7 @@ Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
 
-Plug 'folke/lsp-trouble.nvim'
+"Plug 'folke/lsp-trouble.nvim' " SJC TODO: Do I use this?
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'stevearc/dressing.nvim'
@@ -220,7 +218,7 @@ Plug 'sbdchd/neoformat'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
 " Themes
-Plug 'freddiehaddad/base16-nvim'
+Plug 'RRethy/base16-nvim'
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 
 " Preview colours in source code while editing
@@ -318,6 +316,7 @@ require("mason-lspconfig").setup()
 local opts = { noremap=true, silent=true }
 vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, opts)
 vim.keymap.set('n', '<Leader>lk', vim.diagnostic.goto_prev, opts)
+vim.keymap.set('n', '<Leader>gd', vim.lsp.buf.definition, opts)
 vim.keymap.set('n', '<Leader>lj', vim.diagnostic.goto_next, opts)
 vim.keymap.set('n', '<Leader>q', vim.diagnostic.setloclist, opts)
 
@@ -349,12 +348,40 @@ require("mason-lspconfig").setup_handlers {
     }
   end,
   -- next, you can provide a dedicated handler for specific servers.
-  ["tsserver"] = function ()
+  ["ts_ls"] = function ()
     require("typescript").setup{
       server = {
         on_attach = on_attach,
         capabilities = capabilities,
       },
+    }
+  end,
+  ["cssls"] = function()
+    require('lspconfig').cssls.setup({
+      settings = {
+        css = {
+          lint = {
+            unknownAtRules = 'ignore',
+          },
+        },
+      },
+    })
+  end,
+  ["tailwindcss"] = function()
+    require("lspconfig").tailwindcss.setup {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      settings = {
+        tailwindCSS = {
+          experimental = {
+            classRegex = {
+              -- enable tailwind in haml: https://github.com/paolotiu/tailwind-intellisense-regex-list#haml
+              { "class: ?\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)" },
+              { "(\\.[\\w\\-.]+)[\\n\\=\\{\\s]", "([\\w\\-]+)" },
+            }
+          }
+        }
+      }
     }
   end
 }
@@ -381,12 +408,6 @@ require('lspconfig.ui.windows').default_options = {
   border = _border
 }
 EOF
-" }}}
-
-" Configure FixCursorHold {{{
-" in millisecond, used for both CursorHold and CursorHoldI,
-" use updatetime instead if not defined
-let g:cursorhold_updatetime = 100
 " }}}
 
 " Configure code auto-formatting with Neoformat {{{
@@ -479,14 +500,14 @@ let g:mkdp_auto_close = 0
 " Configure colorscheme w/base16 {{{
 " lua require("base16-nvim").setup({})
 
-" let base16colorspace=256
-" set termguicolors
+let base16colorspace=256
+set termguicolors
 
-" if filereadable(expand("~/.vimrc_background"))
-"   source ~/.vimrc_background
-" endif
+if filereadable(expand("~/.vimrc_background"))
+  source ~/.vimrc_background
+endif
 
-colorscheme tokyonight-night
+" colorscheme tokyonight-night
 
 " Configure highlighting (must be done after initializing the colorscheme) {{{
 " Italicize comments
@@ -606,6 +627,13 @@ require('gitsigns').setup({
       opts.buffer = bufnr
       vim.keymap.set(mode, l, r, opts)
     end
+
+    -- Stage hunk
+    map('n', '<leader>ga', function()
+      if vim.wo.diff then return '<leader>ga' end
+      vim.schedule(function() gs.stage_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
 
     -- Navigation
     map('n', '<leader>gj', function()

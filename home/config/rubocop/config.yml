@@ -7,10 +7,13 @@
 AllCops:
   NewCops: enable
 
-Style/EmptyLinesAroundClassBody:
+Layout/EmptyLinesAroundClassBody:
   Enabled: false
 
-Style/EmptyLinesAroundModuleBody:
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Style/NumericLiterals:
   Enabled: false
 
 Style/QuotedSymbols:

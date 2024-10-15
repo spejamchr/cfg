@@ -4,44 +4,51 @@ $0
 endsnippet
 
 snippet .assign "Assign to a JSON Decoder"
-.assign('${1:prop}', field('`!p snip.rv = re.sub(r'(?<!^)(?=[A-Z])', '_', t[1]).lower()`', ${2:string}))
-$0
+.assign('${1:prop}', field('`!p snip.rv = re.sub(r'(?<!^)(?=[A-Z])', '_', t[1]).lower()`', ${2:string}))$0
 endsnippet
 
 snippet storeTypes "Types for a basic store"
-interface Waiting {
+export interface Waiting {
   kind: 'waiting';
 }
 
 export interface Loading {
   kind: 'loading';
+  link: Link;
 }
 
-interface Ready {
+export type LoadError = AppyError;
+
+export interface LoadingError {
+  kind: 'loading-error';
+  error: LoadError;
+}
+
+export interface Ready {
   kind: 'ready';
-}
-
-interface Error {
-  kind: 'error';
+  resource: $1,
 }
 
 export const waiting = (): Waiting => ({
   kind: 'waiting',
 });
 
-export const loading = (): Loading => ({
+export const loading = (link: Link): Loading => ({
   kind: 'loading',
+  link,
 });
 
-export const ready = (): Ready => ({
-  kind: 'ready',
-});
-
-export const error = (): Error => ({
-  kind: 'error',
+export const loadingError = (error: LoadError): LoadingError => ({
+  kind: 'loading-error',
+  error,
 })
 
-export type $1State = Waiting | Loading | Ready | Error;
+export const ready = (resource: `!p snip.rv = t[1]`): Ready => ({
+  kind: 'ready',
+  resource,
+});
+
+export type State = Waiting | Loading | LoadingError | Ready;
 endsnippet
 
 snippet sjc "Debugging logger"
@@ -49,13 +56,16 @@ console.log(\`[SJC] ${1:message}\`)
 endsnippet
 
 snippet store "Basic store"
-import assertNever from 'exo_modules/AssertNever';
-import { action, observable } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import { State, waiting } from './Types';
 
 class Store {
   @observable
   state: State = waiting();
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action
   ready = (): void => {
@@ -71,8 +81,6 @@ endsnippet
 
 snippet reactions "Basic Reactions component"
 import { warn } from '@execonline-inc/logging';
-import assertNever from 'exo_modules/AssertNever';
-import ReactionComponent, { RCProps } from 'javascripts/ReactionComponent';
 import Store from './Store';
 import { State } from './Types';
 
@@ -86,8 +94,8 @@ class Reactions extends ReactionComponent<Store, State, RCProps<Store>> {
         break;
       case 'ready':
         break;
-      case 'error':
-        warn(state.message);
+      case 'loading-error':
+        warn("Could not load $1", JSON.stringify(state.error));
         break;
       default:
         assertNever(state);

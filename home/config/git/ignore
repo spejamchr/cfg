@@ -17,7 +17,6 @@
 # Logs and databases #
 ######################
 *.log
-*.sql
 *.sqlite
 
 # OS generated files #
@@ -31,3 +30,5 @@
 # Temp files #
 ##############
 .*@neomake*
+
+sjc/

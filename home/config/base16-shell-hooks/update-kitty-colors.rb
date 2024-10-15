@@ -152,6 +152,8 @@ kitty_colors = palette.map do |p|
     active_border_color: p[:base0B],
     inactive_border_color: p[:base03],
     bell_border_color: p[:base08],
+
+    transparent_background_colors: p.values_at(:base01, :base02, :base07, :base0A).join(" "),
   }
 end
 
@@ -193,7 +195,8 @@ kitty_colors.effect do |colors|
     f.puts "# #{__FILE__}"
     colors.each { |kv| f.puts kv.join(' ') }
   end
-  `kitty @ --to unix:/tmp/mykitty set-colors --all --configured "#{KITTY_COLORS_PATH}"`
+  # `kitty @ --to unix:/tmp/mykitty set-colors --all --configured "#{KITTY_COLORS_PATH}"`
+  `kitty @ --to unix:/tmp/mykitty load-config`
 end
 
 kitty_diff_colors.effect do |colors|

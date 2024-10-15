@@ -3,7 +3,7 @@ function eo_terminal
     in_new_kitty_window source "e $EO" &&
         in_new_kitty_window console "cd $EO && be rails console" &&
         in_new_kitty_window "木" "cd $EO && de tail -f log/development.log" &&
-        in_new_kitty_window "EP木" "cd $EO && docker logs -f exec_online-ep_client-1" &&
+        in_new_kitty_window "EP木" "cd $EO && docker logs -f exec_online-enterprise-1" &&
         in_new_kitty_window "P3木" "cd $EO && docker logs -f exec_online-p3-1" &&
         in_new_kitty_window "puma木" "cd $EO && docker logs -f exec_online-exo_app-1" &&
         in_new_kitty_window pianoctl pianoctl &&

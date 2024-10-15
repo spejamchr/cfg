@@ -8,5 +8,7 @@ function in_new_kitty_window
 
   set -l id $(kitty @ launch --type tab --tab-title $title --title $title --keep-focus)
 
-  [ (count $argv) -gt 1 ] && kitty @ send-text -m id:"$id" $argv[2..] \n
+  if [ (count $argv) -gt 1 ]
+    fish --command "sleep 0.1 && kitty @ send-text -m id:$id \"$argv[2..]\" \n" &
+  end
 end
