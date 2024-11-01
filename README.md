@@ -42,6 +42,7 @@ You shouldn't have to install anything to run the install script.
 Installed with `brew install`:
 
 - [`bat`](https://github.com/sharkdp/bat): A cat(1) clone with wings
+- [`rustup`](https://github.com/rust-lang/rustup): Rust toolchain installer
 - [`blueutil`](https://github.com/toy/blueutil): CLI for bluetooth on OSX
 - [`bun`](https://github.com/oven-sh/bun): Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - [`chruby-fish`](https://github.com/JeanMertz/chruby-fish): Thin wrapper around chruby to make it work with the Fish shell

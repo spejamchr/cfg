@@ -250,6 +250,7 @@ function main() {
   brew_install pianobar
   brew_install ripgrep
   brew_install ruby-install
+  brew_install rustup
   brew_install sleepwatcher 'Run `brew services start sleepwatcher` to start sleepwatcher'
   brew_install wget
   brew_install yarn

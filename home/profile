@@ -97,3 +97,4 @@ function in_new_kitty_window() {
 
 # Run Rubocop against locally modified files
 alias rubodiff='bundle exec pronto run --commit=$(git rev-parse origin/master) --runner rubocop'
+. "$HOME/.cargo/env"
