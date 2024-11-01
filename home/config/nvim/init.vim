@@ -301,7 +301,7 @@ EOF
 lua << EOF
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = {'ts_ls', 'jsonls', 'rust_analyzer', 'prettier', 'solargraph'},
+  ensure_installed = {'vtsls', 'jsonls', 'rust_analyzer', 'solargraph'},
 })
 
 -- Mappings.
@@ -462,6 +462,20 @@ nnoremap <Leader>p :Neoformat<CR>
 " }}}
 
 " Configure fzf {{{
+lua << EOF
+local actions = require "fzf-lua.actions"
+require'fzf-lua'.setup {
+  actions = {
+    files = {
+      ["enter"]       = actions.file_edit_or_qf,
+      ["ctrl-x"]      = actions.file_split,
+      ["ctrl-v"]      = actions.file_vsplit,
+      ["ctrl-t"]      = actions.file_tabedit,
+    },
+  },
+}
+EOF
+
 " Fuzzy find files in the working directory
 nnoremap <Leader>f :FzfLua files<CR>
 
