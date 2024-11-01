@@ -1,34 +1,17 @@
-#!/usr/bin/env zsh
-
-if [[ $(arch) = 'i386' ]]; then
-  HOMEBREW_PREFIX="/usr/local"
-else
-  HOMEBREW_PREFIX="/opt/homebrew"
-fi
-
-function upgrade_kitty() {
-  echo "-> Upgrading kitty..."
-  local kitty_path="/Applications/kitty.app"
-  if [[ -d "$kitty_path" ]]; then
-    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin installer=nightly launch=n
-  else
-    echo "Kitty is not available at $kitty_path"
-  fi
-}
+#!/usr/bin/env sh
 
 function upgrade_yabai() {
   echo "\n-> Upgrading yabai, will need password soon..."
-  # stop, upgrade, start yabai
-  brew services stop yabai
-  brew upgrade yabai
-  brew services start yabai
-
-  # reinstall the scripting addition
+  # Uninstall the old scripting-addition.
   sudo yabai --uninstall-sa
-  sudo yabai --install-sa
 
-  # load the scripting addition
-  killall Dock
+  # stop, upgrade, start yabai
+  yabai --uninstall-service
+  brew upgrade yabai
+  yabai --start-service
+
+  # Install and load the scripting-addition.
+  sudo yabai --load-sa
 }
 
 function upgrade_brew_stuff() {
@@ -39,21 +22,23 @@ function upgrade_brew_stuff() {
       upgrade_yabai
     fi
     echo "\n-> Upgrading brew packages..."
-    if [[ $(brew outdated --formula) ]]; then
-      brew upgrade --formula
-    else
-      echo "Already up-to-date"
-    fi
-    echo "\n-> Upgrading brew casks..."
-    if [[ $(brew outdated --cask) ]]; then
-      brew upgrade --cask
-    else
-      echo "Already up-to-date"
-    fi
+    brew upgrade
+    echo "\n-> Cleaning up..."
+    brew cleanup
   else
     echo "brew is not available"
   fi
 }
 
-upgrade_kitty
+function upgrade_base16_shell() {
+  echo "\n-> Updating base16_shell..."
+  base16_install_dir="$HOME/.config/base16-shell"
+  if [[ -d "$base16_install_dir" ]]; then
+    git -C "$base16_install_dir" pull
+  else
+    echo "base16-shell is not installed at $base16_install_dir"
+  fi
+}
+
 upgrade_brew_stuff
+upgrade_base16_shell

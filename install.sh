@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env sh
 
 function health_checks() {
   if [[ ! $(uname -s) = Darwin ]]; then
@@ -23,13 +23,8 @@ function health_checks() {
   fi
 }
 
-function personal_computer() {
-  # How can I detect this more flexibly?
-  [[ whoami = 'spencer' ]]
-}
-
 function logit {
-  local logfile="$DOT/.install.log"
+  local logfile="$CFG/.install.log"
   touch $logfile
   if [[ ! -e $logfile ]]; then
     return 1
@@ -79,17 +74,6 @@ function try_to() {
 
 }
 
-function git_clone() {
-  local url="https://github.com/$1.git"
-  local dir="$2"
-  if [[ ! -d $dir ]]; then
-    try_to "Clone $url to $dir" \
-      "git clone \"$url\" \"$dir\"" \
-      "rm -rf \"$dir\"" \
-      || exit 1
-  fi
-}
-
 function ensure_dir() {
   if [[ ! -e "$1" ]]; then
     try_to "Create $1" \
@@ -116,14 +100,12 @@ function install_command_line_tools() {
   fi
 }
 
-if [[ $(arch) = 'i386' ]]; then
-  HOMEBREW_PREFIX="/usr/local"
-else
-  HOMEBREW_PREFIX="/opt/homebrew"
-fi
-
 function brew_install() {
-  if brew list $1 &>/dev/null; then
+  if [[ ! "$brew_formulae_list" ]]; then
+    brew_formulae_list=$(brew list --formulae)
+  fi
+
+  if [[ $(echo "$brew_formulae_list" | grep "^${1#*/*/}$") ]]; then
     infcho "$1 is already installed with brew"
   else
     try_to "Install $1 with Homebrew" \
@@ -138,7 +120,9 @@ function brew_cask_install() {
     brew_cask_list=$(brew list --cask)
   fi
 
-  if [[ ! $(echo "$brew_cask_list" | grep ${1#*/*/}) ]]; then
+  if [[ $(echo "$brew_cask_list" | grep "^${1#*/*/}$") ]]; then
+    infcho "$1 is already installed with brew cask"
+  else
     try_to "Install $1 with Homebrew Cask" \
       "brew install --cask \"$1\"" \
       "brew uninstall --cask \"$1\""
@@ -155,24 +139,6 @@ function backup_or_remove() {
         "mv \"$1\" \"$1.bak\"" \
         "mv \"$1.bak\" \"$1\""
     fi
-  fi
-}
-
-function install_kitty() {
-  local kitty_path="/Applications/kitty.app"
-  if [[ ! -d "$kitty_path" ]]; then
-    try_to 'Install kitty' \
-      "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin installer=nightly launch=n" \
-      "rm -rf \"$kitty_path\""
-  fi
-
-  local kitty_bin="$HOMEBIN/kitty"
-  local kitty_launcher="$kitty_path/Contents/MacOS/kitty"
-  if [[ ! -L "$kitty_bin" ]]; then
-    backup_or_remove "$kitty_bin" || return 1
-    try_to "Symlink kitty launcher to $kitty_bin" \
-      "ln -s \"$kitty_launcher\" \"$kitty_bin\"" \
-      "rm \"$kitty_bin\""
   fi
 }
 
@@ -197,7 +163,7 @@ function all_paths() {
 function backup_existing_config_files() {
   if [[ ! $OVERWRITE ]]; then
     local error
-    for filepath in $(all_paths "$DOT/home"); do
+    for filepath in $(all_paths "$CFG/home"); do
       local homepath="$HOME/.$filepath"
       if [[ -e "$homepath" && ! -L "$homepath" ]]; then
         backup_or_remove "$homepath" || error=true
@@ -210,8 +176,8 @@ function backup_existing_config_files() {
 }
 
 function create_symlinks() {
-  for filepath in $(all_paths "$DOT/home"); do
-    local cfgpath="$DOT/home/$filepath"
+  for filepath in $(all_paths "$CFG/home"); do
+    local cfgpath="$CFG/home/$filepath"
     local homepath="$HOME/.$filepath"
     [[ -L "$homepath" ]] && continue
     if [[ -f "$homepath" && ! -L "$homepath" ]]; then
@@ -234,22 +200,31 @@ function install_sleepwatcher_plist() {
   fi
 
   if [[ ! -L "$plist_path" ]]; then
-    from_path="$DOT/system/sleepwatcher/$filename"
+    from_path="$CFG/system/sleepwatcher/$filename"
     try_to "Create symlink at $plist_path to $from_path" \
       "ln -s \"$from_path\" \"$plist_path\"" \
       "rm \"$plist_path\""
   fi
 }
 
+function install_base16_shell() {
+  base16_install_dir="$HOME/.config/base16-shell"
+  if [[ -d "$base16_install_dir" ]]; then
+    infcho "base16-shell appears to be installed at $base16_install_dir"
+  else
+    try_to "Install base16-shell" \
+      "git clone https://github.com/chriskempson/base16-shell.git $base16_install_dir" \
+      "rm -r \"$base16_install_dir\""
+  fi
+}
+
 function main() {
   health_checks
 
-  local DOT="$HOME/.dotfiles"
+  local CFG="$HOME/cfg"
   local CONFIG="$HOME/.config"
   local HOMEBIN="$HOME/.bin"
   local LOGGED
-
-  git_clone spejamchr/cfg "$DOT"
 
   ensure_dir "$CONFIG"
   ensure_dir "$HOMEBIN"
@@ -264,51 +239,37 @@ function main() {
   brew_install bat
   brew_install blueutil
   brew_install chruby-fish
-  brew_install node
+  brew_install fd
   brew_install fzf
-  brew_install librsync # for Kitty
-  brew_install zlib # for Kitty
-  brew_install pygments # for Kitty
-  # brew_install cmake
-  # brew_install gnupg
   brew_install htop
-  brew_install imagemagick # for Kitty
   brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
   brew_install koekeishiya/formulae/yabai 'Post-install configuration required. See `brew info yabai`'
-  # brew_install libyaml
-  # brew_install mysql@5.7 'Post-install configuration required. See `brew info mysql@5.7`'
   brew_install neovim
+  brew_install node
+  brew_install oven-sh/bun/bun
   brew_install pianobar
-  # brew_install pkg-config
-  # brew_install puma/puma/puma-dev 'Post-install configuration required. See `brew info puma-dev`'
-  # brew_install rbenv/tap/openssl@1.0
-  # brew_install redis 'Run `brew services start redis` to start redis'
   brew_install ripgrep
   brew_install ruby-install
   brew_install sleepwatcher 'Run `brew services start sleepwatcher` to start sleepwatcher'
+  brew_install wget
   brew_install yarn
 
+  brew_cask_install calibre
+  brew_cask_install docker
   brew_cask_install dropbox
-  brew_cask_install homebrew/cask-fonts/font-fira-code-nerd-font
-  # brew_cask_install flux
-  # brew_cask_install gpg-suite-no-mail
-  # brew_cask_install mpv
-  # brew_cask_install sequel-pro
-  brew_cask_install ubersicht
-  brew_cask_install slack
+  brew_cask_install firefox
+  brew_cask_install font-fira-code-nerd-font
   brew_cask_install joplin
-
-  if personal_computer; then
-    brew_cask_install calibre
-    brew_cask_install keepassxc
-  fi
-
-  install_kitty
+  brew_cask_install keepassxc
+  brew_cask_install kitty@nightly
+  brew_cask_install slack
+  brew_cask_install ubersicht
 
   backup_existing_config_files
   create_symlinks
 
   install_sleepwatcher_plist
+  install_base16_shell
 }
 
 main

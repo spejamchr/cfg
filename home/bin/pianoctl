@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Start pianobar as a daemon, and control it
+#
+# With this, the controlling terminal can be closed, and pianobar will
+# continue.
+
+require "io/console"
+require "io/wait"
+
+OUT_PATH = File.expand_path("~/.config/pianobar/out")
+CONTROL_PATH = File.expand_path("~/.config/pianobar/ctl")
+
+# Don't display what the user types
+$stdin.echo = false
+
+def pianobar_running?
+  `pgrep pianobar` != ""
+end
+
+def display_output
+  file = File.open(OUT_PATH)
+
+  loop do
+    sleep(0.1)
+    # Not raw -- that makes the output look funky
+    $stdout.cooked { |io| io.print(file.read) }
+  end
+end
+
+def process_input
+  ctl = File.open(CONTROL_PATH, "a")
+  # Don't buffer `print`s to `ctl`
+  ctl.sync = true
+
+  loop do
+    input = $stdin.getch
+    input = "\n" if input == "\r"
+    exit(0) if input == "\u0003" # CTRL-C
+
+    ctl.print(input)
+  end
+end
+
+def ensure_pianobar_is_running
+  return if pianobar_running?
+
+  Process.fork do
+    Process.daemon
+    exec("pianobar > ~/.config/pianobar/out")
+  end
+
+  # Let pianobar get started before we try reading from `OUT_PATH` or writing
+  # to `CONTROL_PATH`.
+  sleep 0.1
+end
+
+def exit_when_pianobar_stops
+  loop do
+    sleep 1
+    exit(0) unless pianobar_running?
+  end
+end
+
+ensure_pianobar_is_running
+
+Thread.new { display_output }
+Thread.new { exit_when_pianobar_stops }
+process_input

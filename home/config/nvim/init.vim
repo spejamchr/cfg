@@ -9,7 +9,7 @@ let mapleader=' '
 set hidden
 
 " fish is great for interactive shells, but for editing use zsh
-set shell=/opt/homebrew/bin/zsh
+set shell=/bin/zsh
 
 " Always show the signcolumn to prevent the text from bouncing
 set signcolumn=yes
@@ -155,17 +155,11 @@ endif
 call plug#begin('~/.local/share/nvim/plugged')
 
 " Fuzzy finder
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf.vim'
-" Plug 'ibhagwan/fzf-lua', {'branch': 'main'} " SJC TODO: Switch to this?
+Plug '/opt/homebrew/opt/fzf'
+Plug 'ibhagwan/fzf-lua', {'branch': 'main'} " SJC TODO: Switch to this?
 
-" Many languages (including Crystal and JSX)
-" Plug 'sheerun/vim-polyglot'
-
-" Statusline
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Use FZF with the LSP
+Plug 'gfanto/fzf-lsp.nvim'
 
 " tpope is the man
 Plug 'tpope/vim-commentary'
@@ -195,9 +189,6 @@ Plug 'neovim/nvim-lspconfig'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'stevearc/dressing.nvim'
-
-" Use FZF with the LSP
-Plug 'gfanto/fzf-lsp.nvim'
 
 " Autocompletion
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -309,7 +300,9 @@ EOF
 " Configure LSP {{{
 lua << EOF
 require("mason").setup()
-require("mason-lspconfig").setup()
+require("mason-lspconfig").setup({
+  ensure_installed = {'ts_ls', 'jsonls', 'rust_analyzer', 'prettier', 'solargraph'},
+})
 
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -347,6 +340,7 @@ require("mason-lspconfig").setup_handlers {
       capabilities = capabilities,
     }
   end,
+
   -- next, you can provide a dedicated handler for specific servers.
   ["ts_ls"] = function ()
     require("typescript").setup{
@@ -356,6 +350,7 @@ require("mason-lspconfig").setup_handlers {
       },
     }
   end,
+
   ["cssls"] = function()
     require('lspconfig').cssls.setup({
       settings = {
@@ -367,6 +362,7 @@ require("mason-lspconfig").setup_handlers {
       },
     })
   end,
+
   ["tailwindcss"] = function()
     require("lspconfig").tailwindcss.setup {
       on_attach = on_attach,
@@ -380,6 +376,26 @@ require("mason-lspconfig").setup_handlers {
               { "(\\.[\\w\\-.]+)[\\n\\=\\{\\s]", "([\\w\\-]+)" },
             }
           }
+        }
+      }
+    }
+  end,
+
+  ["solargraph"] = function()
+    require("lspconfig").solargraph.setup {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      root_dir = require('lspconfig').util.root_pattern("Gemfile", ".git", "."),
+      settings = {
+        solargraph = {
+          autoformat = false,
+          formatting = false,
+          completion = true,
+          diagnostic = true,
+          folding = true,
+          references = true,
+          rename = true,
+          symbols = true
         }
       }
     }
@@ -445,44 +461,24 @@ augroup END
 nnoremap <Leader>p :Neoformat<CR>
 " }}}
 
-" Configure airline {{{
-" Powerline-style statusline
-let g:airline_powerline_fonts = 1
-
-" Slim down the statusline
-let g:airline_section_b=''
-let g:airline_section_y=''
-let g:airline_skip_empty_sections=1
-let g:airline_theme='base16_harmonic_dark'
-" }}}
-
 " Configure fzf {{{
 " Fuzzy find files in the working directory
-nnoremap <Leader>f :Files<CR>
-nnoremap <Leader>sf :Files<CR>
+nnoremap <Leader>f :FzfLua files<CR>
 
 " Search for the word under the cursor
-nnoremap <Leader>sg :Rg <C-r><C-w><CR>
+nnoremap <Leader>sg :FzfLua grep_cword<CR>
 
 " Fuzzy find text in the working directory
-nnoremap <Leader>st :Rg<CR>
-
-" Fuzzy find lines in the current file
-nnoremap <Leader>s/ :BLines<CR>
+nnoremap <Leader>st :FzfLua live_grep<CR>
 
 " Fuzzy find Vim uommands
-nnoremap <Leader>sc :Commands<CR>
+nnoremap <Leader>sc :FzfLua commands<CR>
 
 " Fuzzy find buffers
-nnoremap <Leader>sb :Buffers<CR>
+nnoremap <Leader>sb :FzfLua buffers<CR>
 
 " Fuzzy find history
-nnoremap <Leader>sh :History<CR>
-
-" Use rg with FZF, showing hidden files but ignoring .git/
-let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/*"'
-
-let $FZF_DEFAULT_OPTS="--layout=reverse"
+nnoremap <Leader>sh :FzfLua oldfiles<CR>
 
 " Configure FZF with LSP
 nnoremap gd :Definitions<CR>
@@ -507,7 +503,7 @@ if filereadable(expand("~/.vimrc_background"))
   source ~/.vimrc_background
 endif
 
-" colorscheme tokyonight-night
+colorscheme tokyonight-night
 
 " Configure highlighting (must be done after initializing the colorscheme) {{{
 " Italicize comments
