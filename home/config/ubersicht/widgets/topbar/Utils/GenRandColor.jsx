@@ -1,4 +1,4 @@
-const randSelection = array => () =>
+export const randSelection = array => () =>
   array[Math.floor(Math.random() * (array.length - 1))];
 
 export default colors =>
