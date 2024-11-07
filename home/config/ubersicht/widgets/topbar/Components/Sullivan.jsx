@@ -11,7 +11,7 @@
 // (From https://github.com/blahsd/supernerd.widget#usage)
 
 import { React } from "uebersicht";
-import { randSelection } from "../Utils/GenRandColor.jsx";
+import { sample } from "../Utils/GenRandColor.jsx";
 import prepare from "../Utils/Prepare.jsx";
 
 export const refreshFrequency = 1000 * 60 * 60 * 24;
@@ -44,80 +44,21 @@ const calcIntersection = (si, sj) => {
   return { intersects, ti, tj };
 };
 
-// Knowns for parabola f(x) = ax**2 + bx + c:
-//
-// [1] f(1) = 1         // It intersects the point (1, 1)
-// [2] f(t) = st        // It starts where the line ends off
-// [3] df(t)/dx = s     // It starts with the same slope as the line
-//
-// @param tp [0-1] Transition Point (from linear to quadratic)
-// @param fl [0-1] Fraction of points in linear section
-const genRandX = (tp, fl) => {
-  const t = fl;
-  const s = tp/fl;
-  const denom = (t - 1)**2
-  const a = (1 - s) / denom;
-  const b = (s * t**2 + s - 2 * t) / denom;
-  const c = -(s - 1) * t**2 / denom;
-
-  return () => {
-    const x = rand();
-    if (x < t) {
-      return x * s;
-    } else {
-      return a * x**2 + b * x + c;
-    }
-  };
-}
-
-const randX = () => genRandX(1/4, 1/2)() * 3/4;
-
-const genSeeds = ({ minX, maxX, minY, maxY }, s = 1) => {
-  const N = 1000;
+const genSeeds = ({ minX, maxX, minY, maxY }) => {
+  const N = 5000;
 
   const SX = maxX - minX;
   const SY = maxY - minY;
 
   const seeds = [];
   while (seeds.length < N) {
-    const l = randX();
-
     seeds.push({
-      x: l * SX + minX,
+      x: rand() * SX + minX,
       y: rand() * rand() * SY + minY,
-      a: 0 + 0.5738 * s,
-      l: [100, 100],
+      a: -1.1,
+      l: [50, 50],
     });
   }
-
-  const inters = [];
-  for (let i = 0; i < N; i++) {
-    for (let j = i + 1; j < N; j++) {
-      const { intersects, ti, tj } = calcIntersection(seeds[i], seeds[j]);
-      if (intersects) {
-        inters.push({ i, j, ti, tj });
-        inters.push({ i: j, j: i, ti: tj, tj: ti });
-      }
-    }
-  }
-
-  inters
-    .sort((a, b) => Math.abs(a.ti) - Math.abs(b.ti))
-    .forEach(({ i, j, ti, tj }) => {
-      if (
-        ti < seeds[i].l[0] &&
-        ti > -seeds[i].l[1] &&
-        tj < seeds[j].l[0] &&
-        tj > -seeds[j].l[1] &&
-        Math.abs(ti) > Math.abs(tj)
-      ) {
-        if (ti > 0) {
-          seeds[i].l[0] = ti;
-        } else {
-          seeds[i].l[1] = -ti;
-        }
-      }
-    });
 
   // Boundaries/page clipping
   seeds.forEach((s) => {
@@ -161,17 +102,29 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
   const minY = dfy + border;
   const maxY = dfh;
 
-  const blColor = randSelection([
-    colors.Red,
-    colors.Magenta,
-    colors.Yellow,
-  ]);
-
-  const brColor = randSelection([
-    colors.BrightBlack,
-    colors.Blue,
-    colors.Green,
-  ]);
+  const color = (x) => {
+    if (rand() < 0.05) {
+      return sample([
+        colors.White,
+        colors.BrightBlack,
+      ])
+    }
+    const scaledX = -15 * ((x - minX) / (maxX - minX) - 0.5);
+    const sigmoidX = 1 / (1 + Math.exp(scaledX));
+    if (sigmoidX < rand()) {
+      return sample([
+        colors.Red,
+        colors.Magenta,
+        colors.Yellow,
+      ])
+    } else {
+      return sample([
+        colors.Blue,
+        colors.Green,
+        colors.Cyan,
+      ])
+    }
+  }
 
   return (
     <div style={bodyStyle}>
@@ -184,27 +137,15 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
       >
         <g strokeWidth={2} strokeLinecap="round" fill="none">
 
-          {genSeeds({ minX, maxX, minY, maxY }, -1).map((s) => (
-            <line
-              strokeWidth={(2 * (maxY - s.y)) / maxY}
-              key={`1:${s.x},${s.y}`}
-              x1={(s.x + s.l[0] * Math.cos(s.a))}
-              y1={minY + maxY - (s.y + s.l[0] * Math.sin(s.a))}
-              x2={(s.x + s.l[1] * Math.cos(s.a + Math.PI))}
-              y2={minY + maxY - (s.y + s.l[1] * Math.sin(s.a + Math.PI))}
-              stroke={blColor()}
-            />
-          ))}
-
           {genSeeds({ minX, maxX, minY, maxY }).map((s) => (
             <line
-              strokeWidth={(2 * (maxY - s.y)) / maxY}
-              key={`1:${s.x},${s.y}`}
-              x1={minX + maxX - (s.x + s.l[0] * Math.cos(s.a))}
-              y1={minY + maxY - (s.y + s.l[0] * Math.sin(s.a))}
-              x2={minX + maxX - (s.x + s.l[1] * Math.cos(s.a + Math.PI))}
-              y2={minY + maxY - (s.y + s.l[1] * Math.sin(s.a + Math.PI))}
-              stroke={brColor()}
+              strokeWidth={(0.7 * (maxY - s.y)) / maxY + 1.3}
+              key={`${s.x},${s.y}`}
+              x1={(s.x + s.l[0] * Math.cos(s.a))}
+              y1={(s.y + s.l[0] * Math.sin(s.a))}
+              x2={(s.x + s.l[1] * Math.cos(s.a + Math.PI))}
+              y2={(s.y + s.l[1] * Math.sin(s.a + Math.PI))}
+              stroke={color(s.x)}
             />
           ))}
 

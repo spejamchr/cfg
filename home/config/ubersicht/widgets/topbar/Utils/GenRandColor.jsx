@@ -1,5 +1,7 @@
-export const randSelection = array => () =>
-  array[Math.floor(Math.random() * (array.length - 1))];
+export const sample = array =>
+  array[Math.floor(Math.random() * array.length)];
+
+export const randSelection = array => () => sample(array);
 
 export default colors =>
   randSelection([
