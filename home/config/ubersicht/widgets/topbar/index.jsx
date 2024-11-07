@@ -1,6 +1,5 @@
 import { styled } from "uebersicht";
 import Battery from "./Components/Battery.jsx";
-import Bluetooth from "./Components/Bluetooth.jsx";
 import CpuMeter from "./Components/CpuMeter.jsx";
 import DateTime from "./Components/DateTime.jsx";
 import LoadAvg from "./Components/LoadAvg.jsx";
@@ -8,7 +7,6 @@ import Pianobar from "./Components/Pianobar.jsx";
 import Spaces from "./Components/Spaces.jsx";
 import Window from "./Components/Window.jsx";
 import prepare from "./Utils/Prepare.jsx";
-import Item from "./Components/Item.jsx";
 
 export const refreshFrequency = 1000;
 
@@ -27,6 +25,7 @@ export const className = {
 };
 
 const containerStyles = (colors, width) => ({
+  backgroundColor: colors.Black,
   height: "100%",
   width: width,
   maxWidth: width,
@@ -43,7 +42,6 @@ const containerStyles = (colors, width) => ({
 export const render = prepare(
   "topbar",
   ({
-    bluetooth,
     colors,
     cpus,
     dateTime,
@@ -61,11 +59,6 @@ export const render = prepare(
       flexDirection: "row-reverse",
     });
     const M1Notch = styled.div({ width: "400px" });
-    const OverflowTester = styled.div({
-      overflow: "hidden",
-      whiteSpace: "nowrap",
-      textOverflow: "ellipsis",
-    });
 
     return (
       <OuterContainer>
@@ -78,7 +71,6 @@ export const render = prepare(
           <span>
             <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
             <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
-            <Bluetooth bluetooth={bluetooth} colors={colors} />
             <Battery power={power} colors={colors} />
             <DateTime dateTime={dateTime} />
             &nbsp; {/* For the orange dot on mic/camera usage */}

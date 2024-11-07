@@ -96,10 +96,9 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
   // look nice either way.
   const display = displays[0] || { frame: { x: 0, w: 1440, y: 0, h: 900 } };
   const { x: dfx, y: dfy, w: dfw, h: dfh } = display.frame;
-  const border = 40;
   const minX = dfx;
   const maxX = dfw;
-  const minY = dfy + border;
+  const minY = dfy;
   const maxY = dfh;
 
   const color = (x) => {
