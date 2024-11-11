@@ -3,7 +3,18 @@ import { React, styled } from "uebersicht";
 const HideOverflow = styled.span`
   overflow: hidden;
   white-space: nowrap;
+  background-color: ${(props) =>  props.bg};
+  padding: 0.5em;
+  margin-left: 0.5em;
+  margin-right: 0.25em;
+  border-radius: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   text-overflow: ellipsis;
+  height: 100%;
   color: ${(props) => props.color};
   &:before {
     content: "「 ";
@@ -13,7 +24,7 @@ const HideOverflow = styled.span`
   }
 `;
 
-const Item = ({ text, hide, color }) =>
-  hide ? "" : <HideOverflow color={color}>{text}</HideOverflow>;
+const Item = ({ text, hide, color, bg }) =>
+  hide ? "" : <HideOverflow color={color} bg={bg}>{text}</HideOverflow>;
 
 export default Item;

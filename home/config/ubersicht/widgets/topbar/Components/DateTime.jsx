@@ -1,7 +1,7 @@
 import { React } from "uebersicht";
 import Item from "./item.jsx";
 
-const DateTime = () => {
+const DateTime = ({colors}) => {
   const date = new Date();
   return (
     <>
@@ -12,6 +12,7 @@ const DateTime = () => {
           month: "short",
           day: "numeric",
         })}
+        bg={colors.Black}
       />
       <Item
         text={date.toLocaleTimeString("ja-JP", {
@@ -19,6 +20,7 @@ const DateTime = () => {
           minute: "2-digit",
           hour12: false,
         })}
+        bg={colors.Black}
       />
     </>
   );

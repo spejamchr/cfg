@@ -37,6 +37,7 @@ const CpuMeter = ({ percentCpu, cpus, colors }) => {
           <span className={fill} />
         </div>
       }
+      bg={colors.Black}
     />
   );
 };

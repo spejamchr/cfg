@@ -8,7 +8,7 @@ import Spaces from "./Components/Spaces.jsx";
 import Window from "./Components/Window.jsx";
 import prepare from "./Utils/Prepare.jsx";
 
-export const refreshFrequency = 1000;
+export const refreshFrequency = 1000 * 60 * 60 * 24;
 
 export const command = `./topbar/command`;
 
@@ -24,8 +24,7 @@ export const className = {
   zIndex: 1,
 };
 
-const containerStyles = (colors, width) => ({
-  backgroundColor: colors.Black,
+export const containerStyles = (colors, width) => ({
   height: "100%",
   width: width,
   maxWidth: width,
@@ -34,7 +33,6 @@ const containerStyles = (colors, width) => ({
   justifyContent: "space-between",
   alignItems: "center",
   whiteSpace: "nowrap",
-  padding: "0px 5px",
   color: colors.White,
   overflow: "hidden",
 });
@@ -52,7 +50,7 @@ export const render = prepare(
     spaces,
     windows,
   }) => {
-    const OuterContainer = styled.div(containerStyles(colors, "100%"));
+    const OuterContainer = styled.div({ ...containerStyles(colors, "100%"), padding: "3px" });
     const InnerContainerLeft = styled.div(containerStyles(colors, "1700px"));
     const InnerContainerRight = styled.div({
       ...containerStyles(colors, "1700px"),
@@ -64,15 +62,15 @@ export const render = prepare(
       <OuterContainer>
         <InnerContainerLeft>
           <Spaces spaces={spaces} colors={colors} />
-          <Pianobar pianobar={pianobar} />
+          <Pianobar pianobar={pianobar} colors={colors} />
         </InnerContainerLeft>
         <M1Notch />
         <InnerContainerRight>
-          <span>
+          <span style={containerStyles(colors, "fit")}>
             <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
             <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
             <Battery power={power} colors={colors} />
-            <DateTime dateTime={dateTime} />
+            <DateTime dateTime={dateTime} colors={colors} />
             &nbsp; {/* For the orange dot on mic/camera usage */}
           </span>
           <Window windows={windows} colors={colors} />
