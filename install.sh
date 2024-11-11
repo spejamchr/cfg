@@ -260,11 +260,13 @@ function main() {
   brew_cask_install dropbox
   brew_cask_install firefox
   brew_cask_install font-fira-code-nerd-font
+  brew_cask_install google-chrome
   brew_cask_install joplin
   brew_cask_install keepassxc
   brew_cask_install kitty@nightly
   brew_cask_install slack
   brew_cask_install ubersicht
+  brew_cask_install zoom
 
   backup_existing_config_files
   create_symlinks
