@@ -65,11 +65,13 @@ Installed with `brew cask install`:
 - [`dropbox`](https://www.dropbox.com/): Client for the Dropbox cloud storage service
 - [`firefox`](https://www.mozilla.org/firefox/): Web browser
 - [`font-fira-code-nerd-font`](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FiraCode): Monospaced font with programming ligatures
+- [`google-chrome`](https://www.google.com/chrome/): Web browser
 - [`joplin`](https://joplinapp.org/): Note taking and to-do application with synchronisation capabilities
 - [`keepassxc`](https://keepassxc.org/): Cross-platform Password Manager
 - [`kitty@nightly`](https://github.com/kovidgoyal/kitty): Cross-platform, fast, feature-rich, GPU based terminal
 - [`slack`](https://slack.com/): Team communication and collaboration software
 - [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
+- [`zoom`](https://www.zoom.us/): Video communication and virtual meeting platform
 
 Other:
 
