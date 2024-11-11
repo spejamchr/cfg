@@ -8,11 +8,7 @@ const HideOverflow = styled.span`
   margin-left: 0.5em;
   margin-right: 0.25em;
   border-radius: 20px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
+  align-content: center;
   text-overflow: ellipsis;
   height: 100%;
   color: ${(props) => props.color};
@@ -24,7 +20,7 @@ const HideOverflow = styled.span`
   }
 `;
 
-const Item = ({ text, hide, color, bg }) =>
-  hide ? "" : <HideOverflow color={color} bg={bg}>{text}</HideOverflow>;
+const Item = ({ text, hide, color, bg, style }) =>
+  hide ? "" : <HideOverflow color={color} bg={bg} style={style}>{text}</HideOverflow>;
 
 export default Item;

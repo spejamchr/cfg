@@ -51,7 +51,7 @@ export const render = prepare(
     windows,
   }) => {
     const OuterContainer = styled.div({ ...containerStyles(colors, "100%"), padding: "3px" });
-    const InnerContainerLeft = styled.div(containerStyles(colors, "1700px"));
+    const InnerContainerLeft = styled.div({ ...containerStyles(colors, "1700px"), paddingRight: "5px" });
     const InnerContainerRight = styled.div({
       ...containerStyles(colors, "1700px"),
       flexDirection: "row-reverse",
