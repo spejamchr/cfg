@@ -8,7 +8,7 @@ import Spaces from "./Components/Spaces.jsx";
 import Window from "./Components/Window.jsx";
 import prepare from "./Utils/Prepare.jsx";
 
-export const refreshFrequency = 1000 * 60 * 60 * 24;
+export const refreshFrequency = 1000;
 
 export const command = `./topbar/command`;
 
