@@ -43,6 +43,17 @@ def process_input
   end
 end
 
+def ensure_pianobar_ctl_fifo_is_present
+  return if File.exist?(CONTROL_PATH) && File.ftype(CONTROL_PATH) == "fifo"
+
+  if File.exist?(CONTROL_PATH)
+    puts "#{CONTROL_PATH} exists, but is not a FIFO. Can you delete it and try again?"
+    exit(1)
+  end
+
+  File.mkfifo(CONTROL_PATH)
+end
+
 def ensure_pianobar_is_running
   return if pianobar_running?
 
@@ -62,6 +73,8 @@ def exit_when_pianobar_stops
     exit(0) unless pianobar_running?
   end
 end
+
+ensure_pianobar_ctl_fifo_is_present
 
 ensure_pianobar_is_running
 
