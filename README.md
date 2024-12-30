@@ -42,7 +42,6 @@ You shouldn't have to install anything to run the install script.
 Installed with `brew install`:
 
 - [`bat`](https://github.com/sharkdp/bat): A cat(1) clone with wings
-- [`rustup`](https://github.com/rust-lang/rustup): Rust toolchain installer
 - [`blueutil`](https://github.com/toy/blueutil): CLI for bluetooth on OSX
 - [`bun`](https://github.com/oven-sh/bun): Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - [`chruby-fish`](https://github.com/JeanMertz/chruby-fish): Thin wrapper around chruby to make it work with the Fish shell
@@ -50,16 +49,20 @@ Installed with `brew install`:
 - [`fzf`](https://github.com/junegunn/fzf): 🌸 A command-line fuzzy finder
 - [`htop`](https://hisham.hm/htop/): Improved top (interactive process viewer)
 - [`neovim`](https://neovim.io/): Ambitious Vim-fork focused on extensibility and agility
+- [`node@20`](https://nodejs.org/): Platform built on V8 to build network applications
 - [`pianobar`](https://github.com/PromyLOPh/pianobar/): Command-line player for [pandora](https://pandora.com)
 - [`ripgrep`](https://github.com/BurntSushi/ripgrep): Search tool like grep and The Silver Searcher
 - [`ruby-install`](https://github.com/postmodern/ruby-install): Install Ruby, JRuby, Rubinius, TruffleRuby, or mruby
+- [`rustup`](https://github.com/rust-lang/rustup): Rust toolchain installer
 - [`skhd`](https://github.com/koekeishiya/skhd): Simple hotkey daemon for macOS
 - [`sleepwatcher`](https://www.bernhard-baehr.de/): Monitors sleep, wakeup, and idleness of a Mac
+- [`wget`](https://www.gnu.org/software/wget/): Internet file retriever
 - [`yabai`](https://github.com/koekeishiya/yabai): A tiling window manager for macOS based on binary space partitioning
 - [`yarn`](https://yarnpkg.com/lang/en/): JavaScript package manager
 
 Installed with `brew cask install`:
 
+- [`android-studio`](https://developer.android.com/studio/): Tools for building Android applications
 - [`calibre`](https://calibre-ebook.com/): A powerful and easy to use e-book manager
 - [`docker`](https://www.docker.com/products/docker-desktop): App to build and share containerised applications and microservices
 - [`dropbox`](https://www.dropbox.com/): Client for the Dropbox cloud storage service

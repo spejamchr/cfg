@@ -245,7 +245,7 @@ function main() {
   brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
   brew_install koekeishiya/formulae/yabai 'Post-install configuration required. See `brew info yabai`'
   brew_install neovim
-  brew_install node
+  brew_install node@20
   brew_install oven-sh/bun/bun
   brew_install pianobar
   brew_install ripgrep
@@ -255,6 +255,7 @@ function main() {
   brew_install wget
   brew_install yarn
 
+  brew_cask_install android-studio
   brew_cask_install calibre
   brew_cask_install docker
   brew_cask_install dropbox
