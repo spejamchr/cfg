@@ -36,12 +36,3 @@ end
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
-
-# ExecOnline {{{
-# Last updated for this PR: https://github.com/execonline-inc/exec_online/pull/8956
-# The PR assumes a POSIX-compliant shell. I'm not sure what will break using fish.
-# Normally I would source ~/.dev/.rc. Instead, I'm manually defining the `dev`
-# alias in fish, and I'm skipping the bits about sourcing ~/.dev/.env and
-# defining the `dev-awsume` function.
-alias dev="$EO/dev"
-# }}}
