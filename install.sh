@@ -101,6 +101,10 @@ function install_command_line_tools() {
 }
 
 function brew_install() {
+  if [[ "$2" && "$2" != $(whoami) ]]; then
+    return 0
+  fi
+
   if [[ ! "$brew_formulae_list" ]]; then
     brew_formulae_list=$(brew list --formulae)
   fi
@@ -116,6 +120,10 @@ function brew_install() {
 }
 
 function brew_cask_install() {
+  if [[ "$2" && "$2" != $(whoami) ]]; then
+    return 0
+  fi
+
   if [[ ! "$brew_cask_list" ]]; then
     brew_cask_list=$(brew list --cask)
   fi
@@ -239,26 +247,25 @@ function main() {
   brew_install bat
   brew_install blueutil
   brew_install chruby-fish
-  brew_install exercism
   brew_install fd
   brew_install fzf
   brew_install htop
-  brew_install koekeishiya/formulae/skhd 'Post-install configuration required. See `brew info skhd`'
-  brew_install koekeishiya/formulae/yabai 'Post-install configuration required. See `brew info yabai`'
+  brew_install koekeishiya/formulae/skhd
+  brew_install koekeishiya/formulae/yabai
   brew_install neovim
-  brew_install node@20
+  brew_install node "spencer"
+  brew_install node@20 "spencerchristiansen"
   brew_install oven-sh/bun/bun
   brew_install pianobar
   brew_install ripgrep
   brew_install ruby-install
   brew_install rustup
-  brew_install sleepwatcher 'Run `brew services start sleepwatcher` to start sleepwatcher'
+  brew_install sleepwatcher
   brew_install wget
   brew_install yarn
 
-  brew_cask_install android-studio
-  brew_cask_install calibre
-  brew_cask_install discord
+  brew_cask_install calibre "spencer"
+  brew_cask_install discord "spencer"
   brew_cask_install docker
   brew_cask_install dotnet-sdk
   brew_cask_install dropbox
@@ -266,13 +273,12 @@ function main() {
   brew_cask_install font-fira-code-nerd-font
   brew_cask_install google-chrome
   brew_cask_install joplin
-  brew_cask_install keepassxc
+  brew_cask_install keepassxc "spencer"
   brew_cask_install kitty@nightly
-  brew_cask_install postgres-unofficial
-  brew_cask_install slack
+  brew_cask_install postgres-unofficial "spencer"
   brew_cask_install ubersicht
-  brew_cask_install visual-studio-code
-  brew_cask_install zoom
+  brew_cask_install visual-studio-code "spencerchristiansen"
+  brew_cask_install zoom "spencer"
 
   backup_existing_config_files
   create_symlinks
