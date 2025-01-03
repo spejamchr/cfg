@@ -239,6 +239,7 @@ function main() {
   brew_install bat
   brew_install blueutil
   brew_install chruby-fish
+  brew_install exercism
   brew_install fd
   brew_install fzf
   brew_install htop
@@ -257,7 +258,9 @@ function main() {
 
   brew_cask_install android-studio
   brew_cask_install calibre
+  brew_cask_install discord
   brew_cask_install docker
+  brew_cask_install dotnet-sdk
   brew_cask_install dropbox
   brew_cask_install firefox
   brew_cask_install font-fira-code-nerd-font
@@ -265,6 +268,7 @@ function main() {
   brew_cask_install joplin
   brew_cask_install keepassxc
   brew_cask_install kitty@nightly
+  brew_cask_install postgres-unofficial
   brew_cask_install slack
   brew_cask_install ubersicht
   brew_cask_install zoom

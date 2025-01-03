@@ -45,6 +45,7 @@ Installed with `brew install`:
 - [`blueutil`](https://github.com/toy/blueutil): CLI for bluetooth on OSX
 - [`bun`](https://github.com/oven-sh/bun): Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - [`chruby-fish`](https://github.com/JeanMertz/chruby-fish): Thin wrapper around chruby to make it work with the Fish shell
+- [`exercism`](https://exercism.io/cli/): Command-line tool to interact with exercism.io
 - [`fd`](https://github.com/sharkdp/fd): A simple, fast and user-friendly alternative to 'find'
 - [`fzf`](https://github.com/junegunn/fzf): 🌸 A command-line fuzzy finder
 - [`htop`](https://hisham.hm/htop/): Improved top (interactive process viewer)
@@ -64,7 +65,9 @@ Installed with `brew cask install`:
 
 - [`android-studio`](https://developer.android.com/studio/): Tools for building Android applications
 - [`calibre`](https://calibre-ebook.com/): A powerful and easy to use e-book manager
+- [`discord`](https://discord.com/): Voice and text chat software
 - [`docker`](https://www.docker.com/products/docker-desktop): App to build and share containerised applications and microservices
+- [`dotnet-sdk`](https://www.microsoft.com/net/core#macos): .NET SDK Developer platform
 - [`dropbox`](https://www.dropbox.com/): Client for the Dropbox cloud storage service
 - [`firefox`](https://www.mozilla.org/firefox/): Web browser
 - [`font-fira-code-nerd-font`](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FiraCode): Monospaced font with programming ligatures
@@ -72,6 +75,7 @@ Installed with `brew cask install`:
 - [`joplin`](https://joplinapp.org/): Note taking and to-do application with synchronisation capabilities
 - [`keepassxc`](https://keepassxc.org/): Cross-platform Password Manager
 - [`kitty@nightly`](https://github.com/kovidgoyal/kitty): Cross-platform, fast, feature-rich, GPU based terminal
+- [`postgres-unofficial`](https://postgresapp.com/): App wrapper for Postgres
 - [`slack`](https://slack.com/): Team communication and collaboration software
 - [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
 - [`zoom`](https://www.zoom.us/): Video communication and virtual meeting platform
