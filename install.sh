@@ -271,6 +271,7 @@ function main() {
   brew_cask_install postgres-unofficial
   brew_cask_install slack
   brew_cask_install ubersicht
+  brew_cask_install visual-studio-code
   brew_cask_install zoom
 
   backup_existing_config_files

@@ -309,7 +309,14 @@ EOF
 lua << EOF
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = {'vtsls', 'jsonls', 'rust_analyzer', 'solargraph'},
+  ensure_installed = {
+    'jsonls',
+    'omnisharp',
+    'rust_analyzer',
+    'solargraph',
+    'tailwindcss',
+    'vtsls',
+  },
 })
 
 -- Mappings.

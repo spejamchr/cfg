@@ -78,6 +78,7 @@ Installed with `brew cask install`:
 - [`postgres-unofficial`](https://postgresapp.com/): App wrapper for Postgres
 - [`slack`](https://slack.com/): Team communication and collaboration software
 - [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
+- [`visual-studio-code`](https://code.visualstudio.com/): Open-source code editor
 - [`zoom`](https://www.zoom.us/): Video communication and virtual meeting platform
 
 Other:
