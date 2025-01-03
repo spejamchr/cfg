@@ -21,8 +21,14 @@ set noswapfile     " no swap files
 " More frequent updates for CursorHold events (GitGutter)
 set updatetime=100
 
-" Tab key inserts 2 spaces
-set tabstop=4 softtabstop=0 expandtab shiftwidth=2 smartindent
+" Tab key inserts 2 spaces normally
+set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smartindent
+augroup custom_indentation
+  autocmd!
+
+  " for c# files, tab is 4 spaces
+  autocmd Filetype cs setlocal ts=4 sw=4
+augroup END
 
 " Hide line numbers
 set nonu
@@ -196,6 +202,7 @@ Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 
 " Snippets
 Plug 'SirVer/ultisnips'
@@ -263,6 +270,7 @@ lua <<EOF
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
       { name = 'ultisnips' }, -- For ultisnips users.
+      { name = 'nvim_lsp_signature_help' }
     }, {
       { name = 'buffer' },
     })
@@ -427,34 +435,12 @@ EOF
 " }}}
 
 " Configure code auto-formatting with Neoformat {{{
-let s:javascript_yarn = {
-            \ 'exe': 'yarn',
-            \ 'args': ['run', '-s', 'prettier', '--stdin-filepath', '"%:p"'],
-            \ 'stdin': 1,
-            \ }
-
-let s:typescript_yarn = {
-            \ 'exe': 'yarn',
-            \ 'args': ['run', '-s', 'prettier', '--stdin', '--stdin-filepath', '"%:p"', '--parser', 'typescript'],
-            \ 'stdin': 1,
-            \ }
-
-let g:neoformat_javascript_yarn = s:javascript_yarn
-let g:neoformat_enabled_javascript = ['yarn', 'prettier']
-
-let g:neoformat_javascriptreact_yarn = s:javascript_yarn
-let g:neoformat_enabled_javascriptreact = ['yarn', 'prettier']
-
-let g:neoformat_typescript_yarn = s:typescript_yarn
-let g:neoformat_enabled_typescript = ['yarn', 'prettier']
-
-let g:neoformat_typescriptreact_yarn = s:typescript_yarn
-let g:neoformat_enabled_typescriptreact = ['yarn', 'prettier']
+let g:neoformat_try_node_exe = 1
 
 augroup fmt
   autocmd!
 
-" Autoformat with Neoformat on save
+  " Autoformat with Neoformat on save
   autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.rs Neoformat
 augroup END
 
@@ -517,7 +503,7 @@ if filereadable(expand("~/.vimrc_background"))
   source ~/.vimrc_background
 endif
 
-colorscheme tokyonight-night
+" colorscheme tokyonight-night
 
 " Configure highlighting (must be done after initializing the colorscheme) {{{
 " Italicize comments
