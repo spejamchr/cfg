@@ -47,6 +47,7 @@ Installed with `brew install`:
 - [`chruby-fish`](https://github.com/JeanMertz/chruby-fish): Thin wrapper around chruby to make it work with the Fish shell
 - [`exercism`](https://exercism.io/cli/): Command-line tool to interact with exercism.io
 - [`fd`](https://github.com/sharkdp/fd): A simple, fast and user-friendly alternative to 'find'
+- [`flyctl`](https://fly.io/): Command-line tools for fly.io services
 - [`fzf`](https://github.com/junegunn/fzf): 🌸 A command-line fuzzy finder
 - [`git`](https://git-scm.com/): Distributed revision control system
 - [`htop`](https://hisham.hm/htop/): Improved top (interactive process viewer)

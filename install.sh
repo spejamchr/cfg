@@ -248,6 +248,7 @@ function main() {
   brew_install blueutil
   brew_install chruby-fish
   brew_install fd
+  brew_install flyctl
   brew_install fzf
   brew_install git
   brew_install htop
