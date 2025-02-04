@@ -51,36 +51,44 @@ export const render = prepare(
     spaces,
     windows,
   }) => {
-    const OuterContainer = styled.div({ ...containerStyles(colors, "100%"), padding: "3px" });
+    const OuterContainer = styled.div({
+      ...containerStyles(colors, "100%"),
+      padding: "3px",
+    });
     const InnerContainer = styled.div({ ...containerStyles(colors, "100%") });
-    const InnerContainerLeft = styled.div({ ...containerStyles(colors, "1700px"), paddingRight: "5px" });
+    const InnerContainerLeft = styled.div({
+      ...containerStyles(colors, "1700px"),
+      paddingRight: "5px",
+    });
     const InnerContainerRight = styled.div({
       ...containerStyles(colors, "1700px"),
       flexDirection: "row-reverse",
     });
     const M1Notch = styled.div({ width: "450px" });
 
-    const leftSide = <>
-      <Spaces spaces={spaces} colors={colors} />
-      <Pianobar pianobar={pianobar} colors={colors} />
-    </>;
+    const leftSide = (
+      <>
+        <Spaces spaces={spaces} colors={colors} />
+        <Pianobar pianobar={pianobar} colors={colors} />
+      </>
+    );
 
-    const rightSide = <span style={containerStyles(colors, "fit")}>
-      <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
-      <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
-      <Battery power={power} colors={colors} />
-      <DateTime dateTime={dateTime} colors={colors} />
-      &nbsp; {/* For the orange dot on mic/camera usage */}
-    </span>;
+    const rightSide = (
+      <span style={containerStyles(colors, "fit")}>
+        <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
+        <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
+        <Battery power={power} colors={colors} />
+        <DateTime dateTime={dateTime} colors={colors} />
+        &nbsp; {/* For the orange dot on mic/camera usage */}
+      </span>
+    );
 
     const windowInfo = <Window windows={windows} colors={colors} />;
 
-    if (monitorId == '1') {
+    if (monitorId == "1") {
       return (
         <OuterContainer>
-          <InnerContainerLeft>
-            {leftSide}
-          </InnerContainerLeft>
+          <InnerContainerLeft>{leftSide}</InnerContainerLeft>
           <M1Notch />
           <InnerContainerRight>
             {rightSide}
@@ -99,5 +107,5 @@ export const render = prepare(
         </OuterContainer>
       );
     }
-  }
+  },
 );

@@ -3,7 +3,7 @@ import { React, styled } from "uebersicht";
 const HideOverflow = styled.span`
   overflow: hidden;
   white-space: nowrap;
-  background-color: ${(props) =>  props.bg};
+  background-color: ${(props) => props.bg};
   padding: 0.5em;
   margin-left: 0.5em;
   margin-right: 0.25em;
@@ -21,6 +21,12 @@ const HideOverflow = styled.span`
 `;
 
 const Item = ({ text, hide, color, bg, style }) =>
-  hide ? "" : <HideOverflow color={color} bg={bg} style={style}>{text}</HideOverflow>;
+  hide ? (
+    ""
+  ) : (
+    <HideOverflow color={color} bg={bg} style={style}>
+      {text}
+    </HideOverflow>
+  );
 
 export default Item;

@@ -14,7 +14,7 @@ const CpuMeter = ({ percentCpu, cpus, colors }) => {
     display: "inline-block",
     background: colors.BrightBlack,
     borderRadius: "25px",
-    padding: "1px"
+    padding: "1px",
   });
 
   const fill = css({
@@ -27,7 +27,7 @@ const CpuMeter = ({ percentCpu, cpus, colors }) => {
     borderBottomLeftRadius: 20,
     backgroundColor: getColor(colors, cpu),
     position: "relative",
-    overflow: "hidden"
+    overflow: "hidden",
   });
 
   return (

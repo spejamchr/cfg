@@ -1,1 +1,1 @@
-export const monitorId = window.location.pathname.split('/')[1];
+export const monitorId = window.location.pathname.split("/")[1];

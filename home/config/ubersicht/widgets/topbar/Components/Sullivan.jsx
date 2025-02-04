@@ -103,27 +103,16 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
 
   const color = (x) => {
     if (rand() < 0.05) {
-      return sample([
-        colors.White,
-        colors.BrightBlack,
-      ])
+      return sample([colors.White, colors.BrightBlack]);
     }
     const scaledX = -15 * ((x - minX) / (maxX - minX) - 0.5);
     const sigmoidX = 1 / (1 + Math.exp(scaledX));
     if (sigmoidX < rand()) {
-      return sample([
-        colors.Red,
-        colors.Magenta,
-        colors.Yellow,
-      ])
+      return sample([colors.Red, colors.Magenta, colors.Yellow]);
     } else {
-      return sample([
-        colors.Blue,
-        colors.Green,
-        colors.Cyan,
-      ])
+      return sample([colors.Blue, colors.Green, colors.Cyan]);
     }
-  }
+  };
 
   return (
     <div style={bodyStyle}>
@@ -135,19 +124,17 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
         xmlns="http://www.w3.org/2000/svg"
       >
         <g strokeWidth={2} strokeLinecap="round" fill="none">
-
           {genSeeds({ minX, maxX, minY, maxY }).map((s) => (
             <line
               strokeWidth={(0.7 * (maxY - s.y)) / maxY + 1.3}
               key={`${s.x},${s.y}`}
-              x1={(s.x + s.l[0] * Math.cos(s.a))}
-              y1={(s.y + s.l[0] * Math.sin(s.a))}
-              x2={(s.x + s.l[1] * Math.cos(s.a + Math.PI))}
-              y2={(s.y + s.l[1] * Math.sin(s.a + Math.PI))}
+              x1={s.x + s.l[0] * Math.cos(s.a)}
+              y1={s.y + s.l[0] * Math.sin(s.a)}
+              x2={s.x + s.l[1] * Math.cos(s.a + Math.PI)}
+              y2={s.y + s.l[1] * Math.sin(s.a + Math.PI)}
               stroke={color(s.x)}
             />
           ))}
-
         </g>
       </svg>
     </div>

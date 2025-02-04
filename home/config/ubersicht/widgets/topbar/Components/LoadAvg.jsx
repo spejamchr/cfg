@@ -6,7 +6,11 @@ const getColor = fourColorRange({ min: 0.33, med: 0.5, max: 1 });
 
 const LoadAvg = ({ loadavg, cpus, colors }) => {
   return (
-    <Item color={getColor(colors, Number(loadavg) / cpus)} text={loadavg} bg={colors.Black} />
+    <Item
+      color={getColor(colors, Number(loadavg) / cpus)}
+      text={loadavg}
+      bg={colors.Black}
+    />
   );
 };
 

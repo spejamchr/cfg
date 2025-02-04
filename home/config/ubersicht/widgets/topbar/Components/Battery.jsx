@@ -5,7 +5,11 @@ const Battery = ({ power, colors }) => {
   const text = `${power.plugged ? "" : " "} ${power.battery}`;
 
   return (
-    <Item color={power.plugged ? colors.Yellow : colors.Magenta} text={text} bg={colors.Black} />
+    <Item
+      color={power.plugged ? colors.Yellow : colors.Magenta}
+      text={text}
+      bg={colors.Black}
+    />
   );
 };
 

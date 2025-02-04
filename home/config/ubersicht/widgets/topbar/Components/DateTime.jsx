@@ -1,7 +1,7 @@
 import { React } from "uebersicht";
 import Item from "./item.jsx";
 
-const DateTime = ({colors}) => {
+const DateTime = ({ colors }) => {
   const date = new Date();
   return (
     <>

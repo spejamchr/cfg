@@ -8,7 +8,13 @@ const Pianobar = ({ pianobar, colors }) => {
       ? pianobar.song.substring(0, maxLength - 3) + "..."
       : pianobar.song;
 
-  return <Item text={song || "音楽を始める..."} hide={!pianobar.on} bg={colors.Black} />;
+  return (
+    <Item
+      text={song || "音楽を始める..."}
+      hide={!pianobar.on}
+      bg={colors.Black}
+    />
+  );
 };
 
 export default Pianobar;
