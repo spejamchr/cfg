@@ -7,7 +7,7 @@ import Pianobar from "./Components/Pianobar.jsx";
 import Spaces from "./Components/Spaces.jsx";
 import Window from "./Components/Window.jsx";
 import prepare from "./Utils/Prepare.jsx";
-import { monitorId } from "./Utils/Monitor.js";
+import { monitorId } from "./Utils/Monitor.jsx";
 
 export const refreshFrequency = 1000;
 
@@ -85,7 +85,7 @@ export const render = prepare(
 
     const windowInfo = <Window windows={windows} colors={colors} />;
 
-    if (monitorId == "1") {
+    if (monitorId === "1") {
       return (
         <OuterContainer>
           <InnerContainerLeft>{leftSide}</InnerContainerLeft>

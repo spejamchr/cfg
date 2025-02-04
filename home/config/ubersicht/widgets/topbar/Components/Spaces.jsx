@@ -1,7 +1,7 @@
 import { React } from "uebersicht";
 import Item from "./item.jsx";
 import { containerStyles } from "../index.jsx";
-import { monitorId } from "../Utils/Monitor.js";
+import { monitorId } from "../Utils/Monitor.jsx";
 
 const Spaces = ({ spaces, colors }) => {
   const displayId = monitorId === "1" ? 1 : 2;
