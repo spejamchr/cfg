@@ -249,6 +249,7 @@ function main() {
   brew_install chruby-fish
   brew_install fd
   brew_install fzf
+  brew_install git
   brew_install htop
   brew_install koekeishiya/formulae/skhd
   brew_install koekeishiya/formulae/yabai
@@ -275,7 +276,9 @@ function main() {
   brew_cask_install joplin
   brew_cask_install keepassxc "spencer"
   brew_cask_install kitty@nightly
+  brew_cask_install mongodb-compass "spencerchristiansen"
   brew_cask_install postgres-unofficial "spencer"
+  brew_cask_install slack 'spencerchristiansen'
   brew_cask_install ubersicht
   brew_cask_install visual-studio-code "spencerchristiansen"
   brew_cask_install zoom "spencer"

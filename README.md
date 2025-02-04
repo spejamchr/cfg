@@ -48,6 +48,7 @@ Installed with `brew install`:
 - [`exercism`](https://exercism.io/cli/): Command-line tool to interact with exercism.io
 - [`fd`](https://github.com/sharkdp/fd): A simple, fast and user-friendly alternative to 'find'
 - [`fzf`](https://github.com/junegunn/fzf): 🌸 A command-line fuzzy finder
+- [`git`](https://git-scm.com/): Distributed revision control system
 - [`htop`](https://hisham.hm/htop/): Improved top (interactive process viewer)
 - [`neovim`](https://neovim.io/): Ambitious Vim-fork focused on extensibility and agility
 - [`node@20`](https://nodejs.org/): Platform built on V8 to build network applications
@@ -63,7 +64,6 @@ Installed with `brew install`:
 
 Installed with `brew cask install`:
 
-- [`android-studio`](https://developer.android.com/studio/): Tools for building Android applications
 - [`calibre`](https://calibre-ebook.com/): A powerful and easy to use e-book manager
 - [`discord`](https://discord.com/): Voice and text chat software
 - [`docker`](https://www.docker.com/products/docker-desktop): App to build and share containerised applications and microservices
@@ -75,6 +75,7 @@ Installed with `brew cask install`:
 - [`joplin`](https://joplinapp.org/): Note taking and to-do application with synchronisation capabilities
 - [`keepassxc`](https://keepassxc.org/): Cross-platform Password Manager
 - [`kitty@nightly`](https://github.com/kovidgoyal/kitty): Cross-platform, fast, feature-rich, GPU based terminal
+- [`mongodb-compass`](https://www.mongodb.com/products/compass): Interactive tool for analyzing MongoDB data
 - [`postgres-unofficial`](https://postgresapp.com/): App wrapper for Postgres
 - [`slack`](https://slack.com/): Team communication and collaboration software
 - [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
