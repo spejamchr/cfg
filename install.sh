@@ -269,7 +269,6 @@ function main() {
   brew_cask_install calibre "spencer"
   brew_cask_install discord "spencer"
   brew_cask_install docker
-  brew_cask_install dotnet-sdk
   brew_cask_install dropbox
   brew_cask_install firefox
   brew_cask_install font-fira-code-nerd-font

@@ -68,7 +68,6 @@ Installed with `brew cask install`:
 - [`calibre`](https://calibre-ebook.com/): A powerful and easy to use e-book manager
 - [`discord`](https://discord.com/): Voice and text chat software
 - [`docker`](https://www.docker.com/products/docker-desktop): App to build and share containerised applications and microservices
-- [`dotnet-sdk`](https://www.microsoft.com/net/core#macos): .NET SDK Developer platform
 - [`dropbox`](https://www.dropbox.com/): Client for the Dropbox cloud storage service
 - [`firefox`](https://www.mozilla.org/firefox/): Web browser
 - [`font-fira-code-nerd-font`](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FiraCode): Monospaced font with programming ligatures
