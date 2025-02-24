@@ -315,7 +315,7 @@ require("mason-lspconfig").setup({
     'rust_analyzer',
     'solargraph',
     'tailwindcss',
-    'vtsls',
+    'ts_ls',
   },
 })
 
@@ -357,15 +357,6 @@ require("mason-lspconfig").setup_handlers {
   end,
 
   -- next, you can provide a dedicated handler for specific servers.
-  ["ts_ls"] = function ()
-    require("typescript").setup{
-      server = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-      },
-    }
-  end,
-
   ["cssls"] = function()
     require('lspconfig').cssls.setup({
       settings = {
@@ -438,7 +429,40 @@ vim.diagnostic.config{
 require('lspconfig.ui.windows').default_options = {
   border = _border
 }
+
+local lspconfig = require("lspconfig")
+
+local function organize_imports()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local params = {
+    command = "_typescript.organizeImports",
+    arguments = {vim.api.nvim_buf_get_name(bufnr)},
+    title = ""
+  }
+  vim.lsp.buf.execute_command(params)
+  -- perform a syncronous request
+  -- 500ms timeout depending on the size of file a bigger timeout may be needed
+  vim.lsp.buf_request_sync(bufnr, "workspace/executeCommand", params, 500)
+end
+
+lspconfig.ts_ls.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  commands = {
+    OrganizeImports = {
+      organize_imports,
+      description = "Organize Imports"
+    }
+  }
+}
+
 EOF
+
+augroup organize_imports
+  autocmd!
+
+  autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx silent! undojoin | OrganizeImports
+augroup END
 " }}}
 
 " Configure code auto-formatting with Neoformat {{{
