@@ -10,6 +10,26 @@ vim.keymap.set(
   { desc = "Open Fern (File Explorer)" }
 )
 
+-- Maps for Finding
+vim.keymap.set("n", "<Leader>fp", function()
+  Snacks.picker.pickers()
+end, { desc = "Find a Picker" })
+
+-- Maps for picking Git stuff
+vim.keymap.del("n", "<leader>gc")
+
+vim.keymap.set("n", "<leader>gf", function()
+  Snacks.picker.git_log_file()
+end, { desc = "Git Current File History" })
+
+vim.keymap.set("n", "<leader>gl", function()
+  Snacks.picker.git_log({ cwd = LazyVim.root.git() })
+end, { desc = "Git Log" })
+
+vim.keymap.set("n", "<leader>gL", function()
+  Snacks.picker.git_log()
+end, { desc = "Git Log (cwd)" })
+
 -- Perform 'open' on leaf node, 'expand' on collapsed node, and 'collapse' on
 -- expanded node. From fern's docs.
 vim.cmd([[
