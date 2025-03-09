@@ -3,6 +3,20 @@
 if true then return {
   { "akinsho/bufferline.nvim", enabled = false },
   {
+    "echasnovski/mini.surround",
+    opts = {
+      custom_textobjects = {
+        f = require('mini.surround').gen_spec.input.treesitter({ outer = '@call.outer', inner = '@call.inner' }),
+        t = require('mini.surround').gen_spec.input.treesitter({ outer = '@function.outer', inner = '@function.inner' }),
+      },
+      mappings = {
+        -- add = "ys",
+        -- delete = "ds",
+        -- replace =  "cs" ,
+      },
+    }
+  },
+  {
     "folke/snacks.nvim",
     opts = {
       picker = {
@@ -11,12 +25,48 @@ if true then return {
             keys = {
               ["<Esc>"] = { "close", mode = { "n", "i" } },
               ["<c-x>"] = { "edit_split", mode = { "i", "n" } },
-            }
-          }
-        }
-      }
-    }
+            },
+          },
+        },
+      },
+      explorer = {
+        enabled = false,
+      },
+    },
   },
+  {
+    "stevearc/conform.nvim",
+    opts = {
+      formatters_by_ft = {
+        lua = { "stylua" },
+        fish = { "fish_indent" },
+        sh = { "shfmt" },
+        cs = { "csharpier" }
+      },
+    },
+  },
+  { "tpope/vim-fugitive" },
+  { "lambdalisue/vim-fern" },
+  { "lambdalisue/vim-fern-git-status" },
+  { "lambdalisue/vim-fern-hijack" },
+  {
+    "folke/tokyonight.nvim",
+    opts = {
+      transparent = true,
+      styles = {
+        sidebars = "transparent",
+        floats = "transparent",
+      },
+    },
+  },
+  {
+    "saghen/blink.cmp",
+    opts = {
+      keymap = {
+        preset = "default",
+      },
+    },
+  }
 } end
 
 -- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim

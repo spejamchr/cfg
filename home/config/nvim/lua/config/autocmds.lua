@@ -22,3 +22,15 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   group = vim.api.nvim_create_augroup("SJC-OrganizeImports", {}),
   callback = OrganizeImports,
 })
+
+-- Per default, netrw leaves unmodified buffers open. This autocommand
+-- deletes netrw's buffer once it's hidden (using ':q', for example)
+-- autocmd FileType netrw setlocal bufhidden=delete
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "netrw",
+  group = vim.api.nvim_create_augroup("SJC-DeleteNetrwBuffers", {}),
+  callback = function()
+    vim.opt_local.bufhidden = "delete"
+  end,
+})
