@@ -37,9 +37,9 @@ class Maybe
     return self unless just?
     return self.class.nothing unless val[:val].is_a?(Hash)
 
-    other = yield(val[:val])
-    other = other.is_a?(Maybe) ? other : Maybe.new(other)
-    other.map { |ov| val[:val].merge(name => ov) }
+    yield(val[:val])
+      .then { |v| v.is_a?(Maybe) ? v : Maybe.new(v) }
+      .map { |ov| val[:val].merge(name => ov) }
   end
 
   private
