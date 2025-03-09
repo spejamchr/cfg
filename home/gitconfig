@@ -1,3 +1,5 @@
+[column]
+  ui = auto
 [include]
   path = .config/git/private-config
 [user]
@@ -27,6 +29,8 @@
   # Show moved lines differently from added/deleted lines
   # https://twitter.com/SmileyKeith/status/946789768506912773
   colorMoved = zebra
+	algorithm = histogram
+	renames = true
 [difftool]
   prompt = false
   trustExitCode = true
@@ -40,10 +44,25 @@
 	defaultBranch = main
 [merge]
 	tool = nvimdiff
-	conflictstyle = diff3
+	conflictstyle = zdiff3
 [mergetool]
 	keepBackup = false
 [mergetool.nvimdiff]
 	trustExitCode = false
 [rerere]
 	enabled = true
+	autoupdate = true
+[branch]
+	sort = -committerdate
+[tag]
+	sort = version:refname
+[push]
+	autoSetupRemote = true
+[fetch]
+	prune = true
+	pruneTags = true
+	all = true
+[help]
+	autocorrect = prompt
+[rebase]
+	updateRefs = true
