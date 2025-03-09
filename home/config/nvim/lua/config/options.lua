@@ -26,3 +26,13 @@ vim.opt.sidescrolloff = 0
 
 -- Use the tree view in Netrw
 vim.g.netrw_liststyle = 3
+vim.g.netrw_banner = 0
+
+-- Set the colorscheme once things have loaded
+vim.schedule(function()
+  vim.cmd([[
+if filereadable(expand("~/.vimrc_background"))
+  source ~/.vimrc_background
+endif
+]])
+end)

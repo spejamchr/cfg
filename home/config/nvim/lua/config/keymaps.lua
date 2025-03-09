@@ -120,3 +120,8 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   group = vim.api.nvim_create_augroup("SJC-fern-custom", { clear = true }),
   callback = fern_init,
 })
+
+-- Open Fern once the editor is ready and things are loaded
+vim.schedule(function()
+  vim.cmd("Fern .")
+end)

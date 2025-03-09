@@ -2,6 +2,7 @@
 -- stylua: ignore
 if true then return {
   { "akinsho/bufferline.nvim", enabled = false },
+  { "RRethy/base16-nvim" },
   {
     "echasnovski/mini.surround",
     opts = {
@@ -48,7 +49,10 @@ if true then return {
   { "tpope/vim-fugitive" },
   { "lambdalisue/vim-fern" },
   { "lambdalisue/vim-fern-git-status" },
-  { "lambdalisue/vim-fern-hijack" },
+  {
+    "lambdalisue/vim-fern-hijack",
+    event = "VeryLazy",
+  },
   {
     "folke/tokyonight.nvim",
     opts = {
