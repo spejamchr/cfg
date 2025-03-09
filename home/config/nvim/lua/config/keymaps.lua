@@ -3,7 +3,12 @@
 -- Add any additional keymaps here
 
 vim.keymap.set({ "n" }, "<Leader>w", "<cmd>w<cr><esc>", { desc = "Save File" })
-vim.keymap.set({ "n" }, "-", ":Fern %:h -reveal=%:p<CR>", { desc = "Open Fern (File Explorer)" })
+vim.keymap.set(
+  { "n" },
+  "-",
+  ":Fern %:h -reveal=%:p<CR>",
+  { desc = "Open Fern (File Explorer)" }
+)
 
 -- Perform 'open' on leaf node, 'expand' on collapsed node, and 'collapse' on
 -- expanded node. From fern's docs.
@@ -43,10 +48,15 @@ local function fern_init()
     desc = "Fern: Reload the UI",
   })
 
-  vim.keymap.set({ "n" }, "<Return>", "<Plug>(fern-action-open-or-expand-or-collapse)", {
-    buffer = true,
-    desc = "Fern: Open/Expand/Collapse selected",
-  })
+  vim.keymap.set(
+    { "n" },
+    "<Return>",
+    "<Plug>(fern-action-open-or-expand-or-collapse)",
+    {
+      buffer = true,
+      desc = "Fern: Open/Expand/Collapse selected",
+    }
+  )
 
   -- CRUD
   vim.keymap.set({ "n" }, "<Leader>n", "<Plug>(fern-action-new-path)", {
