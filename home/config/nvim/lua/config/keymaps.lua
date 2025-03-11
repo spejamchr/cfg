@@ -15,8 +15,15 @@ vim.keymap.set("n", "<Leader>fp", function()
   Snacks.picker.pickers()
 end, { desc = "Find a Picker" })
 
--- Maps for picking Git stuff
+-- Maps for Git stuff
 vim.keymap.del("n", "<leader>gc")
+
+vim.keymap.set(
+  "n",
+  "<leader>ga",
+  ":G blame<CR>",
+  { desc = "Git Blame Whole File" }
+)
 
 vim.keymap.set("n", "<leader>gf", function()
   Snacks.picker.git_log_file()
