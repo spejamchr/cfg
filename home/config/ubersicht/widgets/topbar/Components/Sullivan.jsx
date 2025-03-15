@@ -60,27 +60,6 @@ const genSeeds = ({ minX, maxX, minY, maxY }) => {
     });
   }
 
-  // Boundaries/page clipping
-  seeds.forEach((s) => {
-    const top = minY;
-    const dirSeeds = [
-      { x: minX, y: top, a: 0, l: [SX, 0] }, // top
-      { x: minX, y: maxY, a: 0, l: [SX, 0] }, // bottom
-      { x: minX, y: top, a: Math.PI / 2, l: [SY, 0] }, // left
-      { x: maxX, y: top, a: Math.PI / 2, l: [SY, 0] }, // right
-    ];
-    dirSeeds.forEach((dir) => {
-      const { intersects, ti } = calcIntersection(s, dir);
-      if (intersects) {
-        if (ti > 0) {
-          s.l[0] = ti;
-        } else {
-          s.l[1] = -ti;
-        }
-      }
-    });
-  });
-
   return seeds;
 };
 
