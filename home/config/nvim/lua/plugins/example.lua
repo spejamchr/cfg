@@ -4,6 +4,43 @@ if true then return {
   { "akinsho/bufferline.nvim", enabled = false },
   { "RRethy/base16-nvim" },
   {
+    "nvim-lualine/lualine.nvim",
+    opts = {
+      sections = {
+        lualine_b = {
+          { "filetype", icon_only = false, separator = "", padding = { left = 1, right = 0 } },
+        },
+        lualine_c = {
+          {
+            "diagnostics",
+            symbols = {
+              error = LazyVim.config.icons.diagnostics.Error,
+              warn = LazyVim.config.icons.diagnostics.Warn,
+              info = LazyVim.config.icons.diagnostics.Info,
+              hint = LazyVim.config.icons.diagnostics.Hint,
+            },
+          },
+          { LazyVim.lualine.pretty_path() },
+        },
+        lualine_y = {
+          { "searchcount" },
+          { "progress", separator = " ", padding = { left = 1, right = 1 } },
+        },
+        lualine_z = {
+          { "location", padding = { left = 0, right = 1 } }
+        },
+      },
+      inactive_sections = {
+        lualine_a = {},
+        lualine_c = {},
+        lualine_b = { '%f' },
+        lualine_x = {'location'},
+        lualine_y = {},
+        lualine_z = {},
+      },
+    },
+  },
+  {
     "echasnovski/mini.surround",
     opts = {
       custom_textobjects = {

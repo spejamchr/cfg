@@ -12,7 +12,7 @@ vim.g["fern#renderer#default#leaf_symbol"] = "| "
 vim.g["fern#renderer#default#collapsed_symbol"] = "+ "
 vim.g["fern#renderer#default#expanded_symbol"] = "- "
 
--- Don't be smart with my root dir - Use whereever I opened the editor
+-- Don't be smart with my root dir - Use wherever I opened the editor
 vim.g.root_spec = { "cwd" }
 
 -- Disable mouse mode
@@ -23,6 +23,7 @@ vim.opt.relativenumber = false
 vim.opt.wrap = true
 vim.opt.scrolloff = 0
 vim.opt.sidescrolloff = 0
+vim.opt.laststatus = 2 -- Show a statusline for every window
 
 -- Use the tree view in Netrw
 vim.g.netrw_liststyle = 3
