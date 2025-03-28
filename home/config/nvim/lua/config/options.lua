@@ -24,6 +24,8 @@ vim.opt.wrap = true
 vim.opt.scrolloff = 0
 vim.opt.sidescrolloff = 0
 vim.opt.laststatus = 2 -- Show a statusline for every window
+vim.opt.clipboard = "" -- Reset to the default behavior, not LazyVim's
+vim.opt.pumblend = 0
 
 -- Use the tree view in Netrw
 vim.g.netrw_liststyle = 3

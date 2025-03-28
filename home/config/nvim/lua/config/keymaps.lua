@@ -9,6 +9,9 @@ vim.keymap.set(
   ":Fern %:h -reveal=%:p<CR>",
   { desc = "Open Fern (File Explorer)" }
 )
+vim.keymap.set({ "n" }, "<Leader>ff", function()
+  Snacks.picker.files()
+end, { desc = "Find file" })
 
 -- Maps for Finding
 vim.keymap.set("n", "<Leader>fp", function()
@@ -16,8 +19,6 @@ vim.keymap.set("n", "<Leader>fp", function()
 end, { desc = "Find a Picker" })
 
 -- Maps for Git stuff
-vim.keymap.del("n", "<leader>gc")
-
 vim.keymap.set(
   "n",
   "<leader>ga",
