@@ -29,33 +29,36 @@ vim.opt.rtp:prepend(lazypath)
 -- Use Space as my leader
 vim.g.mapleader = " "
 
--- Show hidden files by default
-vim.g["fern#default_hidden"] = 1
+-- Fish is great for interactive shells, but for editing use zsh
+vim.opt.shell = "/bin/zsh"
 
--- Only use my mappings
-vim.g["fern#disable_default_mappings"] = 1
+-- Always show the signcolumn to prevent the text from bouncing
+vim.opt.signcolumn = "yes"
 
-vim.g["fern#renderer#default#leaf_symbol"] = "| "
-vim.g["fern#renderer#default#collapsed_symbol"] = "+ "
-vim.g["fern#renderer#default#expanded_symbol"] = "- "
+vim.opt.backup = false -- no backup files
+vim.opt.writebackup = false -- only in case you don't want a backup file while editing
+vim.opt.swapfile = false -- no swap files
 
--- Don't be smart with my root dir - Use wherever I opened the editor
-vim.g.root_spec = { "cwd" }
+-- Tab key inserts 2 spaces normally
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 0
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.smartindent = true
 
 -- Disable mouse mode
 vim.opt.mouse = ""
 
-vim.opt.number = false
-vim.opt.relativenumber = false
-vim.opt.wrap = true
-vim.opt.scrolloff = 0
-vim.opt.sidescrolloff = 0
-vim.opt.laststatus = 2 -- Show a statusline for every window
-vim.opt.pumblend = 0
+vim.opt.splitbelow = true
+vim.opt.splitright = true
 
--- Use the tree view in Netrw
-vim.g.netrw_liststyle = 3
-vim.g.netrw_banner = 0
+vim.opt.cursorline = true
+
+-- Show incremental commands
+vim.opt.inccommand = "split"
+
+-- Persistent undo
+vim.opt.undofile = true
 
 -- Set the colorscheme once things have loaded
 vim.schedule(function()
@@ -192,6 +195,14 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 -- }}}
 
 -- Autocmds {{{
+vim.api.nvim_create_autocmd("VimResized", {
+  pattern = "*",
+  group = vim.api.nvim_create_augroup("SJC-resize-neovim", {}),
+  callback = function()
+    vim.cmd("wincmd =")
+  end,
+})
+
 function OrganizeImports()
   local bufnr = vim.api.nvim_get_current_buf()
   local params = {
@@ -307,6 +318,14 @@ require("lazy").setup({
     {
       "folke/snacks.nvim",
       opts = {
+        indent = { enabled = true },
+        input = { enabled = true },
+        notifier = { enabled = true },
+        scope = { enabled = true },
+        scroll = { enabled = true },
+        statuscolumn = { enabled = true },
+        toggle = { enabled = true },
+        words = { enabled = true },
         picker = {
           win = {
             input = {
@@ -384,7 +403,20 @@ require("lazy").setup({
       end,
     },
     { "tpope/vim-fugitive" },
-    { "lambdalisue/vim-fern" },
+    {
+      "lambdalisue/vim-fern",
+      init = function()
+        -- Show hidden files by default
+        vim.g["fern#default_hidden"] = 1
+
+        -- Only use my mappings
+        vim.g["fern#disable_default_mappings"] = 1
+
+        vim.g["fern#renderer#default#leaf_symbol"] = "| "
+        vim.g["fern#renderer#default#collapsed_symbol"] = "+ "
+        vim.g["fern#renderer#default#expanded_symbol"] = "- "
+      end,
+    },
     { "lambdalisue/vim-fern-git-status" },
     { "lambdalisue/vim-fern-hijack" },
     {
