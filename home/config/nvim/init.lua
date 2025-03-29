@@ -73,34 +73,47 @@ end)
 -- Keymaps {{{
 vim.keymap.set({ "n" }, "<Leader>w", "<cmd>w<cr><esc>", { desc = "Save File" })
 vim.keymap.set({ "n" }, "-", ":Oil<CR>", { desc = "Open File Explorer" })
-vim.keymap.set({ "n" }, "<Leader><space>", function()
-  Snacks.picker.files()
-end, { desc = "Find file" })
+
+-- Maps for Navigation
+function navving()
+  function m(lhs, rhs, desc)
+    vim.keymap.set({ "n", "i", "x" }, lhs, rhs, { desc = "Nav to " .. desc })
+  end
+  m("<C-l>", "<CMD>wincmd l<CR>", "right window")
+  m("<C-h>", "<CMD>wincmd h<CR>", "left window")
+  m("<C-k>", "<CMD>wincmd k<CR>", "window above")
+  m("<C-j>", "<CMD>wincmd j<CR>", "window below")
+end
+
+navving()
 
 -- Maps for Finding
-vim.keymap.set("n", "<Leader>fp", function()
-  Snacks.picker.pickers()
-end, { desc = "Find a Picker" })
+-- stylua: ignore
+function finding()
+  function m(lhs, rhs, desc)
+    vim.keymap.set("n", lhs, rhs, { desc = "Find " .. desc })
+  end
+  m("<Leader>ff", function() Snacks.picker.files() end, "File")
+  m("<Leader><space>", function() Snacks.picker.files() end, "File")
+  m("<Leader>fp", function() Snacks.picker.pickers() end, "Picker")
+  m("<Leader>sg", function() Snacks.picker.grep() end, "with Grep")
+end
+
+finding()
 
 -- Maps for Git stuff
-vim.keymap.set(
-  "n",
-  "<leader>ga",
-  ":G blame<CR>",
-  { desc = "Git Blame Whole File" }
-)
+-- stylua: ignore
+function gitting()
+  function m(lhs, rhs, desc)
+    vim.keymap.set("n", lhs, rhs, { desc = "Git " .. desc })
+  end
+  m("<leader>ga", ":G blame<CR>", "Blame Whole File")
+  m("<leader>gf", function() Snacks.picker.git_log_file() end, "Current File History")
+  m("<leader>gl", function() Snacks.picker.git_log({ cwd = LazyVim.root.git() }) end, "Log")
+  m("<leader>gL", function() Snacks.picker.git_log() end, "Log (cwd)")
+end
 
-vim.keymap.set("n", "<leader>gf", function()
-  Snacks.picker.git_log_file()
-end, { desc = "Git Current File History" })
-
-vim.keymap.set("n", "<leader>gl", function()
-  Snacks.picker.git_log({ cwd = LazyVim.root.git() })
-end, { desc = "Git Log" })
-
-vim.keymap.set("n", "<leader>gL", function()
-  Snacks.picker.git_log()
-end, { desc = "Git Log (cwd)" })
+gitting()
 -- }}}
 
 -- Autocmds {{{
@@ -193,6 +206,8 @@ require("lazy").setup({
         keymaps = {
           ["<C-x>"] = { "actions.select", opts = { horizontal = true } },
           ["<C-v>"] = { "actions.select", opts = { vertical = true } },
+          ["<C-l>"] = false,
+          ["<C-h>"] = false,
         },
       },
       lazy = false,
@@ -213,9 +228,9 @@ require("lazy").setup({
           }
         end,
         mappings = {
-          add = "ys",
-          delete = "ds",
-          replace = "cs",
+          add = "gsa",
+          delete = "gsd",
+          replace = "gsc",
           find = "",
           find_left = "",
           highlight = "",
