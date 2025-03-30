@@ -171,6 +171,20 @@ vim.lsp.config["luals"] = {
   cmd = { "lua-language-server" },
   filetypes = { "lua" },
   root_markers = { ".luarc.json", ".luarc.jsonc" },
+  on_init = function(client)
+    if client.workspace_folders then
+      local path = client.workspace_folders[1].name
+      if
+        path ~= vim.fn.stdpath("config")
+        and (
+          vim.loop.fs_stat(path .. "/.luarc.json")
+          or vim.loop.fs_stat(path .. "/.luarc.jsonc")
+        )
+      then
+        return
+      end
+    end
+  end,
   settings = {
     Lua = {
       runtime = {
@@ -192,12 +206,15 @@ vim.lsp.config["luals"] = {
 vim.lsp.enable("luals")
 
 vim.lsp.config["ts_ls"] = {
+  init_options = { hostInfo = "neovim" },
   cmd = { "typescript-language-server", "--stdio" },
   filetypes = {
-    "typescript",
-    "typescriptreact",
     "javascript",
+    "javascript.jsx",
     "javascriptreact",
+    "typescript",
+    "typescript.tsx",
+    "typescriptreact",
   },
   root_markers = { ".git" },
   single_file_support = true,
