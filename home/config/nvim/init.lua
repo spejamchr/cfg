@@ -35,6 +35,9 @@ vim.opt.shell = "/bin/zsh"
 -- Always show the signcolumn to prevent the text from bouncing
 vim.opt.signcolumn = "yes"
 
+-- Add a border to floating windows
+vim.opt.winborder = "rounded"
+
 vim.opt.backup = false -- no backup files
 vim.opt.writebackup = false -- only in case you don't want a backup file while editing
 vim.opt.swapfile = false -- no swap files
