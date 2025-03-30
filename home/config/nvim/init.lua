@@ -215,7 +215,7 @@ vim.lsp.config["ts_ls"] = {
 }
 vim.lsp.enable("ts_ls")
 
-vim.diagnostic.config({ virtual_lines = true })
+vim.diagnostic.config({ virtual_lines = true, jump = { float = true } })
 -- }}}
 
 -- Setup Plugins with lazy.nvim {{{
