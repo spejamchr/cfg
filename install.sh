@@ -264,6 +264,7 @@ function main() {
   brew_install ruby-install
   brew_install rustup
   brew_install sleepwatcher
+  brew_install typescript-language-server
   brew_install wget
   brew_install yarn
 

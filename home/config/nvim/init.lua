@@ -77,9 +77,8 @@ end)
 vim.keymap.set({ "n" }, "<Leader>w", "<cmd>w<cr><esc>", { desc = "Save File" })
 vim.keymap.set({ "n" }, "-", ":Oil<CR>", { desc = "Open File Explorer" })
 
--- Maps for Navigation
-function navving()
-  function m(lhs, rhs, desc)
+local function navving()
+  local function m(lhs, rhs, desc)
     vim.keymap.set({ "n", "i", "x" }, lhs, rhs, { desc = "Nav to " .. desc })
   end
   m("<C-l>", "<CMD>wincmd l<CR>", "right window")
@@ -87,36 +86,46 @@ function navving()
   m("<C-k>", "<CMD>wincmd k<CR>", "window above")
   m("<C-j>", "<CMD>wincmd j<CR>", "window below")
 end
-
 navving()
 
--- Maps for Finding
 -- stylua: ignore
-function finding()
-  function m(lhs, rhs, desc)
+local function finding()
+  local function m(lhs, rhs, desc)
     vim.keymap.set("n", lhs, rhs, { desc = "Find " .. desc })
   end
-  m("<Leader>ff", function() Snacks.picker.files() end, "File")
   m("<Leader><space>", function() Snacks.picker.files() end, "File")
+  m("<Leader>ff", function() Snacks.picker.files() end, "File")
+  m("<Leader>fb", function() Snacks.picker.buffers() end, "Buffers")
+  m("<Leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, "Config File")
   m("<Leader>fp", function() Snacks.picker.pickers() end, "Picker")
+  m("<Leader>fr", function() Snacks.picker.recent() end, "Picker")
   m("<Leader>sg", function() Snacks.picker.grep() end, "with Grep")
 end
-
 finding()
 
--- Maps for Git stuff
 -- stylua: ignore
-function gitting()
-  function m(lhs, rhs, desc)
+local function gitting()
+  local function m(lhs, rhs, desc)
     vim.keymap.set("n", lhs, rhs, { desc = "Git " .. desc })
   end
-  m("<leader>ga", ":G blame<CR>", "Blame Whole File")
+  m("<leader>ga", ":G blame<CR>", "Blame All File")
   m("<leader>gf", function() Snacks.picker.git_log_file() end, "Current File History")
   m("<leader>gl", function() Snacks.picker.git_log({ cwd = LazyVim.root.git() }) end, "Log")
   m("<leader>gL", function() Snacks.picker.git_log() end, "Log (cwd)")
 end
-
 gitting()
+
+-- stylua: ignore
+local function lsping()
+  local function m(lhs, rhs, desc)
+    vim.keymap.set("n", lhs, rhs, { desc = "LSP " .. desc })
+  end
+  m("gd", function() Snacks.picker.lsp_definitions() end, "Definitions")
+  m("gr", function() Snacks.picker.lsp_references() end, "References")
+  m("<Leader>ca", vim.lsp.buf.code_action, "Code Action")
+  m("gn", vim.lsp.buf.rename, "Rename")
+end
+lsping()
 -- }}}
 
 -- Autocmds {{{
@@ -181,6 +190,32 @@ vim.lsp.config["luals"] = {
   },
 }
 vim.lsp.enable("luals")
+
+vim.lsp.config["ts_ls"] = {
+  cmd = { "typescript-language-server", "--stdio" },
+  filetypes = {
+    "typescript",
+    "typescriptreact",
+    "javascript",
+    "javascriptreact",
+  },
+  root_markers = { ".git" },
+  single_file_support = true,
+  settings = {
+    includeInlayParameterNameHints = "all",
+    includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+    includeInlayFunctionParameterTypeHints = true,
+    includeInlayVariableTypeHints = true,
+    includeInlayPropertyDeclarationTypeHints = true,
+    includeInlayFunctionLikeReturnTypeHints = true,
+    includeInlayEnumMemberValueHints = true,
+    importModuleSpecifierPreference = "relative",
+    importModuleSpecifierEnding = "minimal",
+  },
+}
+vim.lsp.enable("ts_ls")
+
+vim.diagnostic.config({ virtual_lines = true })
 -- }}}
 
 -- Setup Plugins with lazy.nvim {{{
@@ -393,7 +428,7 @@ require("lazy").setup({
           local function map(mode, l, r, desc)
             vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc })
           end
-    
+
           -- stylua: ignore start
           map("n", "]h", function()
             if vim.wo.diff then
@@ -423,7 +458,15 @@ require("lazy").setup({
         end,
       },
     },
-    { "saghen/blink.cmp" },
+    {
+      "saghen/blink.cmp",
+      ---@module 'blink.cmp'
+      ---@type blink.cmp.Config
+      opts = {
+        keymap = { preset = "default" },
+        completion = { documentation = { auto_show = true } },
+      },
+    },
   },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
