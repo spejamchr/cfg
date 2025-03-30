@@ -254,6 +254,7 @@ function main() {
   brew_install htop
   brew_install koekeishiya/formulae/skhd
   brew_install koekeishiya/formulae/yabai
+  brew_install lua-language-server
   brew_install neovim
   brew_install node "spencer"
   brew_install node@20 "spencerchristiansen"

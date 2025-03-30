@@ -51,6 +51,7 @@ Installed with `brew install`:
 - [`fzf`](https://github.com/junegunn/fzf): 🌸 A command-line fuzzy finder
 - [`git`](https://git-scm.com/): Distributed revision control system
 - [`htop`](https://hisham.hm/htop/): Improved top (interactive process viewer)
+- [`lua-language-server`](https://github.com/LuaLS/lua-language-server): Language Server for the Lua language
 - [`neovim`](https://neovim.io/): Ambitious Vim-fork focused on extensibility and agility
 - [`node@20`](https://nodejs.org/): Platform built on V8 to build network applications
 - [`pianobar`](https://github.com/PromyLOPh/pianobar/): Command-line player for [pandora](https://pandora.com)

@@ -154,6 +154,22 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 -- }}}
 
+-- LSP {{{
+vim.lsp.config["luals"] = {
+  cmd = { "lua-language-server" },
+  filetypes = { "lua" },
+  root_markers = { ".luarc.json", ".luarc.jsonc" },
+  settings = {
+    Lua = {
+      runtime = {
+        version = "LuaJIT",
+      },
+    },
+  },
+}
+vim.lsp.enable("luals")
+-- }}}
+
 -- Setup Plugins with lazy.nvim {{{
 require("lazy").setup({
   defaults = {
