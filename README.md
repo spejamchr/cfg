@@ -55,11 +55,13 @@ Installed with `brew install`:
 - [`neovim`](https://neovim.io/): Ambitious Vim-fork focused on extensibility and agility
 - [`node@20`](https://nodejs.org/): Platform built on V8 to build network applications
 - [`pianobar`](https://github.com/PromyLOPh/pianobar/): Command-line player for [pandora](https://pandora.com)
+- [`prettier`](https://prettier.io/): Code formatter for JavaScript, CSS, JSON, GraphQL, Markdown, YAML
 - [`ripgrep`](https://github.com/BurntSushi/ripgrep): Search tool like grep and The Silver Searcher
 - [`ruby-install`](https://github.com/postmodern/ruby-install): Install Ruby, JRuby, Rubinius, TruffleRuby, or mruby
 - [`rustup`](https://github.com/rust-lang/rustup): Rust toolchain installer
 - [`skhd`](https://github.com/koekeishiya/skhd): Simple hotkey daemon for macOS
 - [`sleepwatcher`](https://www.bernhard-baehr.de/): Monitors sleep, wakeup, and idleness of a Mac
+- [`stylua`](https://github.com/JohnnyMorganz/StyLua): Opinionated Lua code formatter
 - [`typescript-language-server`](https://github.com/typescript-language-server/typescript-language-server): Language Server Protocol implementation for TypeScript wrapping tsserver
 - [`wget`](https://www.gnu.org/software/wget/): Internet file retriever
 - [`yabai`](https://github.com/koekeishiya/yabai): A tiling window manager for macOS based on binary space partitioning

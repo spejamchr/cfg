@@ -260,10 +260,12 @@ function main() {
   brew_install node@20 "spencerchristiansen"
   brew_install oven-sh/bun/bun
   brew_install pianobar
+  brew_install prettier
   brew_install ripgrep
   brew_install ruby-install
   brew_install rustup
   brew_install sleepwatcher
+  brew_install stylua
   brew_install typescript-language-server
   brew_install wget
   brew_install yarn
