@@ -25,216 +25,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 -- }}}
 
--- Options {{{
--- Use Space as my leader
-vim.g.mapleader = " "
-
--- Fish is great for interactive shells, but for editing use zsh
-vim.opt.shell = "/bin/zsh"
-
--- Always show the signcolumn to prevent the text from bouncing
-vim.opt.signcolumn = "yes"
-
--- Add a border to floating windows
-vim.opt.winborder = "rounded"
-
-vim.opt.backup = false -- no backup files
-vim.opt.writebackup = false -- only in case you don't want a backup file while editing
-vim.opt.swapfile = false -- no swap files
-
--- Tab key inserts 2 spaces normally
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 0
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 2
-vim.opt.smartindent = true
-
--- Disable mouse mode
-vim.opt.mouse = ""
-
-vim.opt.splitbelow = true
-vim.opt.splitright = true
-
-vim.opt.cursorline = true
-
--- Show incremental commands
-vim.opt.inccommand = "split"
-
--- Persistent undo
-vim.opt.undofile = true
-
--- Set the colorscheme once things have loaded
-vim.schedule(function()
-  vim.cmd([[
-if filereadable(expand("~/.vimrc_background"))
-  source ~/.vimrc_background
-endif
-]])
-end)
--- }}}
-
--- Keymaps {{{
-vim.keymap.set({ "n" }, "<Leader>w", "<cmd>w<cr><esc>", { desc = "Save File" })
-vim.keymap.set({ "n" }, "-", ":Oil<CR>", { desc = "Open File Explorer" })
-
-local function navving()
-  local function m(lhs, rhs, desc)
-    vim.keymap.set({ "n", "i", "x" }, lhs, rhs, { desc = "Nav to " .. desc })
-  end
-  m("<C-l>", "<CMD>wincmd l<CR>", "right window")
-  m("<C-h>", "<CMD>wincmd h<CR>", "left window")
-  m("<C-k>", "<CMD>wincmd k<CR>", "window above")
-  m("<C-j>", "<CMD>wincmd j<CR>", "window below")
-end
-navving()
-
--- stylua: ignore
-local function finding()
-  local function m(lhs, rhs, desc)
-    vim.keymap.set("n", lhs, rhs, { desc = "Find " .. desc })
-  end
-  m("<Leader><space>", function() Snacks.picker.files() end, "File")
-  m("<Leader>ff", function() Snacks.picker.files() end, "File")
-  m("<Leader>fb", function() Snacks.picker.buffers() end, "Buffers")
-  m("<Leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, "Config File")
-  m("<Leader>fp", function() Snacks.picker.pickers() end, "Picker")
-  m("<Leader>fr", function() Snacks.picker.recent() end, "Picker")
-  m("<Leader>sg", function() Snacks.picker.grep() end, "with Grep")
-end
-finding()
-
--- stylua: ignore
-local function gitting()
-  local function m(lhs, rhs, desc)
-    vim.keymap.set("n", lhs, rhs, { desc = "Git " .. desc })
-  end
-  m("<leader>ga", ":G blame<CR>", "Blame All File")
-  m("<leader>gf", function() Snacks.picker.git_log_file() end, "Current File History")
-  m("<leader>gl", function() Snacks.picker.git_log({ cwd = LazyVim.root.git() }) end, "Log")
-  m("<leader>gL", function() Snacks.picker.git_log() end, "Log (cwd)")
-end
-gitting()
-
--- stylua: ignore
-local function lsping()
-  local function m(lhs, rhs, desc)
-    vim.keymap.set("n", lhs, rhs, { desc = "LSP " .. desc })
-  end
-  m("gd", function() Snacks.picker.lsp_definitions() end, "Definitions")
-  m("gr", function() Snacks.picker.lsp_references() end, "References")
-  m("<Leader>ca", vim.lsp.buf.code_action, "Code Action")
-  m("gn", vim.lsp.buf.rename, "Rename")
-end
-lsping()
--- }}}
-
--- Autocmds {{{
-vim.api.nvim_create_autocmd("VimResized", {
-  pattern = "*",
-  group = vim.api.nvim_create_augroup("SJC-resize-neovim", {}),
-  callback = function()
-    vim.cmd("wincmd =")
-  end,
-})
-
-function OrganizeImports()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local params = {
-    command = "_typescript.organizeImports",
-    arguments = { vim.api.nvim_buf_get_name(bufnr) },
-    title = "",
-  }
-  vim.lsp.buf_request_sync(bufnr, "workspace/executeCommand", params, 500)
-end
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.js,*.jsx,*.ts,*.tsx",
-  group = vim.api.nvim_create_augroup("SJC-OrganizeImports", {}),
-  callback = OrganizeImports,
-})
-
--- Per default, netrw leaves unmodified buffers open. This autocommand
--- deletes netrw's buffer once it's hidden (using ':q', for example)
--- autocmd FileType netrw setlocal bufhidden=delete
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "netrw",
-  group = vim.api.nvim_create_augroup("SJC-DeleteNetrwBuffers", {}),
-  callback = function()
-    vim.opt_local.bufhidden = "delete"
-  end,
-})
--- }}}
-
--- LSP {{{
-vim.lsp.config["luals"] = {
-  cmd = { "lua-language-server" },
-  filetypes = { "lua" },
-  root_markers = { ".luarc.json", ".luarc.jsonc" },
-  on_init = function(client)
-    if client.workspace_folders then
-      local path = client.workspace_folders[1].name
-      if
-        path ~= vim.fn.stdpath("config")
-        and (
-          vim.loop.fs_stat(path .. "/.luarc.json")
-          or vim.loop.fs_stat(path .. "/.luarc.jsonc")
-        )
-      then
-        return
-      end
-    end
-  end,
-  settings = {
-    Lua = {
-      runtime = {
-        version = "LuaJIT",
-      },
-      workspace = {
-        library = vim.tbl_extend(
-          "keep",
-          { vim.env.VIMRUNTIME, "${3rd}/luv/library" },
-          vim.api.nvim_get_runtime_file("", true)
-        ),
-      },
-      telemetry = {
-        enable = false,
-      },
-    },
-  },
-}
-vim.lsp.enable("luals")
-
-vim.lsp.config["ts_ls"] = {
-  init_options = { hostInfo = "neovim" },
-  cmd = { "typescript-language-server", "--stdio" },
-  filetypes = {
-    "javascript",
-    "javascript.jsx",
-    "javascriptreact",
-    "typescript",
-    "typescript.tsx",
-    "typescriptreact",
-  },
-  root_markers = { ".git" },
-  single_file_support = true,
-  settings = {
-    includeInlayParameterNameHints = "all",
-    includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-    includeInlayFunctionParameterTypeHints = true,
-    includeInlayVariableTypeHints = true,
-    includeInlayPropertyDeclarationTypeHints = true,
-    includeInlayFunctionLikeReturnTypeHints = true,
-    includeInlayEnumMemberValueHints = true,
-    importModuleSpecifierPreference = "relative",
-    importModuleSpecifierEnding = "minimal",
-  },
-}
-vim.lsp.enable("ts_ls")
-
-vim.diagnostic.config({ virtual_lines = true, jump = { float = true } })
--- }}}
-
 -- Setup Plugins with lazy.nvim {{{
 require("lazy").setup({
   defaults = {
@@ -242,6 +32,7 @@ require("lazy").setup({
   },
   spec = {
     { "RRethy/base16-nvim" },
+    { "williamboman/mason.nvim", lazy = false, opts = {} },
     {
       "nvim-lualine/lualine.nvim",
       opts = {
@@ -494,4 +285,217 @@ require("lazy").setup({
   -- automatically check for plugin updates
   checker = { enabled = true },
 })
+-- }}}
+
+-- Options {{{
+-- Use Space as my leader
+vim.g.mapleader = " "
+
+-- Fish is great for interactive shells, but for editing use zsh
+vim.opt.shell = "/bin/zsh"
+
+-- Always show the signcolumn to prevent the text from bouncing
+vim.opt.signcolumn = "yes"
+
+-- Add a border to floating windows
+vim.opt.winborder = "rounded"
+
+vim.opt.backup = false -- no backup files
+vim.opt.writebackup = false -- only in case you don't want a backup file while editing
+vim.opt.swapfile = false -- no swap files
+
+-- Tab key inserts 2 spaces normally
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 0
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.smartindent = true
+
+-- Disable mouse mode
+vim.opt.mouse = ""
+
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+
+vim.opt.cursorline = true
+
+-- Show incremental commands
+vim.opt.inccommand = "split"
+
+-- Persistent undo
+vim.opt.undofile = true
+
+-- Set the colorscheme once things have loaded
+vim.schedule(function()
+  vim.cmd([[
+if filereadable(expand("~/.vimrc_background"))
+  source ~/.vimrc_background
+endif
+]])
+end)
+-- }}}
+
+-- Keymaps {{{
+local Snacks = require("snacks")
+
+vim.keymap.set({ "n" }, "<Leader>w", "<cmd>w<cr><esc>", { desc = "Save File" })
+vim.keymap.set({ "n" }, "-", ":Oil<CR>", { desc = "Open File Explorer" })
+
+local function navving()
+  local function m(lhs, rhs, desc)
+    vim.keymap.set({ "n", "i", "x" }, lhs, rhs, { desc = "Nav to " .. desc })
+  end
+  m("<C-l>", "<CMD>wincmd l<CR>", "right window")
+  m("<C-h>", "<CMD>wincmd h<CR>", "left window")
+  m("<C-k>", "<CMD>wincmd k<CR>", "window above")
+  m("<C-j>", "<CMD>wincmd j<CR>", "window below")
+end
+navving()
+
+-- stylua: ignore
+local function finding()
+  local function m(lhs, rhs, desc)
+    vim.keymap.set("n", lhs, rhs, { desc = "Find " .. desc })
+  end
+  m("<Leader><space>", function() Snacks.picker.files() end, "File")
+  m("<Leader>ff", function() Snacks.picker.files() end, "File")
+  m("<Leader>fb", function() Snacks.picker.buffers() end, "Buffers")
+  m("<Leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, "Config File")
+  m("<Leader>fp", function() Snacks.picker.pickers() end, "Picker")
+  m("<Leader>fr", function() Snacks.picker.recent() end, "Picker")
+  m("<Leader>sg", function() Snacks.picker.grep() end, "with Grep")
+end
+finding()
+
+-- stylua: ignore
+local function gitting()
+  local function m(lhs, rhs, desc, mode)
+    mode = mode or "n"
+    vim.keymap.set(mode, lhs, rhs, { desc = "Git " .. desc })
+  end
+  m("<leader>ga", ":G blame<CR>", "Blame All File")
+  m("<leader>gf", function() Snacks.picker.git_log_file() end, "Current File History")
+  m("<leader>gl", function() Snacks.picker.git_log() end, "Log")
+  m("<leader>gB", function() Snacks.gitbrowse() end, "Git Browse", { "n", "v" })
+end
+gitting()
+
+-- stylua: ignore
+local function lsping()
+  local function m(lhs, rhs, desc)
+    vim.keymap.set("n", lhs, rhs, { desc = "LSP " .. desc })
+  end
+  m("gd", function() Snacks.picker.lsp_definitions() end, "Definitions")
+  m("gr", function() Snacks.picker.lsp_references() end, "References")
+  m("<Leader>ca", vim.lsp.buf.code_action, "Code Action")
+  m("gn", vim.lsp.buf.rename, "Rename")
+end
+lsping()
+-- }}}
+
+-- Autocmds {{{
+vim.api.nvim_create_autocmd("VimResized", {
+  pattern = "*",
+  group = vim.api.nvim_create_augroup("SJC-resize-neovim", {}),
+  callback = function()
+    vim.cmd("wincmd =")
+  end,
+})
+
+function OrganizeImports()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local params = {
+    command = "_typescript.organizeImports",
+    arguments = { vim.api.nvim_buf_get_name(bufnr) },
+    title = "",
+  }
+  vim.lsp.buf_request_sync(bufnr, "workspace/executeCommand", params, 500)
+end
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.js,*.jsx,*.ts,*.tsx",
+  group = vim.api.nvim_create_augroup("SJC-OrganizeImports", {}),
+  callback = OrganizeImports,
+})
+
+-- Per default, netrw leaves unmodified buffers open. This autocommand
+-- deletes netrw's buffer once it's hidden (using ':q', for example)
+-- autocmd FileType netrw setlocal bufhidden=delete
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "netrw",
+  group = vim.api.nvim_create_augroup("SJC-DeleteNetrwBuffers", {}),
+  callback = function()
+    vim.opt_local.bufhidden = "delete"
+  end,
+})
+-- }}}
+
+-- LSP {{{
+vim.lsp.config["luals"] = {
+  cmd = { "lua-language-server" },
+  filetypes = { "lua" },
+  root_markers = { ".luarc.json", ".luarc.jsonc" },
+  on_init = function(client)
+    if client.workspace_folders then
+      local path = client.workspace_folders[1].name
+      if
+        path ~= vim.fn.stdpath("config")
+        and (
+          vim.loop.fs_stat(path .. "/.luarc.json")
+          or vim.loop.fs_stat(path .. "/.luarc.jsonc")
+        )
+      then
+        return
+      end
+    end
+  end,
+  settings = {
+    Lua = {
+      runtime = {
+        version = "LuaJIT",
+      },
+      workspace = {
+        library = vim.tbl_extend(
+          "keep",
+          { vim.env.VIMRUNTIME, "${3rd}/luv/library" },
+          vim.api.nvim_get_runtime_file("", true)
+        ),
+      },
+      telemetry = {
+        enable = false,
+      },
+    },
+  },
+}
+vim.lsp.enable("luals")
+
+vim.lsp.config["ts_ls"] = {
+  init_options = { hostInfo = "neovim" },
+  cmd = { "typescript-language-server", "--stdio" },
+  filetypes = {
+    "javascript",
+    "javascript.jsx",
+    "javascriptreact",
+    "typescript",
+    "typescript.tsx",
+    "typescriptreact",
+  },
+  root_markers = { ".git" },
+  single_file_support = true,
+  settings = {
+    includeInlayParameterNameHints = "all",
+    includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+    includeInlayFunctionParameterTypeHints = true,
+    includeInlayVariableTypeHints = true,
+    includeInlayPropertyDeclarationTypeHints = true,
+    includeInlayFunctionLikeReturnTypeHints = true,
+    includeInlayEnumMemberValueHints = true,
+    importModuleSpecifierPreference = "relative",
+    importModuleSpecifierEnding = "minimal",
+  },
+}
+vim.lsp.enable("ts_ls")
+
+vim.diagnostic.config({ virtual_lines = true, jump = { float = true } })
 -- }}}
