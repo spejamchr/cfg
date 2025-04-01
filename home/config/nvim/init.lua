@@ -32,7 +32,30 @@ require("lazy").setup({
   },
   spec = {
     { "RRethy/base16-nvim" },
-    { "williamboman/mason.nvim", lazy = false, opts = {} },
+    {
+      "williamboman/mason.nvim",
+      lazy = false,
+      opts = { ui = { border = "rounded", backdrop = 100 } },
+    },
+    {
+      "WhoIsSethDaniel/mason-tool-installer.nvim",
+      opts = {
+        ensure_installed = {
+          "json-lsp",
+          "lua-language-server",
+          "markdown-toc",
+          "markdownlint-cli2",
+          "marksman",
+          "prettier",
+          "rubocop",
+          "rust-analyzer",
+          "shfmt",
+          "solargraph",
+          "stylua",
+          "typescript-language-server",
+        },
+      },
+    },
     {
       "nvim-lualine/lualine.nvim",
       opts = {
