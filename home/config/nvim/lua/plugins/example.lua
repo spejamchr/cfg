@@ -67,6 +67,7 @@ if true then return {
           },
         },
       },
+      bigfile = { enabled = false },
       explorer = {
         enabled = false,
       },
@@ -79,7 +80,9 @@ if true then return {
         lua = { "stylua" },
         fish = { "fish_indent" },
         sh = { "shfmt" },
-        cs = { "csharpier" }
+        cs = { "csharpier" },
+        ts = { "prettier"},
+        js = { "prettier"},
       },
     },
   },

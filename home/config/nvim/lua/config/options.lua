@@ -18,6 +18,9 @@ vim.g.root_spec = { "cwd" }
 -- Disable mouse mode
 vim.opt.mouse = ""
 
+vim.opt.winborder = "rounded"
+
+vim.opt.spell = true
 vim.opt.number = false
 vim.opt.relativenumber = false
 vim.opt.wrap = true

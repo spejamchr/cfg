@@ -37,9 +37,22 @@ vim.keymap.set("n", "<leader>gL", function()
   Snacks.picker.git_log()
 end, { desc = "Git Log (cwd)" })
 
--- Perform 'open' on leaf node, 'expand' on collapsed node, and 'collapse' on
--- expanded node. From fern's docs.
 vim.cmd([[
+" Open Fern in the current dir and highlight the current file
+" nmap - :Fern %:h -reveal=%:p<CR>
+
+" Show hidden files by default
+let g:fern#default_hidden = 1
+
+" Only use my mappings
+let g:fern#disable_default_mappings = 1
+
+let g:fern#renderer#default#leaf_symbol = '| '
+let g:fern#renderer#default#collapsed_symbol = '+ '
+let g:fern#renderer#default#expanded_symbol = '- '
+
+" Perform 'open' on leaf node, 'expand' on collapsed node, and 'collapse' on
+" expanded node. From fern's docs.
 nmap <silent><expr>
       \ <Plug>(fern-action-open-or-expand-or-collapse)
       \ fern#smart#leaf(
@@ -47,83 +60,38 @@ nmap <silent><expr>
       \   "\<Plug>(fern-action-expand)",
       \   "\<Plug>(fern-action-collapse)",
       \ )
+
+" Define my mappings {{{
+function! s:init_fern() abort
+  "Splits
+  nmap <buffer> <C-x> <Plug>(fern-action-open:split)
+  nmap <buffer> <C-v> <Plug>(fern-action-open:vsplit)
+
+  " Navigation
+  nmap <buffer> - <Plug>(fern-action-leave)
+  nmap <buffer> _ <Plug>(fern-action-enter)
+  nmap <buffer> r <Plug>(fern-action-reload)
+  nmap <buffer> z <Plug>(fern-action-expand)
+
+  nmap <buffer> <Return> <Plug>(fern-action-open-or-expand-or-collapse)
+
+  " CRUD
+  nmap <buffer> <Leader>n <Plug>(fern-action-new-path)
+  nmap <buffer> <Leader>d <Plug>(fern-action-remove)
+  nmap <buffer> <Leader>m <Plug>(fern-action-rename)
+
+  " Copy
+  nmap <buffer> <Leader>c <Plug>(fern-action-copy)
+
+  " Marks
+  nmap <buffer> <C-n> <Plug>(fern-action-mark:toggle)j
+  nmap <buffer> <C-p> <Plug>(fern-action-mark:toggle)k
+  nmap <buffer> <C-t> <Plug>(fern-action-mark:toggle)
+  nmap <buffer> <C-c> <Plug>(fern-action-mark:clear)
+endfunction
+
+augroup fern-custom
+  autocmd! *
+  autocmd FileType fern call s:init_fern()
+augroup END
 ]])
-
--- Define my Fern mappings
-local function fern_init()
-  -- Splits
-  vim.keymap.set({ "n" }, "<C-x>", "<Plug>(fern-action-open:split)", {
-    buffer = true,
-    desc = "Fern: Open in Split",
-  })
-  vim.keymap.set({ "n" }, "<C-v>", "<Plug>(fern-action-open:vsplit)", {
-    buffer = true,
-    desc = "Fern: Open in Vsplit",
-  })
-
-  -- Navigation
-  vim.keymap.set({ "n" }, "-", "<Plug>(fern-action-leave)", {
-    buffer = true,
-    desc = "Fern: Navigate up the Filesystem",
-  })
-  vim.keymap.set({ "n" }, "_", "<Plug>(fern-action-enter)", {
-    buffer = true,
-    desc = "Fern: Enter the directory",
-  })
-  vim.keymap.set({ "n" }, "r", "<Plug>(fern-action-reload)", {
-    buffer = true,
-    desc = "Fern: Reload the UI",
-  })
-
-  vim.keymap.set(
-    { "n" },
-    "<Return>",
-    "<Plug>(fern-action-open-or-expand-or-collapse)",
-    {
-      buffer = true,
-      desc = "Fern: Open/Expand/Collapse selected",
-    }
-  )
-
-  -- CRUD
-  vim.keymap.set({ "n" }, "<Leader>n", "<Plug>(fern-action-new-path)", {
-    buffer = true,
-    desc = "Fern: Create new file/dir",
-  })
-  vim.keymap.set({ "n" }, "<Leader>d", "<Plug>(fern-action-remove)", {
-    buffer = true,
-    desc = "Fern: Remove selected",
-  })
-  vim.keymap.set({ "n" }, "<Leader>m", "<Plug>(fern-action-rename)", {
-    buffer = true,
-    desc = "Fern: Move selected",
-  })
-  vim.keymap.set({ "n" }, "<Leader>c", "<Plug>(fern-action-copy)", {
-    buffer = true,
-    desc = "Fern: Copy selected",
-  })
-
-  -- Marks
-  vim.keymap.set({ "n" }, "<C-n>", "<Plug>(fern-action-mark:toggle)j", {
-    buffer = true,
-    desc = "Fern: Toggle selection of current and move down",
-  })
-  vim.keymap.set({ "n" }, "<C-p>", "<Plug>(fern-action-mark:toggle)k", {
-    buffer = true,
-    desc = "Fern: Toggle selection of current and move up",
-  })
-  vim.keymap.set({ "n" }, "<C-t>", "<Plug>(fern-action-mark:toggle)", {
-    buffer = true,
-    desc = "Fern: Toggle selection of current",
-  })
-  vim.keymap.set({ "n" }, "<C-c>", "<Plug>(fern-action-mark:clear)", {
-    buffer = true,
-    desc = "Fern: Clear all selections",
-  })
-end
-
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  pattern = { "fern" },
-  group = vim.api.nvim_create_augroup("SJC-fern-custom", { clear = true }),
-  callback = fern_init,
-})
