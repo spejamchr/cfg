@@ -61,7 +61,7 @@ theme=$(
   sed -e 's/^base16-//' -e 's/.sh$//' | \
   fzf --preview="
     echo '[$original_theme_name] -> [{}]'
-    bat --style=changes,numbers --color always --theme=base16 '$example_file'
+    bat --style=changes,numbers --color=always --theme=base16 '$example_file'
     set_base16 '{}'
   "
 )
