@@ -5,7 +5,7 @@ ctrl - return : kitty -1 --directory=$HOME --listen-on unix:/tmp/mykitty
 # ctrl - m : mpv $(pbpaste)
 
 # open htop
-ctrl - s : kitty -1 --directory=$HOME --title="htop" ~/code/scripts/start_htop
+# ctrl - s : kitty -1 --directory=$HOME --title="htop" ~/code/scripts/start_htop
 
 # Control pianobar with the media keys
 play : pgrep pianobar > /dev/null && \
