@@ -743,7 +743,7 @@ require("lazy").setup({
 			lazy = false,
 			init = function()
 				-- Show hidden files by default
-				vim.g["ferm#default_hidden"] = 1
+				vim.g["fern#default_hidden"] = 1
 
 				-- " Only use my mappings
 				vim.g["fern#disable_default_mappings"] = 1
