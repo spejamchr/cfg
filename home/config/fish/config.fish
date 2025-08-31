@@ -25,9 +25,9 @@ if status is-interactive
     set -gx BASE16_SHELL_HOOKS "$XDG_CONFIG_HOME/base16-shell-hooks"
 
     set -g fish_prompt_pwd_dir_length 0
-end
 
-chruby 3
+    chruby 3 # Don't start the latest ruby for rails running in puma-dev
+end
 
 # bun
 set --export BUN_INSTALL "$HOME/.bun"

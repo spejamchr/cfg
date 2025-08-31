@@ -1,4 +1,4 @@
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
-chruby 3
+# chruby 3 # Don't start the latest ruby for rails running in puma-dev
