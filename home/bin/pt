@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Select a base16 color scheme with live preview
+# Select a tinty color scheme with live preview
 #
 # Pass a filepath to preview highlighting changes for that file.
 
@@ -8,10 +8,9 @@ if [[ "$1" = '--help' || "$1" = '-h' ]]; then
   y="\033[33m" # yellow
   b="\033[1m" # bold
   c="\033[0m" # clear
-  location='$BASE16_SHELL/scripts'
 
   echo -e "$g""pt$c
-Pick a base16 theme with live preview.
+Pick a tinty theme with live preview.
 
 $y""USAGE:$c
     pt [FILE]
@@ -26,28 +25,21 @@ $y""ARGS:$c
         Optional path to a file to render in the preview window.
 
 $y""SEE ALSO:$g
-    Base16$c
-        https://github.com/chriskempson/base16
-
-    $g""set_base16$c
-        Set a specific base16 theme programmatically."
+    Tinty$c
+        https://github.com/tinted-theming/tinty"
 
   exit 0
 fi
 
 example_file=$1
 if [[ ! -f "$example_file" ]]; then
-  example_file="$XDG_CONFIG_HOME/base16-shell-hooks/update-kitty-colors.rb"
+  example_file="$XDG_CONFIG_HOME/tinted-theming/tinty/update-kitty-colors.rb"
 fi
 
-original_theme_name=$( echo "$HOME/.base16_theme" | \
-  xargs readlink | \
-  xargs basename | \
-  sed -e 's/^base16-//' -e 's/.sh$//'
-)
+original_theme_name=$(tinty current)
 
 theme=$(
-  ls "$BASE16_SHELL/scripts" | \
+  tinty list | \
   # Exclude light themes
   grep -v \
     -e light \
@@ -58,11 +50,10 @@ theme=$(
     -e github \
     -e shapeshifter \
     -e tomorrow.sh | \
-  sed -e 's/^base16-//' -e 's/.sh$//' | \
   fzf --preview="
     echo '[$original_theme_name] -> [{}]'
     bat --style=changes,numbers --color=always --theme=base16 '$example_file'
-    set_base16 '{}'
+    tinty apply '{}'
   "
 )
 
@@ -71,4 +62,4 @@ if [[ ! -n "$theme" ]]; then
 fi
 
 # Update the theme asynchronously
-( set_base16 "$theme" & )
+( tinty apply "$theme" & )

@@ -248,8 +248,10 @@ vim.opt.rtp:prepend(lazypath)
 -- }}}
 
 -- Install Packages {{{
+local tinty_current = vim.system({ "tinty", "current" }, { text = true }):wait().stdout
+
 require("lazy").setup({
-	install = { colorscheme = { "base16-horizon-terminal-dark" } },
+	install = { colorscheme = { tinty_current, "default" } },
 	checker = { enabled = true },
 	rocks = { enabled = false },
 	ui = {
@@ -692,10 +694,22 @@ require("lazy").setup({
 		},
 		-- }}}
 
-		-- RRethy/base16-nvim {{{
-		-- Neovim plugin for building a sync base16 colorscheme. Includes support for
-		-- Treesitter and LSP highlight groups.
-		{ "RRethy/base16-nvim", lazy = false, priority = 1000 },
+		-- tinted-theming/tinted-nvim {{{
+		-- Neovim plugin for building tinted-theming colorscheme. Includes support
+		-- for Treesitter and LSP highlight groups.
+		{
+			"tinted-theming/tinted-nvim",
+			lazy = false,
+			priority = 1000,
+			config = function()
+				require("tinted-colorscheme").setup(nil, {
+					supports = {
+						tinty = true,
+						live_reload = false,
+					},
+				})
+			end,
+		},
 		-- }}}
 
 		-- -- folke/noice.nvim {{{

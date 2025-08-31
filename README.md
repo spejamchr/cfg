@@ -84,7 +84,8 @@ Installed with `brew cask install`:
 
 Other:
 
-- [`base16_shell`](https://github.com/chriskempson/base16-shell): Base16 for Shells
+- [`tinty`](https://github.com/tinted-theming/tinty): A base16 and base24 color scheme manager
+  - Installed with `cargo` for now. As of 2024-08-31 the `brew` package is outdated. Need version 0.29.0.
 
 ### Debugging
 

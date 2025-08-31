@@ -26,14 +26,8 @@ CPUS=$(sysctl -n hw.ncpu)
 PERCENT_CPU=$(ps -A -o %cpu | awk '{s+=$1} END {print s}')
 LOADAVG=$(sysctl -n vm.loadavg | awk '{print $2}')
 
-# Update the bar colors based on the current base16 theme
-COLORS=$(cat ~/.base16_theme |
-  grep -e '"../../..".* - ' |
-  sed -e 's/.*\(".*"\).* - \(.*\)/"\2":\1/' \
-  -e 's/:"/:"#/' \
-  -e 's/[\/ ]//g' |
-  tr '\n' ',')
-COLORS=${COLORS%,} # Remove last comma
+# Update the bar colors based on the current theme
+COLORS=$(cat ~/.config/ubersicht/colors.json)
 
 cat <<-EOF
 {
@@ -55,6 +49,6 @@ cat <<-EOF
     "cpus": $CPUS,
     "percentCpu": $PERCENT_CPU,
     "loadavg": "$LOADAVG",
-    "colors": {$COLORS}
+    "colors": $COLORS
 }
 EOF

@@ -1,0 +1,14 @@
+shell = "sh -c '{}'"
+
+hooks = [
+  "ruby ~/.config/tinted-theming/tinty/write-ubersicht-colors.rb",
+  "sh ~/.config/tinted-theming/tinty/refresh-ubersicht.sh",
+  "ruby ~/.config/tinted-theming/tinty/update-nvim-colors.rb",
+]
+
+[[items]]
+path = "https://github.com/tinted-theming/tinted-terminal"
+name = "tinted-terminal"
+themes-dir = "themes/kitty"
+hook = "ruby ~/.config/tinted-theming/tinty/update-kitty-colors.rb"
+supported-systems = ["base16", "base24"]

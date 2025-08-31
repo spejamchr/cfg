@@ -30,15 +30,10 @@ function upgrade_brew_stuff() {
   fi
 }
 
-function upgrade_base16_shell() {
-  echo "\n-> Updating base16_shell..."
-  base16_install_dir="$HOME/.config/base16-shell"
-  if [[ -d "$base16_install_dir" ]]; then
-    git -C "$base16_install_dir" pull
-  else
-    echo "base16-shell is not installed at $base16_install_dir"
-  fi
+function upgrade_tinty() {
+  echo "\n-> Updating tinty..."
+  cargo install tinty
 }
 
 upgrade_brew_stuff
-upgrade_base16_shell
+upgrade_tinty

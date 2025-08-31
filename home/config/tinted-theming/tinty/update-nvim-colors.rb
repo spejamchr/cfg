@@ -3,6 +3,18 @@
 
 require 'json'
 
+scheme_id = ENV.fetch("TINTY_SCHEME_ID")
+
+VIMRC_BACKGROUND = File.join(Dir.home, ".vimrc_background")
+
+File.open(VIMRC_BACKGROUND, 'w') do |f|
+  f.puts(<<~VIM)
+    if !exists('g:colors_name') || g:colors_name != '#{scheme_id}'
+      colorscheme #{scheme_id}
+    endif
+  VIM
+end
+
 def kitty_info
   JSON.parse(`kitty @ ls`)
 end
@@ -20,6 +32,5 @@ end
 # This is a little brittle. The escape sequences--\033\033--are sent to exit
 # insert/visual mode and return to normal mode.
 nvim_window_ids.each do |id|
-  `kitty @ --to unix:/tmp/mykitty send-text -m id:#{id} $'\033\033:source ~/.vimrc_background\n'`
+  `kitty @ --to unix:/tmp/mykitty send-text -m id:#{id} $'\033\033:source #{VIMRC_BACKGROUND}\n'`
 end
-

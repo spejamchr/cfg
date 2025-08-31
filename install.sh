@@ -215,14 +215,14 @@ function install_sleepwatcher_plist() {
   fi
 }
 
-function install_base16_shell() {
-  base16_install_dir="$HOME/.config/base16-shell"
-  if [[ -d "$base16_install_dir" ]]; then
-    infcho "base16-shell appears to be installed at $base16_install_dir"
+function install_tinty() {
+  tinty_install_dir=$(which tinty)
+  if [[ "$tinty_install_dir" ]]; then
+    infcho "tinty appears to be installed at $tinty_install_dir"
   else
-    try_to "Install base16-shell" \
-      "git clone https://github.com/chriskempson/base16-shell.git $base16_install_dir" \
-      "rm -r \"$base16_install_dir\""
+    try_to "Install tinty" \
+      "cargo install tinty" \
+      "cargo uninstall tinty"
   fi
 }
 
@@ -287,7 +287,7 @@ function main() {
   create_symlinks
 
   install_sleepwatcher_plist
-  install_base16_shell
+  install_tinty
 }
 
 main
