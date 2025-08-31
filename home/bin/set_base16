@@ -42,25 +42,14 @@ fi
 
 ln -fs "$path" "$HOME/.base16_theme"
 
-if [ -n ${BASE16_SHELL_HOOKS:+s} ] && [ -d "${BASE16_SHELL_HOOKS}" ]; then
-  for hook in $BASE16_SHELL_HOOKS/*; do
-    [ -f "$hook" ] && [ -x "$hook" ] && "$hook"
-  done
-fi
-
 echo -e "
 if !exists('g:colors_name') || g:colors_name != 'base16-$theme'
   colorscheme base16-$theme
 endif
 " >| ~/.vimrc_background
 
-# Tell all nvim sessions to reload ~/.vimrc_background
-#
-# This is a little brittle. The escape sequences--\033\033--are sent to exit
-# insert/visual mode and return to normal mode.
-for id in $(pgrep nvim); do
-  pid=$(ps -o ppid= -p $id | sed -e 's/ //')
-  kitty @ --to unix:/tmp/mykitty send-text \
-    -m pid:"$pid" \
-    $'\033\033:source ~/.vimrc_background\n'
-done
+if [ -n ${BASE16_SHELL_HOOKS:+s} ] && [ -d "${BASE16_SHELL_HOOKS}" ]; then
+  for hook in $BASE16_SHELL_HOOKS/*; do
+    [ -f "$hook" ] && [ -x "$hook" ] && "$hook"
+  done
+fi
