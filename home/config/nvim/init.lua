@@ -216,7 +216,11 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search resul
 vim.keymap.set("n", "<leader>tl", function()
 	local new_config = not vim.diagnostic.config().virtual_lines
 	vim.diagnostic.config({ virtual_lines = new_config })
-end, { desc = "Toggle Diagnostic Virtual Lines" })
+end, { desc = "Toggle Virtual Lines" })
+
+vim.keymap.set("n", "<leader>th", function()
+	vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+end, { desc = "Toggle Inlay Hints" })
 
 vim.keymap.set("n", "<Leader>w", "<cmd>w<CR>", { desc = "Write current file" })
 
@@ -254,13 +258,18 @@ require("lazy").setup({
 	},
 
 	spec = {
-
+		-- folke/which-key.nvim {{{
+		-- 💥 Create key bindings that stick. WhichKey helps you remember your Neovim
+		-- keymaps, by showing available keybindings in a popup as you type.
 		{
 			"folke/which-key.nvim",
 			event = "VeryLazy",
 			opts = {},
 		},
+		-- }}}
 
+		-- ibhagwan/fzf-lua {{{
+		-- Improved fzf.vim written in lua
 		{
 			"ibhagwan/fzf-lua",
 			event = "VeryLazy",
@@ -274,6 +283,7 @@ require("lazy").setup({
 				map("<Leader>f", fzflua.files, "Find File")
 				map("<Leader>sf", fzflua.files, "Search in Files")
 
+				map("<Leader>st", fzflua.live_grep, "Search with live grep")
 				map("<Leader>sg", fzflua.grep_cword, "Search for the word under the cursor")
 				map("<Leader>sc", fzflua.commands, "Search in Commands")
 				map("<Leader>sb", fzflua.buffers, "Search in Buffers")
@@ -292,13 +302,19 @@ require("lazy").setup({
 				map("<Leader>lr", fzflua.lsp_references, "[LSP] References")
 				map("<Leader>la", fzflua.lsp_code_actions, "[LSP] Code Actions")
 
+				-- FzfLua register_ui_select
+
 				return {
 					"border-fused",
 					"hide",
 				}
 			end,
 		},
+		-- }}}
 
+		-- nvim-mini/mini.surround {{{
+		-- Neovim Lua plugin with fast and feature-rich surround actions. Part of
+		-- 'mini.nvim' library.
 		{
 			"nvim-mini/mini.surround",
 			version = false,
@@ -317,29 +333,16 @@ require("lazy").setup({
 				},
 			},
 		},
+		-- }}}
 
+		-- nvim-mini/mini.pairs {{{
+		-- Neovim Lua plugin to automatically manage character pairs. Part of
+		-- 'mini.nvim' library.
 		{
-			"folke/snacks.nvim",
-			priority = 1000,
-			lazy = false,
-			---@type snacks.Config
-			opts = {
-				image = { enabled = true },
-				input = { enabled = true },
-			},
-		},
-
-		{
-			"folke/ts-comments.nvim",
-			event = "VeryLazy",
-			opts = {},
-		},
-
-		{
-			"echasnovski/mini.pairs",
+			"nvim-mini/mini.pairs",
 			event = "VeryLazy",
 			opts = {
-				modes = { insert = true, command = true, terminal = false },
+				modes = { insert = true, command = false, terminal = false },
 				-- skip autopair when next character is one of these
 				skip_next = [=[[%w%%%'%[%"%.%`%$]]=],
 				-- skip autopair when the cursor is inside these treesitter nodes
@@ -351,7 +354,34 @@ require("lazy").setup({
 				markdown = true,
 			},
 		},
+		-- }}}
 
+		-- folke/snacks.nvim {{{
+		-- 🍿 A collection of QoL plugins for Neovim
+		{
+			"folke/snacks.nvim",
+			priority = 1000,
+			lazy = false,
+			---@type snacks.Config
+			opts = {
+				image = { enabled = true },
+				input = { enabled = true },
+			},
+		},
+		-- }}}
+
+		-- folke/ts-comments.nvim {{{
+		-- Tiny plugin to enhance Neovim's native comments
+		{
+			"folke/ts-comments.nvim",
+			event = "VeryLazy",
+			opts = {},
+		},
+		-- }}}
+
+		-- folke/flash.nvim {{{
+		-- Navigate your code with search labels, enhanced character motions and
+		-- Treesitter integration
 		{
 			"folke/flash.nvim",
 			event = "VeryLazy",
@@ -368,44 +398,183 @@ require("lazy").setup({
 				},
 			},
 		},
+		-- }}}
 
+		-- lewis6991/gitsigns.nvim {{{
+		-- Git integration for buffers
 		{
 			"lewis6991/gitsigns.nvim",
 			event = "VeryLazy",
+			-- Copied from the docs
+			-- https://github.com/lewis6991/gitsigns.nvim?tab=readme-ov-file#-keymaps
+			on_attach = function(bufnr)
+				local gitsigns = require("gitsigns")
+
+				local function map(mode, l, r, opts)
+					opts = opts or {}
+					opts.buffer = bufnr
+					vim.keymap.set(mode, l, r, opts)
+				end
+
+				-- Navigation
+				map("n", "]c", function()
+					if vim.wo.diff then
+						vim.cmd.normal({ "]c", bang = true })
+					else
+						gitsigns.nav_hunk("next")
+					end
+				end)
+
+				map("n", "[c", function()
+					if vim.wo.diff then
+						vim.cmd.normal({ "[c", bang = true })
+					else
+						gitsigns.nav_hunk("prev")
+					end
+				end)
+
+				-- Actions
+				map("n", "<leader>hs", gitsigns.stage_hunk)
+				map("n", "<leader>hr", gitsigns.reset_hunk)
+
+				map("v", "<leader>hs", function()
+					gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+				end)
+
+				map("v", "<leader>hr", function()
+					gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+				end)
+
+				map("n", "<leader>hS", gitsigns.stage_buffer)
+				map("n", "<leader>hR", gitsigns.reset_buffer)
+				map("n", "<leader>hp", gitsigns.preview_hunk)
+				map("n", "<leader>hi", gitsigns.preview_hunk_inline)
+
+				map("n", "<leader>hb", function()
+					gitsigns.blame_line({ full = true })
+				end)
+
+				map("n", "<leader>hd", gitsigns.diffthis)
+
+				map("n", "<leader>hD", function()
+					gitsigns.diffthis("~")
+				end)
+
+				map("n", "<leader>hQ", function()
+					gitsigns.setqflist("all")
+				end)
+				map("n", "<leader>hq", gitsigns.setqflist)
+
+				-- Toggles
+				map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
+				map("n", "<leader>tw", gitsigns.toggle_word_diff)
+
+				-- Text object
+				map({ "o", "x" }, "ih", gitsigns.select_hunk)
+			end,
 			keys = {
-				{ "]h", ":Gitsigns next_hunk<CR>", desc = "Next Git Hunk" },
-				{ "[h", ":Gitsigns prev_hunk<CR>", desc = "Previous Git Hunk" },
+				{ "]h", "<cmd>Gitsigns next_hunk<CR>", desc = "Next Git Hunk" },
+				{ "[h", "<cmd>Gitsigns prev_hunk<CR>", desc = "Previous Git Hunk" },
 			},
 		},
+		-- }}}
 
+		-- folke/todo-comments.nvim {{{
+		-- ✅ Highlight, list and search todo comments in your projects
 		{
 			"folke/todo-comments.nvim",
 			lazy = false,
 			dependencies = { "nvim-lua/plenary.nvim" },
 			opts = {},
 		},
+		-- }}}
 
-		-- Even fewer distractions
+		-- junegunn/goyo.vim {{{
+		-- 🌷 Distraction-free writing in Vim
 		{ "junegunn/goyo.vim", event = "VeryLazy" },
+		--- }}}
 
+		-- mason-org/mason-lspconfig.nvim {{{
 		-- LSP Stuff. Thanks Mason!
+		-- Extension to mason.nvim that makes it easier to use lspconfig with
+		-- mason.nvim.
 		{
 			"mason-org/mason-lspconfig.nvim",
-			opts = {
-				ensure_installed = {
-					"jsonls",
-					"omnisharp",
-					"rust_analyzer",
-					"solargraph",
-					"tailwindcss",
-				},
-			},
+			opts = {},
 			dependencies = {
 				{ "mason-org/mason.nvim", opts = {} },
 				"neovim/nvim-lspconfig",
+				"WhoIsSethDaniel/mason-tool-installer.nvim",
+				"saghen/blink.cmp",
+				-- Useful status updates for LSP.
+				{ "j-hui/fidget.nvim", opts = {} },
 			},
-		},
+			config = function()
+				vim.api.nvim_create_autocmd("LspAttach", {
+					desc = "Configure LSP stuff",
+					group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
+					callback = function(event)
+						local client = vim.lsp.get_client_by_id(event.data.client_id)
+					end,
+				})
 
+				local capabilities = require("blink.cmp").get_lsp_capabilities()
+
+				local servers = {
+					jsonls = {},
+					omnisharp = {},
+					tailwindcss = {},
+					rust_analyzer = {},
+					solargraph = {},
+					lua_ls = {
+						-- cmd = { ... },
+						-- filetypes = { ... },
+						-- capabilities = {},
+						settings = {
+							Lua = {
+								completion = {
+									callSnippet = "Replace",
+								},
+								-- You can toggle below to ignore Lua_LS's noisy `missing-fields`
+								-- warnings
+								-- diagnostics = { disable = { 'missing-fields' } },
+							},
+						},
+					},
+				}
+
+				local other_tools = {
+					"stylua",
+				}
+
+				local ensure_installed = vim.tbl_keys(servers)
+
+				vim.list_extend(ensure_installed, other_tools)
+
+				require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+
+				require("mason-lspconfig").setup({
+					-- Explicitly set to an empty table (use mason-tool-installer instead)
+					ensure_installed = {},
+					automatic_installation = false, -- Only install stuff from the init.lua
+					handlers = {
+						function(server_name)
+							local server = servers[server_name] or {}
+							-- This handles overriding only values explicitly passed by the server
+							-- configuration above. Useful when disabling certain features of
+							-- an LSP (for example, turning off formatting for ts_ls)
+							server.capabilities =
+								vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+							require("lspconfig")[server_name].setup(server)
+						end,
+					},
+				})
+			end,
+		},
+		-- }}}
+
+		-- pmizio/typescript-tools.nvim {{{
+		--  ⚡ TypeScript integration NeoVim deserves ⚡
 		-- TS doesn't have a great LSP situation. It needs an adapter.
 		{
 			"pmizio/typescript-tools.nvim",
@@ -413,7 +582,10 @@ require("lazy").setup({
 			dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
 			opts = {},
 		},
+		-- }}}
 
+		-- folke/lazydev.nvim {{{
+		--  Faster LuaLS setup for Neovim
 		-- Improve the LSP experience in my init.lua
 		{
 			"folke/lazydev.nvim",
@@ -424,8 +596,10 @@ require("lazy").setup({
 				},
 			},
 		},
+		-- }}}
 
-		-- Format files
+		-- stevearc/conform.nvim {{{
+		-- Lightweight yet powerful formatter plugin for Neovim
 		{
 			"stevearc/conform.nvim",
 			opts = {
@@ -441,18 +615,16 @@ require("lazy").setup({
 				},
 			},
 		},
+		-- }}}
 
-		-- Completions
+		-- saghen/blink.cmp {{{
+		-- Performant, batteries-included completion plugin for Neovim
 		{
 			"saghen/blink.cmp",
 			-- optional: provides snippets for the snippet source
 			dependencies = { "rafamadriz/friendly-snippets" },
 			-- use a release tag to download pre-built binaries
 			version = "1.*",
-			-- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-			-- build = 'cargo build --release',
-			-- If you use nix, you can build from source using latest nightly rust with:
-			-- build = 'nix run .#build-plugin',
 			---@module 'blink.cmp'
 			---@type blink.cmp.Config
 			opts = {
@@ -490,8 +662,10 @@ require("lazy").setup({
 			},
 			opts_extend = { "sources.default" },
 		},
+		-- }}}
 
-		-- Treesitter Syntax Highlighting
+		-- nvim-treesitter/nvim-treesitter {{{
+		-- Nvim Treesitter configurations and abstraction layer
 		{
 			"nvim-treesitter/nvim-treesitter",
 			lazy = false,
@@ -504,8 +678,11 @@ require("lazy").setup({
 				},
 			},
 		},
+		-- }}}
 
-		-- Statusline
+		-- nvim-lualine/lualine.nvim {{{
+		-- A blazing fast and easy to configure neovim statusline plugin written in
+		-- pure lua.
 		{
 			"nvim-lualine/lualine.nvim",
 			lazy = false,
@@ -513,30 +690,40 @@ require("lazy").setup({
 				theme = "auto",
 			},
 		},
+		-- }}}
 
-		-- Colorscheme
+		-- RRethy/base16-nvim {{{
+		-- Neovim plugin for building a sync base16 colorscheme. Includes support for
+		-- Treesitter and LSP highlight groups.
 		{ "RRethy/base16-nvim", lazy = false, priority = 1000 },
+		-- }}}
 
-		-- lazy.nvim
-		{
-			"folke/noice.nvim",
-			event = "VeryLazy",
-			opts = {
-				-- add any options here
-			},
-			dependencies = {
-				"MunifTanjim/nui.nvim",
-				-- OPTIONAL:
-				--   `nvim-notify` is only needed, if you want to use the notification view.
-				--   If not available, we use `mini` as the fallback
-				-- "rcarriga/nvim-notify",
-			},
-		},
+		-- -- folke/noice.nvim {{{
+		-- -- 💥 Highly experimental plugin that completely replaces the UI for messages,
+		-- -- cmdline and the popupmenu.
+		-- {
+		-- 	"folke/noice.nvim",
+		-- 	event = "VeryLazy",
+		-- 	opts = {
+		-- 		-- add any options here
+		-- 	},
+		-- 	dependencies = {
+		-- 		"MunifTanjim/nui.nvim",
+		-- 		-- OPTIONAL:
+		-- 		--   `nvim-notify` is only needed, if you want to use the notification view.
+		-- 		--   If not available, we use `mini` as the fallback
+		-- 		-- "rcarriga/nvim-notify",
+		-- 	},
+		-- },
+		-- -- }}}
 
-		-- Git
+		-- tpope/vim-fugitive {{{
+		-- fugitive.vim: A Git wrapper so awesome, it should be illegal
 		{ "tpope/vim-fugitive" },
+		-- }}}
 
-		-- File browsing
+		-- lambdalisue/vim-fern {{{
+		-- 🌿 General purpose asynchronous tree viewer written in Pure Vim script
 		{
 			"lambdalisue/vim-fern",
 			lazy = false,
@@ -551,9 +738,12 @@ require("lazy").setup({
 				vim.g["fern#renderer#default#collapsed_symbol"] = "+ "
 				vim.g["fern#renderer#default#expanded_symbol"] = "- "
 			end,
+			dependencies = {
+				{ "lambdalisue/vim-fern-git-status", lazy = false },
+				{ "lambdalisue/vim-fern-hijack", lazy = false },
+			},
 		},
-		{ "lambdalisue/vim-fern-git-status", lazy = false },
-		{ "lambdalisue/vim-fern-hijack", lazy = false },
+		-- }}}
 	},
 })
 -- }}}
