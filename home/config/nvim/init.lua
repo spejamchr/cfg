@@ -600,6 +600,9 @@ require("lazy").setup({
 		-- Lightweight yet powerful formatter plugin for Neovim
 		{
 			"stevearc/conform.nvim",
+			init = function()
+				vim.o.formatexpr = "v:lua.require('conform').formatexpr()"
+			end,
 			opts = {
 				formatters_by_ft = {
 					lua = { "stylua" },
@@ -739,6 +742,14 @@ require("lazy").setup({
 						live_reload = false,
 					},
 				})
+
+				vim.schedule(function()
+					vim.cmd([[
+            if filereadable(expand("~/.vimrc_background"))
+              source ~/.vimrc_background
+            endif
+          ]])
+				end)
 			end,
 		},
 		-- }}}
@@ -772,12 +783,4 @@ require("lazy").setup({
 		-- }}}
 	},
 })
--- }}}
-
--- Set colorscheme {{{
-vim.cmd([[
-if filereadable(expand("~/.vimrc_background"))
-  source ~/.vimrc_background
-endif
-]])
 -- }}}
