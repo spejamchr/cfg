@@ -18,9 +18,6 @@ vim.o.shiftwidth = 2
 vim.o.smartindent = true
 vim.o.expandtab = true
 
--- Try line numbers for now
-vim.o.number = true
-
 -- /foo -> foo Foo FOO
 -- /Foo ->     Foo
 vim.o.ignorecase = true
@@ -304,7 +301,7 @@ require("lazy").setup({
 				map("<Leader>lr", fzflua.lsp_references, "[LSP] References")
 				map("<Leader>la", fzflua.lsp_code_actions, "[LSP] Code Actions")
 
-				-- FzfLua register_ui_select
+				fzflua.register_ui_select()
 
 				return {
 					"border-fused",
@@ -517,6 +514,9 @@ require("lazy").setup({
 					group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
 					callback = function(event)
 						local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+						-- Try line numbers for now, but only when LSP is attached (when I'm editing code)
+						vim.api.nvim_set_option_value("number", true, { scope = "local" })
 					end,
 				})
 
@@ -547,6 +547,7 @@ require("lazy").setup({
 
 				local other_tools = {
 					"stylua",
+					"prettier",
 				}
 
 				local ensure_installed = vim.tbl_keys(servers)
@@ -610,6 +611,7 @@ require("lazy").setup({
 					rust = { "rustfmt", lsp_format = "fallback" },
 					javascript = { "prettier" },
 					typescript = { "prettier" },
+					yaml = { "prettier" },
 				},
 				format_on_save = {
 					timeout_ms = 500,
@@ -689,7 +691,41 @@ require("lazy").setup({
 			"nvim-lualine/lualine.nvim",
 			lazy = false,
 			opts = {
-				theme = "auto",
+				options = {
+					theme = "auto",
+				},
+				sections = {
+					lualine_a = { "mode" },
+					lualine_b = {
+						{ "branch", icons_enabled = false },
+						"diff",
+						"diagnostics",
+						{
+							-- Filename, with pretty paths for Fern buffers
+							function()
+								if vim.bo.filetype == "fern" then
+									local filepath = vim.api.nvim_buf_get_name(0)
+									local found, _, path = string.find(filepath, "^fern://......../file://(.*)%$$")
+									if found then
+										return vim.fn.fnamemodify(path, ":~:.")
+									else
+										return filepath
+									end
+								else
+									return "%f"
+								end
+							end,
+						},
+					},
+					lualine_c = {},
+					lualine_x = { "filetype" },
+					lualine_y = { "progress" },
+					lualine_z = { "location" },
+				},
+				inactive_sections = {
+					lualine_c = { "%f" },
+					lualine_x = { "location" },
+				},
 			},
 		},
 		-- }}}
