@@ -253,7 +253,7 @@ require("lazy").setup({
 	rocks = { enabled = false },
 	ui = {
 		border = "rounded",
-		backdrop = 100, -- hide the opacity to remove its border
+		backdrop = 100, -- hide the backdrop to remove its border
 	},
 
 	spec = {
@@ -512,9 +512,7 @@ require("lazy").setup({
 				vim.api.nvim_create_autocmd("LspAttach", {
 					desc = "Configure LSP stuff",
 					group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
-					callback = function(event)
-						local client = vim.lsp.get_client_by_id(event.data.client_id)
-
+					callback = function()
 						-- Try line numbers for now, but only when LSP is attached (when I'm editing code)
 						vim.api.nvim_set_option_value("number", true, { scope = "local" })
 					end,
@@ -551,14 +549,11 @@ require("lazy").setup({
 				}
 
 				local ensure_installed = vim.tbl_keys(servers)
-
 				vim.list_extend(ensure_installed, other_tools)
-
 				require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 				require("mason-lspconfig").setup({
-					-- Explicitly set to an empty table (use mason-tool-installer instead)
-					ensure_installed = {},
+					ensure_installed = {}, -- Use mason-tool-installer instead
 					automatic_installation = false, -- Only install stuff from the init.lua
 					handlers = {
 						function(server_name)
@@ -747,25 +742,6 @@ require("lazy").setup({
 			end,
 		},
 		-- }}}
-
-		-- -- folke/noice.nvim {{{
-		-- -- 💥 Highly experimental plugin that completely replaces the UI for messages,
-		-- -- cmdline and the popupmenu.
-		-- {
-		-- 	"folke/noice.nvim",
-		-- 	event = "VeryLazy",
-		-- 	opts = {
-		-- 		-- add any options here
-		-- 	},
-		-- 	dependencies = {
-		-- 		"MunifTanjim/nui.nvim",
-		-- 		-- OPTIONAL:
-		-- 		--   `nvim-notify` is only needed, if you want to use the notification view.
-		-- 		--   If not available, we use `mini` as the fallback
-		-- 		-- "rcarriga/nvim-notify",
-		-- 	},
-		-- },
-		-- -- }}}
 
 		-- tpope/vim-fugitive {{{
 		-- fugitive.vim: A Git wrapper so awesome, it should be illegal
