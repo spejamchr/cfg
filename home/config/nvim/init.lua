@@ -90,15 +90,6 @@ vim.api.nvim_create_autocmd({ "VimResized" }, {
 	end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-	desc = "Organize TS/JS imports on save",
-	pattern = { "*.ts*", "*.js*" },
-	group = group,
-	callback = function()
-		vim.cmd("TSToolsOrganizeImports sync")
-	end,
-})
-
 vim.api.nvim_create_autocmd({ "TextYankPost" }, {
 	desc = "Highlight when yanking text",
 	group = group,
@@ -220,8 +211,6 @@ vim.keymap.set("n", "<leader>th", function()
 end, { desc = "Toggle Inlay Hints" })
 
 vim.keymap.set("n", "<Leader>w", "<cmd>w<CR>", { desc = "Write current file" })
-
-vim.keymap.set("n", "<Leader>to", "<cmd>TSToolsOrganizeImports<CR>", { desc = "Organize TS Imports" })
 
 vim.keymap.set("n", "-", "<cmd>Fern %:h -reveal=%:p<CR>", { desc = "Open Fern" })
 -- }}}
@@ -526,6 +515,7 @@ require("lazy").setup({
 					tailwindcss = {},
 					rust_analyzer = {},
 					solargraph = {},
+					["typescript-language-server"] = {},
 					lua_ls = {
 						-- cmd = { ... },
 						-- filetypes = { ... },
@@ -546,6 +536,7 @@ require("lazy").setup({
 				local other_tools = {
 					"stylua",
 					"prettier",
+					"biome",
 				}
 
 				local ensure_installed = vim.tbl_keys(servers)
@@ -568,17 +559,6 @@ require("lazy").setup({
 					},
 				})
 			end,
-		},
-		-- }}}
-
-		-- pmizio/typescript-tools.nvim {{{
-		--  ⚡ TypeScript integration NeoVim deserves ⚡
-		-- TS doesn't have a great LSP situation. It needs an adapter.
-		{
-			"pmizio/typescript-tools.nvim",
-			event = "VeryLazy",
-			dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-			opts = {},
 		},
 		-- }}}
 
@@ -607,8 +587,8 @@ require("lazy").setup({
 				formatters_by_ft = {
 					lua = { "stylua" },
 					rust = { "rustfmt", lsp_format = "fallback" },
-					javascript = { "prettier" },
-					typescript = { "prettier" },
+					javascript = { "biome-organize-imports", "prettier" },
+					typescript = { "biome-organize-imports", "prettier" },
 					yaml = { "prettier" },
 				},
 				format_on_save = {
@@ -710,7 +690,7 @@ require("lazy").setup({
 										return filepath
 									end
 								else
-									return "%f"
+									return vim.fn.fnamemodify("%f", ":~:.")
 								end
 							end,
 						},
