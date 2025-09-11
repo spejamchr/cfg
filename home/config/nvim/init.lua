@@ -246,6 +246,7 @@ require("lazy").setup({
 	},
 
 	spec = {
+
 		-- folke/which-key.nvim {{{
 		-- 💥 Create key bindings that stick. WhichKey helps you remember your Neovim
 		-- keymaps, by showing available keybindings in a popup as you type.
@@ -736,7 +737,7 @@ require("lazy").setup({
 
 		-- tpope/vim-fugitive {{{
 		-- fugitive.vim: A Git wrapper so awesome, it should be illegal
-		{ "tpope/vim-fugitive" },
+		{ "tpope/vim-fugitive", dependencies = { "tpope/vim-rhubarb" } },
 		-- }}}
 
 		-- lambdalisue/vim-fern {{{
