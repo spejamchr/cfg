@@ -213,6 +213,26 @@ end, { desc = "Toggle Inlay Hints" })
 vim.keymap.set("n", "<Leader>w", "<cmd>w<CR>", { desc = "Write current file" })
 
 vim.keymap.set("n", "-", "<cmd>Fern %:h -reveal=%:p<CR>", { desc = "Open Fern" })
+
+local visual_range = function()
+	local c = vim.fn.getpos(".")[2]
+	local v = vim.fn.getpos("v")[2]
+	local a = math.min(c, v)
+	local b = math.max(c, v)
+	return a .. "," .. b
+end
+
+vim.keymap.set("n", "<Leader>gb", "<cmd>GBrowse<CR>", { desc = "Open current file/thing in browser" })
+
+vim.keymap.set("v", "<Leader>gb", function()
+	vim.cmd(visual_range() .. "GBrowse")
+end, { desc = "Open current file/thing in browser" })
+
+vim.keymap.set("n", "<Leader>gy", "<cmd>GBrowse<CR>", { desc = "Copy browser link to current file/thing" })
+
+vim.keymap.set("v", "<Leader>gy", function()
+	vim.cmd(visual_range() .. "GBrowse!")
+end, { desc = "Copy browser link to current file/thing" })
 -- }}}
 
 -- Bootstrap lazy.nvim {{{
