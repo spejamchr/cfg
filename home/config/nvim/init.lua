@@ -233,6 +233,10 @@ vim.keymap.set("n", "<Leader>gy", "<cmd>GBrowse<CR>", { desc = "Copy browser lin
 vim.keymap.set("v", "<Leader>gy", function()
 	vim.cmd(visual_range() .. "GBrowse!")
 end, { desc = "Copy browser link to current file/thing" })
+
+-- Stay in Visual mode when indenting
+vim.keymap.set("v", ">", ">gv", { desc = "Indent current selection" })
+vim.keymap.set("v", "<", "<gv", { desc = "Un-indent current selection" })
 -- }}}
 
 -- Bootstrap lazy.nvim {{{
