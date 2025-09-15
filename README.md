@@ -59,6 +59,7 @@ Installed with `brew install`:
 - [`rustup`](https://github.com/rust-lang/rustup): Rust toolchain installer
 - [`skhd`](https://github.com/koekeishiya/skhd): Simple hotkey daemon for macOS
 - [`sleepwatcher`](https://www.bernhard-baehr.de/): Monitors sleep, wakeup, and idleness of a Mac
+- [`tinty`](https://github.com/tinted-theming/tinty): A base16 and base24 color scheme manager
 - [`wget`](https://www.gnu.org/software/wget/): Internet file retriever
 - [`yabai`](https://github.com/koekeishiya/yabai): A tiling window manager for macOS based on binary space partitioning
 - [`yarn`](https://yarnpkg.com/lang/en/): JavaScript package manager
@@ -81,11 +82,6 @@ Installed with `brew cask install`:
 - [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
 - [`visual-studio-code`](https://code.visualstudio.com/): Open-source code editor
 - [`zoom`](https://www.zoom.us/): Video communication and virtual meeting platform
-
-Other:
-
-- [`tinty`](https://github.com/tinted-theming/tinty): A base16 and base24 color scheme manager
-  - Installed with `cargo` for now. As of 2024-08-31 the `brew` package is outdated. Need version 0.29.0.
 
 ### Debugging
 

@@ -215,17 +215,6 @@ function install_sleepwatcher_plist() {
   fi
 }
 
-function install_tinty() {
-  tinty_install_dir=$(which tinty)
-  if [[ "$tinty_install_dir" ]]; then
-    infcho "tinty appears to be installed at $tinty_install_dir"
-  else
-    try_to "Install tinty" \
-      "cargo install tinty" \
-      "cargo uninstall tinty"
-  fi
-}
-
 function main() {
   health_checks
 
@@ -263,6 +252,7 @@ function main() {
   brew_install ruby-install
   brew_install rustup
   brew_install sleepwatcher
+  brew_install tinted-theming/tinted/tinty
   brew_install wget
   brew_install yarn
 
@@ -287,7 +277,6 @@ function main() {
   create_symlinks
 
   install_sleepwatcher_plist
-  install_tinty
 }
 
 main

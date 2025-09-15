@@ -30,10 +30,4 @@ function upgrade_brew_stuff() {
   fi
 }
 
-function upgrade_tinty() {
-  echo "\n-> Updating tinty..."
-  cargo install tinty
-}
-
 upgrade_brew_stuff
-upgrade_tinty
