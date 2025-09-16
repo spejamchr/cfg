@@ -708,6 +708,8 @@ require("lazy").setup({
 						{ "branch", icons_enabled = false },
 						"diff",
 						"diagnostics",
+					},
+					lualine_c = {
 						{
 							-- Filename, with pretty paths for Fern buffers
 							function()
@@ -725,7 +727,6 @@ require("lazy").setup({
 							end,
 						},
 					},
-					lualine_c = {},
 					lualine_x = { "filetype" },
 					lualine_y = { "progress" },
 					lualine_z = { "location" },
