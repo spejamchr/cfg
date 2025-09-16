@@ -658,7 +658,10 @@ require("lazy").setup({
 				fuzzy = { implementation = "prefer_rust_with_warning" },
 				sources = {
 					-- add lazydev to your completion providers
-					default = { "lazydev", "lsp", "path", "snippets", "buffer" },
+					default = { "lsp", "path", "snippets", "buffer" },
+					per_filetype = {
+						lua = { inherit_defaults = true, "lazydev" },
+					},
 					providers = {
 						lazydev = {
 							name = "LazyDev",
