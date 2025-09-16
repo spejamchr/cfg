@@ -671,6 +671,15 @@ require("lazy").setup({
 						},
 					},
 				},
+				cmdline = {
+					keymap = { preset = "inherit" },
+					enabled = true,
+					completion = {
+						menu = {
+							auto_show = true,
+						},
+					},
+				},
 			},
 			opts_extend = { "sources.default" },
 		},
