@@ -706,7 +706,20 @@ require("lazy").setup({
 					lualine_a = { "mode" },
 					lualine_b = {
 						{ "branch", icons_enabled = false },
-						"diff",
+						{
+							"diff",
+							source = function()
+								-- https://github.com/nvim-lualine/lualine.nvim/wiki/Component-snippets#using-external-source-for-diff
+								local gitsigns = vim.b.gitsigns_status_dict
+								if gitsigns then
+									return {
+										added = gitsigns.added,
+										modified = gitsigns.changed,
+										removed = gitsigns.removed,
+									}
+								end
+							end,
+						},
 						"diagnostics",
 					},
 					lualine_c = {
