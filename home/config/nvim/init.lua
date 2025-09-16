@@ -614,6 +614,8 @@ require("lazy").setup({
 					rust = { "rustfmt", lsp_format = "fallback" },
 					javascript = { "biome-organize-imports", "prettier" },
 					typescript = { "biome-organize-imports", "prettier" },
+					typescriptreact = { "biome-organize-imports", "prettier" },
+					javascriptreact = { "biome-organize-imports", "prettier" },
 					yaml = { "prettier" },
 				},
 				format_on_save = {
