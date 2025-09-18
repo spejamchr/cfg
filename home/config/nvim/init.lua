@@ -610,12 +610,13 @@ require("lazy").setup({
 			end,
 			opts = {
 				formatters_by_ft = {
+					html = { "prettier" },
+					javascript = { "biome-organize-imports", "prettier" },
+					javascriptreact = { "biome-organize-imports", "prettier" },
 					lua = { "stylua" },
 					rust = { "rustfmt", lsp_format = "fallback" },
-					javascript = { "biome-organize-imports", "prettier" },
 					typescript = { "biome-organize-imports", "prettier" },
 					typescriptreact = { "biome-organize-imports", "prettier" },
-					javascriptreact = { "biome-organize-imports", "prettier" },
 					yaml = { "prettier" },
 				},
 				format_on_save = {
