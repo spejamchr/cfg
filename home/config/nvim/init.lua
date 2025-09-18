@@ -318,8 +318,9 @@ require("lazy").setup({
 				fzflua.register_ui_select()
 
 				return {
-					"border-fused",
-					"hide",
+					fzf_opts = {
+						["--cycle"] = true,
+					},
 				}
 			end,
 		},
