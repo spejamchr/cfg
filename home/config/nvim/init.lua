@@ -615,6 +615,7 @@ require("lazy").setup({
 					javascript = { "biome-organize-imports", "prettier" },
 					javascriptreact = { "biome-organize-imports", "prettier" },
 					lua = { "stylua" },
+					markdown = { "prettier" },
 					rust = { "rustfmt", lsp_format = "fallback" },
 					typescript = { "biome-organize-imports", "prettier" },
 					typescriptreact = { "biome-organize-imports", "prettier" },
