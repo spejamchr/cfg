@@ -564,10 +564,10 @@ require("lazy").setup({
 				}
 
 				local other_tools = {
-					"stylua",
 					"prettier",
-					"biome",
 					"proselint",
+					"shfmt",
+					"stylua",
 					"write-good",
 				}
 
@@ -627,16 +627,33 @@ require("lazy").setup({
 				vim.o.formatexpr = "v:lua.require('conform').formatexpr()"
 			end,
 			opts = {
+				formatters = {
+					prettier = {
+						append_args = {
+							"--plugin",
+							vim.fn.expand(
+								"$HOME/.bun/install/global/node_modules/prettier-plugin-organize-imports/index.js"
+							),
+						},
+					},
+					shfmt = {
+						append_args = { "--case-indent", "--language-dialect", "bash" },
+					},
+				},
 				formatters_by_ft = {
+					bash = { "shfmt" },
 					html = { "prettier" },
-					javascript = { "biome-organize-imports", "prettier" },
-					javascriptreact = { "biome-organize-imports", "prettier" },
+					javascript = { "prettier" },
+					javascriptreact = { "prettier" },
 					lua = { "stylua" },
 					markdown = { "prettier" },
 					rust = { "rustfmt", lsp_format = "fallback" },
-					typescript = { "biome-organize-imports", "prettier" },
-					typescriptreact = { "biome-organize-imports", "prettier" },
+					sh = { "shfmt" },
+					shell = { "shfmt" },
+					typescript = { "prettier" },
+					typescriptreact = { "prettier" },
 					yaml = { "prettier" },
+					zsh = { "shfmt" },
 				},
 				format_on_save = {
 					timeout_ms = 500,

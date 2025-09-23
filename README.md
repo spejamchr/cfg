@@ -84,6 +84,11 @@ Installed with `brew cask install`:
 - [`visual-studio-code`](https://code.visualstudio.com/): Open-source code editor
 - [`zoom`](https://www.zoom.us/): Video communication and virtual meeting platform
 
+Other:
+
+- [`prettier-plugin-organize-imports`](https://github.com/simonhaenisch/prettier-plugin-organize-imports): Make Prettier organize your imports using the TypeScript language service API.
+  - Installed with `bun add --global`
+
 ### Debugging
 
 The script will output information to `STDOUT` and store a logfile in the repo at `.install.log`.

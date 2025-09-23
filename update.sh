@@ -31,3 +31,5 @@ function upgrade_brew_stuff() {
 }
 
 upgrade_brew_stuff
+
+bun add --global prettier-plugin-organize-imports

@@ -33,7 +33,7 @@ function logit {
     echo "Logging results in $logfile"
     LOGGED=true
   fi
-  echo "$(date +"%Y-%m-%d %T") $@" >> $logfile
+  echo "$(date +"%Y-%m-%d %T") $@" >>$logfile
 }
 
 function errcho() {
@@ -86,8 +86,8 @@ function install_brew() {
   if [[ ! $(brew --version 2>&-) ]]; then
     try_to 'Install Homebrew' \
       'yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /dev/null' \
-      '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"' \
-      && logcho 'More info about uninstalling Homebrew here: https://github.com/Homebrew/install'
+      '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"' &&
+      logcho 'More info about uninstalling Homebrew here: https://github.com/Homebrew/install'
   fi
 }
 
@@ -95,8 +95,8 @@ function install_command_line_tools() {
   if [[ ! -d '/Library/Developer/CommandLineTools' ]]; then
     try_to 'Install Apple Command Line Tools. You may have to enter your password in a prompt.' \
       'xcode-select --install' \
-      'rm -rf /Library/Developer/CommandLineTools' \
-      && logcho 'More info about uninstalling the Command Line Tools here: https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_'
+      'rm -rf /Library/Developer/CommandLineTools' &&
+      logcho 'More info about uninstalling the Command Line Tools here: https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_'
   fi
 }
 
@@ -114,8 +114,8 @@ function brew_install() {
   else
     try_to "Install $1 with Homebrew" \
       "brew install \"$1\"" \
-      "brew uninstall \"$1\"" \
-      && [[ "$2" ]] && infcho "$2"
+      "brew uninstall \"$1\"" &&
+      [[ "$2" ]] && infcho "$2"
   fi
 }
 
@@ -273,6 +273,8 @@ function main() {
   brew_cask_install ubersicht
   brew_cask_install visual-studio-code "spencerchristiansen"
   brew_cask_install zoom "spencer"
+
+  bun add --global prettier-plugin-organize-imports
 
   backup_existing_config_files
   create_symlinks

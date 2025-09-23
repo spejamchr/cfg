@@ -7,9 +7,9 @@ tmpfile='/tmp/sleepwatcher.bluetooth.info'
 if [[ "$(blueutil --power)" = 1 ]]; then
   blueutil --paired |
     grep ', connected' |
-    sed -e 's/,.*//g' -e 's/address: //g' > "$tmpfile"
+    sed -e 's/,.*//g' -e 's/address: //g' >"$tmpfile"
 
   blueutil --power 0
 fi
 
-pgrep pianobar > /dev/null && pkill pianobar
+pgrep pianobar >/dev/null && pkill pianobar
