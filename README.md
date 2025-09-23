@@ -77,6 +77,7 @@ Installed with `brew cask install`:
 - [`keepassxc`](https://keepassxc.org/): Cross-platform Password Manager
 - [`kitty@nightly`](https://github.com/kovidgoyal/kitty): Cross-platform, fast, feature-rich, GPU based terminal
 - [`mongodb-compass`](https://www.mongodb.com/products/compass): Interactive tool for analyzing MongoDB data
+- [`notunes`](https://github.com/tombonez/noTunes): Simple application that will prevent iTunes or Apple Music from launching
 - [`postgres-unofficial`](https://postgresapp.com/): App wrapper for Postgres
 - [`slack`](https://slack.com/): Team communication and collaboration software
 - [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
