@@ -306,6 +306,9 @@ require("lazy").setup({
 
 				map("<Leader>sr", fzflua.resume, "Resume last search")
 
+				map("<Leader>L", "<cmd>Lazy<CR>", "Open Lazy")
+				map("<Leader>M", "<cmd>Mason<CR>", "Open Mason")
+
 				-- Use FzfLua for LSP stuff
 				-- Prefer custom keymaps that don't require double-tapping with the same
 				-- finger (I don't like the default "gr" key combo)
