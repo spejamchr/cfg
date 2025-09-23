@@ -540,10 +540,11 @@ require("lazy").setup({
 
 				local servers = {
 					jsonls = {},
+					markdown_oxide = {},
 					omnisharp = {},
-					tailwindcss = {},
 					rust_analyzer = {},
 					solargraph = {},
+					tailwindcss = {},
 					["typescript-language-server"] = {},
 					lua_ls = {
 						-- cmd = { ... },
@@ -566,6 +567,8 @@ require("lazy").setup({
 					"stylua",
 					"prettier",
 					"biome",
+					"proselint",
+					"write-good",
 				}
 
 				local ensure_installed = vim.tbl_keys(servers)
@@ -581,8 +584,19 @@ require("lazy").setup({
 							-- This handles overriding only values explicitly passed by the server
 							-- configuration above. Useful when disabling certain features of
 							-- an LSP (for example, turning off formatting for ts_ls)
-							server.capabilities =
-								vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+							server.capabilities = vim.tbl_deep_extend(
+								"force",
+								{},
+								capabilities,
+								server.capabilities or {},
+								{
+									workspace = {
+										didChangeWatchedFiles = {
+											dynamicRegistration = true,
+										},
+									},
+								}
+							)
 							require("lspconfig")[server_name].setup(server)
 						end,
 					},
@@ -629,6 +643,28 @@ require("lazy").setup({
 					lsp_format = "fallback",
 				},
 			},
+		},
+		-- }}}
+
+		-- mfussenegger/nvim-lint {{{
+		-- An asynchronous linter plugin for Neovim complementary to the built-in Language Server Protocol support.
+		{
+			"mfussenegger/nvim-lint",
+			config = function()
+				local lint = require("lint")
+				lint.linters_by_ft = {
+					markdown = { "proselint", "write_good" },
+				}
+
+				local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
+
+				vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+					group = lint_augroup,
+					callback = function()
+						lint.try_lint()
+					end,
+				})
+			end,
 		},
 		-- }}}
 
