@@ -1,6 +1,6 @@
 # `cfg`
 
-> macOS only
+> macOS
 
 ### Installation
 
@@ -22,8 +22,8 @@ OVERWRITE=true ~/cfg/install.sh
 
 This script will:
 
-1. Ensure several directories exist
-2. Install a bunch of stuff (see below for the list)
+1. Ensure my usual directories exist
+2. Install packages (see below for the list)
 3. Backup existing dotfiles (Unless you specify `OVERWRITE=true`)
 4. Symlink the dotfiles stored in this repo into place
 
@@ -34,7 +34,7 @@ This script will:
 
 You shouldn't have to install anything to run the install script.
 
-### Installed Stuff
+### Installed Packages
 
 - [`Homebrew`](https://brew.sh/): The missing package manager for macOS (or Linux)
 - macOS command line tools: Commonly used tools, utilities, and compilers
@@ -80,7 +80,7 @@ Installed with `brew cask install`:
 - [`notunes`](https://github.com/tombonez/noTunes): Simple application that will prevent iTunes or Apple Music from launching
 - [`postgres-unofficial`](https://postgresapp.com/): App wrapper for Postgres
 - [`slack`](https://slack.com/): Team communication and collaboration software
-- [`übersicht`](http://tracesof.net/uebersicht/): Keep an eye on what is happening on your machine and in the World
+- [`übersicht`](http://tracesof.net/uebersicht/): Run commands and display their output on the desktop
 - [`visual-studio-code`](https://code.visualstudio.com/): Open-source code editor
 - [`zoom`](https://www.zoom.us/): Video communication and virtual meeting platform
 
@@ -91,11 +91,13 @@ Other:
 
 ### Debugging
 
-The script will output information to `STDOUT` and store a logfile in the repo at `.install.log`.
+The installation script will output information to `STDOUT` and store a logfile in the repo at `.install.log`.
 
 ### Organization
 
-The `install.sh` script and the logfile, `.install.log`, are both at the root of the repo (though
-the logfile is not tracked by git). The `home/` directory holds all the dotfiles. It is organized
-such that a file `home/something` will be symlinked to `~/.something`, and `home/dir/descendant`
-will be symlinked to `~/.dir/descendant`.
+The `install.sh` script and the logfile, `.install.log`, are both at the root of the repo (though the logfile is not tracked by git).
+
+The `home/` directory holds all the dotfiles. The installation script symlinks dotfiles as follows:
+
+- `home/something` symlinked to `~/.something`
+- `home/dir/descendant` symlinked to `~/.dir/descendant`
