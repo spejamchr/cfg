@@ -545,6 +545,7 @@ require("lazy").setup({
 					rust_analyzer = {},
 					solargraph = {},
 					tailwindcss = {},
+					ltex_plus = {},
 					["typescript-language-server"] = {},
 					lua_ls = {
 						-- cmd = { ... },
