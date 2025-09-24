@@ -9,27 +9,36 @@ React;
 const Spaces = ({ spaces, colors }) => {
   const displayId = monitorId === "1" ? 1 : 2;
 
+  const spacesOnMonitor = spaces.filter((s) => s["display"] === displayId);
+
+  const currentSpace = spacesOnMonitor.find(
+    (s) => s["has-focus"] || s["is-visible"],
+  );
+
+  const currentSpaceNumber =
+    currentSpace?.index.toLocaleString("ja-JP-u-nu-hanidec");
+
+  const totalSpaces =
+    spacesOnMonitor.length.toLocaleString("ja-JP-u-nu-hanidec");
+
+  const text = `${currentSpaceNumber} / ${totalSpaces}`;
+
   return (
     <span
       style={{ ...containerStyles(colors, "auto"), minWidth: "fit-content" }}
     >
-      {spaces
-        .filter((s) => s["display"] === displayId)
-        .map((s) => (
-          <Item
-            key={s.index}
-            color={
-              s["has-focus"]
-                ? colors.Cyan
-                : s["is-visible"]
-                  ? colors.White
-                  : colors.BrightBlack
-            }
-            text={s.index.toLocaleString("ja-JP-u-nu-hanidec")}
-            bg={colors.Black}
-            style={{ minWidth: "fit-content" }}
-          />
-        ))}
+      <Item
+        color={
+          currentSpace?.["has-focus"]
+            ? colors.Cyan
+            : currentSpace?.["is-visible"]
+              ? colors.White
+              : colors.BrightBlack
+        }
+        text={text}
+        bg={colors.Black}
+        style={{ minWidth: "fit-content" }}
+      />
     </span>
   );
 };
