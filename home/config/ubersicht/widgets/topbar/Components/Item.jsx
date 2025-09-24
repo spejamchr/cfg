@@ -1,5 +1,8 @@
 import { React, styled } from "uebersicht";
 
+// Uebersicht needs this to be imported
+React;
+
 const HideOverflow = styled.span`
   overflow: hidden;
   white-space: nowrap;

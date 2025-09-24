@@ -2,6 +2,9 @@ import { css, React } from "uebersicht";
 import fourColorRange from "../Utils/FourColorRange.jsx";
 import Item from "./item.jsx";
 
+// Uebersicht needs this to be imported
+React;
+
 const getColor = fourColorRange({ min: 30, med: 60, max: 80 });
 
 const CpuMeter = ({ percentCpu, cpus, colors }) => {

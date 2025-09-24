@@ -14,6 +14,9 @@ import { React } from "uebersicht";
 import { sample } from "../Utils/GenRandColor.jsx";
 import prepare from "../Utils/Prepare.jsx";
 
+// Uebersicht needs this to be imported
+React;
+
 export const refreshFrequency = 1000 * 60 * 60 * 24;
 
 export const command = `./topbar/command`;

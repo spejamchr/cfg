@@ -1,6 +1,9 @@
 import { React } from "uebersicht";
 import Item from "./item.jsx";
 
+// Uebersicht needs this to be imported
+React;
+
 const Pianobar = ({ pianobar, colors }) => {
   const maxLength = 80;
   const song =

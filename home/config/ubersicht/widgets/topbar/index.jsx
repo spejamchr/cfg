@@ -1,4 +1,4 @@
-import { styled, React } from "uebersicht";
+import { React, styled } from "uebersicht";
 import Battery from "./Components/Battery.jsx";
 import CpuMeter from "./Components/CpuMeter.jsx";
 import DateTime from "./Components/DateTime.jsx";
@@ -6,8 +6,11 @@ import LoadAvg from "./Components/LoadAvg.jsx";
 import Pianobar from "./Components/Pianobar.jsx";
 import Spaces from "./Components/Spaces.jsx";
 import Window from "./Components/Window.jsx";
-import prepare from "./Utils/Prepare.jsx";
 import { monitorId } from "./Utils/Monitor.jsx";
+import prepare from "./Utils/Prepare.jsx";
+
+// Uebersicht needs this to be imported
+React;
 
 export const refreshFrequency = 1000;
 

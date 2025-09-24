@@ -1,7 +1,10 @@
 import { React } from "uebersicht";
-import Item from "./item.jsx";
 import { containerStyles } from "../index.jsx";
 import { monitorId } from "../Utils/Monitor.jsx";
+import Item from "./item.jsx";
+
+// Uebersicht needs this to be imported
+React;
 
 const Spaces = ({ spaces, colors }) => {
   const displayId = monitorId === "1" ? 1 : 2;

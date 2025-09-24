@@ -1,6 +1,9 @@
 import { React } from "uebersicht";
 import Item from "./item.jsx";
 
+// Uebersicht needs this to be imported
+React;
+
 const DateTime = ({ colors }) => {
   const date = new Date();
   return (

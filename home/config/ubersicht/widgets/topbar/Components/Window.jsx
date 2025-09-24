@@ -1,6 +1,9 @@
 import { React } from "uebersicht";
 import Item from "./item.jsx";
 
+// Uebersicht needs this to be imported
+React;
+
 const Window = ({ windows, colors }) =>
   windows
     .filter((w) => w["has-focus"])
