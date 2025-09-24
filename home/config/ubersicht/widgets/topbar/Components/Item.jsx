@@ -15,11 +15,18 @@ const HideOverflow = styled.span`
   text-overflow: ellipsis;
   height: 100%;
   color: ${(props) => props.color};
+  position: relative;
+  padding-right: 1.5em;
+  padding-left: 1.5em;
   &:before {
-    content: "「 ";
+    content: "「";
+    position: absolute;
+    left: 0.5em;
   }
   &:after {
-    content: " 」";
+    content: "」";
+    position: absolute;
+    right: 0.5em;
   }
 `;
 

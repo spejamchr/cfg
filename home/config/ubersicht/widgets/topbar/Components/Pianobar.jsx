@@ -5,11 +5,7 @@ import Item from "./item.jsx";
 React;
 
 const Pianobar = ({ pianobar, colors }) => {
-  const maxLength = 80;
-  const song =
-    pianobar.song.length > maxLength
-      ? pianobar.song.substring(0, maxLength - 3) + "..."
-      : pianobar.song;
+  const song = pianobar.song;
 
   return (
     <Item
