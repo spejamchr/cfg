@@ -237,6 +237,10 @@ end, { desc = "Copy browser link to current file/thing" })
 -- Stay in Visual mode when indenting
 vim.keymap.set("v", ">", ">gv", { desc = "Indent current selection" })
 vim.keymap.set("v", "<", "<gv", { desc = "Un-indent current selection" })
+
+vim.keymap.set("n", "<Leader>L", "<cmd>Lazy<CR>", { desc = "Open Lazy" })
+vim.keymap.set("n", "<Leader>S", "<cmd>Lazy sync<CR>", { desc = "Sync Lazy" })
+vim.keymap.set("n", "<Leader>M", "<cmd>Mason<CR>", { desc = "Open Mason" })
 -- }}}
 
 -- Bootstrap lazy.nvim {{{
@@ -305,9 +309,6 @@ require("lazy").setup({
 				map("<Leader>ss", fzflua.builtin, "Search in Searchers")
 
 				map("<Leader>sr", fzflua.resume, "Resume last search")
-
-				map("<Leader>L", "<cmd>Lazy<CR>", "Open Lazy")
-				map("<Leader>M", "<cmd>Mason<CR>", "Open Mason")
 
 				-- Use FzfLua for LSP stuff
 				-- Prefer custom keymaps that don't require double-tapping with the same
