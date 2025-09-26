@@ -70,13 +70,13 @@ vim.o.showmode = false
 -- }}}
 
 -- Autocommands {{{
-local group = vim.api.nvim_create_augroup("init.lua", { clear = true })
+local init_lua_group = vim.api.nvim_create_augroup("init.lua", { clear = true })
 
 -- By default, netrw leaves unmodified buffers open.
 vim.api.nvim_create_autocmd({ "FileType" }, {
 	desc = "Delete netrw's buffers once they're hidden",
 	pattern = "netrw",
-	group = group,
+	group = init_lua_group,
 	callback = function()
 		vim.opt_local.bufhidden = "delete"
 	end,
@@ -84,7 +84,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 
 vim.api.nvim_create_autocmd({ "VimResized" }, {
 	desc = "Keep splits equal when resizing neovim",
-	group = group,
+	group = init_lua_group,
 	callback = function()
 		vim.cmd("wincmd =")
 	end,
@@ -92,7 +92,7 @@ vim.api.nvim_create_autocmd({ "VimResized" }, {
 
 vim.api.nvim_create_autocmd({ "TextYankPost" }, {
 	desc = "Highlight when yanking text",
-	group = group,
+	group = init_lua_group,
 	callback = function()
 		vim.hl.on_yank()
 	end,
@@ -101,7 +101,7 @@ vim.api.nvim_create_autocmd({ "TextYankPost" }, {
 vim.api.nvim_create_autocmd({ "FileType" }, {
 	desc = "Initialize Fern",
 	pattern = "fern",
-	group = group,
+	group = init_lua_group,
 	callback = function()
 		-- Perform 'open' on leaf node, 'expand' on collapsed node, and 'collapse'
 		-- on expanded node. From fern's docs.
@@ -182,6 +182,43 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 		})
 	end,
 })
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	desc = "Configure LSP stuff",
+	group = init_lua_group,
+	callback = function()
+		-- Try line numbers for now, but only when LSP is attached (when I'm editing code)
+		vim.api.nvim_set_option_value("number", true, { scope = "local" })
+	end,
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	desc = "Setup Markdown Oxide command",
+	group = init_lua_group,
+	callback = function(ev)
+		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+
+		if client == nil or client.name ~= "markdown_oxide" then
+			return
+		end
+
+		-- Set up daily command & hotkeys
+
+		vim.keymap.set("n", "<Leader>ot", "<cmd>LspToday<CR>", { desc = "Open today's note" })
+		vim.keymap.set("n", "<Leader>om", "<cmd>LspTomorrow<CR>", { desc = "Open tomorrow's note" })
+		vim.keymap.set("n", "<Leader>oy", "<cmd>LspYesterday<CR>", { desc = "Open yesterday's note" })
+
+		vim.api.nvim_create_user_command("Daily", function(args)
+			local input = args.args
+
+			client:exec_cmd({
+				title = "Open daily note",
+				command = "jump",
+				arguments = { input },
+			}, { bufnr = ev.buf })
+		end, { desc = "Open daily note", nargs = "*" })
+	end,
+})
 -- }}}
 
 -- Keymaps {{{
@@ -245,6 +282,7 @@ vim.keymap.set("n", "<Leader>M", "<cmd>Mason<CR>", { desc = "Open Mason" })
 
 -- Bootstrap lazy.nvim {{{
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+---@diagnostic disable-next-line: undefined-field
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
 	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
@@ -439,6 +477,7 @@ require("lazy").setup({
 					if vim.wo.diff then
 						vim.cmd.normal({ "]c", bang = true })
 					else
+						---@diagnostic disable-next-line: param-type-mismatch
 						gitsigns.nav_hunk("next")
 					end
 				end)
@@ -447,6 +486,7 @@ require("lazy").setup({
 					if vim.wo.diff then
 						vim.cmd.normal({ "[c", bang = true })
 					else
+						---@diagnostic disable-next-line: param-type-mismatch
 						gitsigns.nav_hunk("prev")
 					end
 				end)
@@ -475,10 +515,12 @@ require("lazy").setup({
 				map("n", "<leader>hd", gitsigns.diffthis)
 
 				map("n", "<leader>hD", function()
+					---@diagnostic disable-next-line: param-type-mismatch
 					gitsigns.diffthis("~")
 				end)
 
 				map("n", "<leader>hQ", function()
+					---@diagnostic disable-next-line: param-type-mismatch
 					gitsigns.setqflist("all")
 				end)
 				map("n", "<leader>hq", gitsigns.setqflist)
@@ -512,98 +554,96 @@ require("lazy").setup({
 		{ "junegunn/goyo.vim", event = "VeryLazy" },
 		--- }}}
 
-		-- mason-org/mason-lspconfig.nvim {{{
-		-- LSP Stuff. Thanks Mason!
-		-- Extension to mason.nvim that makes it easier to use lspconfig with
-		-- mason.nvim.
+		-- WhoIsSethDaniel/mason-tool-installer.nvim {{{
+		-- Install and upgrade third party tools automatically
+		--
+		-- And other LSP-related packages
 		{
-			"mason-org/mason-lspconfig.nvim",
+			"WhoIsSethDaniel/mason-tool-installer.nvim",
 			opts = {},
 			dependencies = {
+				--  Portable package manager for Neovim that runs everywhere Neovim
+				--  runs. Easily install and manage LSP servers, DAP servers, linters,
+				--  and formatters.
 				{ "mason-org/mason.nvim", opts = {} },
+				--  Quickstart configs for Nvim LSP
 				"neovim/nvim-lspconfig",
-				"WhoIsSethDaniel/mason-tool-installer.nvim",
+				--  Performant, batteries-included completion plugin for Neovim
 				"saghen/blink.cmp",
-				-- Useful status updates for LSP.
+				-- 💫 Extensible UI for Neovim notifications and LSP progress messages.
 				{ "j-hui/fidget.nvim", opts = {} },
 			},
 			config = function()
-				vim.api.nvim_create_autocmd("LspAttach", {
-					desc = "Configure LSP stuff",
-					group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
-					callback = function()
-						-- Try line numbers for now, but only when LSP is attached (when I'm editing code)
-						vim.api.nvim_set_option_value("number", true, { scope = "local" })
-					end,
-				})
-
 				local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-				local servers = {
-					eslint = {},
-					jsonls = {},
-					markdown_oxide = {},
-					omnisharp = {},
-					rust_analyzer = {},
-					solargraph = {},
-					tailwindcss = {},
-					ltex_plus = {},
-					["typescript-language-server"] = {},
-					lua_ls = {
-						-- cmd = { ... },
-						-- filetypes = { ... },
-						-- capabilities = {},
-						settings = {
-							Lua = {
-								completion = {
-									callSnippet = "Replace",
+				local lsp_list = {
+					{ mason_name = "codebook", ls_config_name = "codebook", config = {} },
+					{ mason_name = "eslint-lsp", ls_config_name = "eslint", config = {} },
+					{ mason_name = "json-lsp", ls_config_name = "jsonls", config = {} },
+					{
+						mason_name = "lua-language-server",
+						ls_config_name = "lua_ls",
+						config = {
+							settings = {
+								Lua = {
+									completion = {
+										callSnippet = "Replace",
+									},
 								},
-								-- You can toggle below to ignore Lua_LS's noisy `missing-fields`
-								-- warnings
-								-- diagnostics = { disable = { 'missing-fields' } },
 							},
 						},
 					},
+					{ mason_name = "markdown-oxide", ls_config_name = "markdown_oxide", config = {} },
+					{ mason_name = "omnisharp", ls_config_name = "omnisharp", config = {} },
+					{ mason_name = "prisma-language-server", ls_config_name = "prismals", config = {} },
+					{ mason_name = "rust-analyzer", ls_config_name = "rust_analyzer", config = {} },
+					{
+						mason_name = "solargraph",
+						ls_config_name = "solargraph",
+						config = {
+							settings = {
+								solargraph = {
+									diagnostics = true,
+								},
+							},
+						},
+					},
+					{ mason_name = "tailwindcss-language-server", ls_config_name = "tailwindcss", config = {} },
+					{ mason_name = "taplo", ls_config_name = "taplo", config = {} },
+					{ mason_name = "typescript-language-server", ls_config_name = "ts_ls", config = {} },
 				}
 
-				local other_tools = {
-					"prettier",
-					"proselint",
-					"shfmt",
-					"stylua",
-					"write-good",
-				}
+				---@param value string
+				---@param list_of_tables {}
+				local pluck = function(value, list_of_tables)
+					local plucked = {}
+					for i = 1, #list_of_tables do
+						plucked[#plucked + 1] = list_of_tables[i][value]
+					end
+					return plucked
+				end
 
-				local ensure_installed = vim.tbl_keys(servers)
-				vim.list_extend(ensure_installed, other_tools)
-				require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
-
-				require("mason-lspconfig").setup({
-					ensure_installed = {}, -- Use mason-tool-installer instead
-					automatic_installation = false, -- Only install stuff from the init.lua
-					handlers = {
-						function(server_name)
-							local server = servers[server_name] or {}
-							-- This handles overriding only values explicitly passed by the server
-							-- configuration above. Useful when disabling certain features of
-							-- an LSP (for example, turning off formatting for ts_ls)
-							server.capabilities = vim.tbl_deep_extend(
-								"force",
-								{},
-								capabilities,
-								server.capabilities or {},
-								{
-									workspace = {
-										didChangeWatchedFiles = {
-											dynamicRegistration = true,
-										},
-									},
-								}
-							)
-							require("lspconfig")[server_name].setup(server)
-						end,
+				require("mason-tool-installer").setup({
+					ensure_installed = {
+						"prettier",
+						"proselint",
+						"shfmt",
+						"stylua",
+						"tree-sitter-cli",
+						"write-good",
+						unpack(pluck("mason_name", lsp_list)),
 					},
 				})
+
+				for i = 1, #lsp_list do
+					local server = lsp_list[i]
+					local server_config = server["config"]
+					local server_name = server["ls_config_name"]
+					server_config.capabilities =
+						vim.tbl_deep_extend("force", {}, capabilities, server_config.capabilities or {})
+					vim.lsp.config(server_name, server_config)
+					vim.lsp.enable(server_name)
+				end
 			end,
 		},
 		-- }}}
