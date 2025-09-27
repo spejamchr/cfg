@@ -278,6 +278,15 @@ vim.keymap.set("v", "<", "<gv", { desc = "Un-indent current selection" })
 vim.keymap.set("n", "<Leader>L", "<cmd>Lazy<CR>", { desc = "Open Lazy" })
 vim.keymap.set("n", "<Leader>S", "<cmd>Lazy sync<CR>", { desc = "Sync Lazy" })
 vim.keymap.set("n", "<Leader>M", "<cmd>Mason<CR>", { desc = "Open Mason" })
+
+vim.keymap.set("n", "<Leader>tf", function()
+	vim.g.disable_autoformat = not vim.g.disable_autoformat
+end, { desc = "Toggle format-on-save (Globally)" })
+
+vim.keymap.set("n", "<Leader>tF", function()
+	local bufnr = vim.fn.bufnr()
+	vim.b[bufnr].disable_autoformat = not vim.b[bufnr].disable_autoformat
+end, { desc = "Toggle format-on-save (Buffer)" })
 -- }}}
 
 -- Bootstrap lazy.nvim {{{
@@ -698,10 +707,17 @@ require("lazy").setup({
 					yaml = { "prettier" },
 					zsh = { "shfmt" },
 				},
-				format_on_save = {
-					timeout_ms = 500,
-					lsp_format = "fallback",
-				},
+				format_on_save = function(bufnr)
+					-- Disable with a global or buffer-local variable
+					if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+						return
+					end
+
+					return {
+						timeout_ms = 500,
+						lsp_format = "fallback",
+					}
+				end,
 			},
 		},
 		-- }}}
