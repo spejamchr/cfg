@@ -639,7 +639,6 @@ require("lazy").setup({
 						"shfmt",
 						"stylua",
 						"tree-sitter-cli",
-						"write-good",
 						unpack(pluck("mason_name", lsp_list)),
 					},
 				})
@@ -729,7 +728,7 @@ require("lazy").setup({
 			config = function()
 				local lint = require("lint")
 				lint.linters_by_ft = {
-					markdown = { "proselint", "write_good" },
+					markdown = { "proselint" },
 				}
 
 				local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
