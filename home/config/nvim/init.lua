@@ -184,7 +184,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
-	desc = "Configure LSP stuff",
+	desc = "Set line numbers",
 	group = init_lua_group,
 	callback = function()
 		-- Try line numbers for now, but only when LSP is attached (when I'm editing code)
@@ -427,6 +427,7 @@ require("lazy").setup({
 			"folke/snacks.nvim",
 			priority = 1000,
 			lazy = false,
+			---@diagnostic disable-next-line: undefined-doc-name
 			---@type snacks.Config
 			opts = {
 				image = { enabled = true },
@@ -605,7 +606,18 @@ require("lazy").setup({
 					{ mason_name = "markdown-oxide", ls_config_name = "markdown_oxide", config = {} },
 					{ mason_name = "omnisharp", ls_config_name = "omnisharp", config = {} },
 					{ mason_name = "prisma-language-server", ls_config_name = "prismals", config = {} },
-					{ mason_name = "rust-analyzer", ls_config_name = "rust_analyzer", config = {} },
+					{
+						mason_name = "rust-analyzer",
+						ls_config_name = "rust_analyzer",
+						config = {
+							settings = {
+								["rust-analyzer"] = {
+									cargo = { features = "all" },
+									check = { features = "all" },
+								},
+							},
+						},
+					},
 					{
 						mason_name = "solargraph",
 						ls_config_name = "solargraph",
