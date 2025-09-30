@@ -18,6 +18,7 @@
   helper = osxkeychain
 [commit]
   gpgsign = false
+  cleanup = scissors
 [diff]
   tool = kitty
   guitool = kitty.gui
