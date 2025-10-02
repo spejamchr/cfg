@@ -67,6 +67,7 @@ Installed with `brew install`:
 Installed with `brew cask install`:
 
 - [`calibre`](https://calibre-ebook.com/): A powerful and easy to use e-book manager
+- [`dbeaver-community`](https://dbeaver.io/): Universal database tool and SQL client
 - [`discord`](https://discord.com/): Voice and text chat software
 - [`docker`](https://www.docker.com/products/docker-desktop): App to build and share containerised applications and microservices
 - [`dropbox`](https://www.dropbox.com/): Client for the Dropbox cloud storage service

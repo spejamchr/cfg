@@ -257,6 +257,7 @@ function main() {
   brew_install yarn
 
   brew_cask_install calibre "spencer"
+  brew_cask_install dbeaver-community "spencerchristiansen"
   brew_cask_install discord "spencer"
   brew_cask_install docker
   brew_cask_install dropbox
