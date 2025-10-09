@@ -10,6 +10,7 @@
   br = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
   lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
   dif = difftool --no-symlinks --dir-diff
+	db = "! git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) branch: %(refname:short) %(authoremail) %(upstream:track)' | awk \"!/branch: main / && !/\\*/ && (/<jc.spencer92@gmail.com> \\[gone\\]/ || !/<jc.spencer92@gmail.com>/)\" | awk '{ print $2; }' | xargs -r git branch -D"
 [color]
   ui = auto
 [web]
