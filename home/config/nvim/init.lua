@@ -587,7 +587,6 @@ require("lazy").setup({
 				local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 				local lsp_list = {
-					{ mason_name = "codebook", ls_config_name = "codebook", config = {} },
 					{ mason_name = "eslint-lsp", ls_config_name = "eslint", config = {} },
 					{ mason_name = "json-lsp", ls_config_name = "jsonls", config = {} },
 					{
