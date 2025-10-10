@@ -51,6 +51,9 @@ vim.o.undofile = true
 vim.o.list = true
 vim.opt.listchars = { tab = "  ", trail = "·" }
 
+-- For empty lines after the end of the file, show nothing instead of tildes
+vim.opt.fillchars = { eob = " " }
+
 -- If performing an operation that would fail due to unsaved changes in the
 -- buffer (like `:q`), instead raise a dialog asking to save the file first.
 vim.o.confirm = true
