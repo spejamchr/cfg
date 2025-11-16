@@ -29,24 +29,6 @@ export const className = {
 
 const rand = Math.random;
 
-const calcIntersection = (si, sj) => {
-  const dxi = Math.cos(si.a);
-  const dyi = Math.sin(si.a);
-  const dxj = Math.cos(sj.a);
-  const dyj = Math.sin(sj.a);
-  const de = dxi * dyj - dyi * dxj;
-  if (Math.abs(de) < 1e-8) {
-    return { intersects: false };
-  }
-
-  const ti = (-si.x * dyj + sj.x * dyj + dxj * si.y - dxj * sj.y) / de;
-  const tj = (dxi * si.y - dxi * sj.y - dyi * si.x + dyi * sj.x) / de;
-  const intersects =
-    ti < si.l[0] && ti > -si.l[1] && tj < sj.l[0] && tj > -sj.l[1];
-
-  return { intersects, ti, tj };
-};
-
 const genSeeds = ({ minX, maxX, minY, maxY }) => {
   const N = 5000;
 
