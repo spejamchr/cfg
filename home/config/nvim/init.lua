@@ -290,6 +290,110 @@ vim.keymap.set("n", "<Leader>tF", function()
 	local bufnr = vim.fn.bufnr()
 	vim.b[bufnr].disable_autoformat = not vim.b[bufnr].disable_autoformat
 end, { desc = "Toggle format-on-save (Buffer)" })
+
+--- Run a long-running command in a floating terminal.
+---
+---@param name string
+---@param cmds string[][]
+local function run_long(name, cmds)
+	local buf
+	for _, id in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.api.nvim_buf_get_name(id) == "/" .. name then
+			buf = id
+			break
+		end
+	end
+	if buf == nil then
+		buf = vim.api.nvim_create_buf(true, false)
+		vim.api.nvim_buf_set_name(buf, "/" .. name)
+	end
+
+	local window = vim.api.nvim_open_win(buf, false, {
+		relative = "editor",
+		width = 80,
+		height = 15,
+		row = vim.o.lines - 2,
+		col = vim.o.columns,
+		anchor = "SE",
+		style = "minimal",
+	})
+
+	local chan = vim.api.nvim_open_term(buf, {})
+
+	---@param data? string
+	local function follow_append(data)
+		if type(data) == "string" then
+			vim.api.nvim_chan_send(chan, data)
+			local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+			if vim.api.nvim_win_is_valid(window) then
+				vim.api.nvim_win_set_cursor(window, { #lines, 0 })
+			end
+		end
+	end
+
+	---@param idx number
+	local function runit(idx)
+		if cmds[idx] == nil then
+			follow_append("\n-- Done --\n\n")
+			vim.defer_fn(function()
+				if vim.api.nvim_win_is_valid(window) then
+					vim.api.nvim_win_close(window, false)
+				end
+			end, 3000)
+			return
+		end
+
+		---@param err string
+		---@param data string
+		local echo = vim.schedule_wrap(function(err, data)
+			follow_append(data)
+			follow_append(err)
+		end)
+
+		vim.system(
+			cmds[idx],
+			{ stdout = echo, stderr = echo },
+			---@param out vim.SystemCompleted
+			vim.schedule_wrap(function(out)
+				if out.code == 0 then
+					runit(idx + 1)
+				else
+					if vim.api.nvim_win_is_valid(window) then
+						follow_append("\n-- Completed with error --\n\n")
+					end
+				end
+			end)
+		)
+	end
+
+	runit(1)
+end
+
+-- For work
+
+vim.keymap.set("n", "<Leader>dp", function()
+	run_long("dev prepare", {
+		{ "dev", "prepare" },
+	})
+end, { desc = "dev prepare" })
+vim.keymap.set("n", "<Leader>dc", function()
+	run_long("dev prepare && dev check", {
+		{ "dev", "prepare" },
+		{ "dev", "check" },
+	})
+end, { desc = "dev prepare && dev check" })
+vim.keymap.set("n", "<Leader>do", function()
+	run_long("dev check", {
+		{ "dev", "check" },
+	})
+end, { desc = "dev check" })
+vim.keymap.set("n", "<Leader>dq", function()
+	run_long("bun-parallel", {
+		{ "bun", "run", "--filter", "*", "check" },
+		{ "bun", "run", "--filter", "stat.*", "lint" },
+	})
+end, { desc = "bun-parallel-check" })
+
 -- }}}
 
 -- Bootstrap lazy.nvim {{{
@@ -375,6 +479,9 @@ require("lazy").setup({
 					fzf_opts = {
 						["--cycle"] = true,
 					},
+					grep = {
+						hidden = true,
+					},
 				}
 			end,
 		},
@@ -435,6 +542,49 @@ require("lazy").setup({
 			opts = {
 				image = { enabled = true },
 				input = { enabled = true },
+				gh = {},
+				picker = {
+					sources = {
+						gh_issue = {
+							-- your gh_issue picker configuration comes here
+							-- or leave it empty to use the default settings
+						},
+						gh_pr = {
+							-- your gh_pr picker configuration comes here
+							-- or leave it empty to use the default settings
+						},
+					},
+				},
+			},
+			keys = {
+				{
+					"<leader>gi",
+					function()
+						Snacks.picker.gh_issue()
+					end,
+					desc = "GitHub Issues (open)",
+				},
+				{
+					"<leader>gI",
+					function()
+						Snacks.picker.gh_issue({ state = "all" })
+					end,
+					desc = "GitHub Issues (all)",
+				},
+				{
+					"<leader>gp",
+					function()
+						Snacks.picker.gh_pr()
+					end,
+					desc = "GitHub Pull Requests (open)",
+				},
+				{
+					"<leader>gP",
+					function()
+						Snacks.picker.gh_pr({ state = "all" })
+					end,
+					desc = "GitHub Pull Requests (all)",
+				},
 			},
 		},
 		-- }}}
@@ -633,7 +783,26 @@ require("lazy").setup({
 					},
 					{ mason_name = "tailwindcss-language-server", ls_config_name = "tailwindcss", config = {} },
 					{ mason_name = "taplo", ls_config_name = "taplo", config = {} },
-					{ mason_name = "typescript-language-server", ls_config_name = "ts_ls", config = {} },
+					{
+						mason_name = "typescript-language-server",
+						ls_config_name = "ts_ls",
+						config = {
+							settings = {
+								typescript = {
+									inlayHints = {
+										includeInlayParameterNameHints = "all",
+										includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+										includeInlayVariableTypeHints = true,
+										includeInlayFunctionParameterTypeHints = true,
+										includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+										includeInlayPropertyDeclarationTypeHints = true,
+										includeInlayFunctionLikeReturnTypeHints = true,
+										includeInlayEnumMemberValueHints = true,
+									},
+								},
+							},
+						},
+					},
 				}
 
 				---@param value string
