@@ -291,7 +291,7 @@ vim.keymap.set("n", "<Leader>tF", function()
 	vim.b[bufnr].disable_autoformat = not vim.b[bufnr].disable_autoformat
 end, { desc = "Toggle format-on-save (Buffer)" })
 
---- Run a long-running command in a floating terminal.
+--- local function run_long(name, cmds) -- Run a long-running command in a floating terminal. {{{
 ---
 ---@param name string
 ---@param cmds string[][]
@@ -368,6 +368,7 @@ local function run_long(name, cmds)
 
 	runit(1)
 end
+-- }}}
 
 -- For work
 
