@@ -624,78 +624,88 @@ require("lazy").setup({
 		-- Git integration for buffers
 		{
 			"lewis6991/gitsigns.nvim",
-			event = "VeryLazy",
+			lazy = false,
 			-- Copied from the docs
 			-- https://github.com/lewis6991/gitsigns.nvim?tab=readme-ov-file#-keymaps
-			on_attach = function(bufnr)
-				local gitsigns = require("gitsigns")
+			opts = {
+				on_attach = function(bufnr)
+					local gitsigns = require("gitsigns")
 
-				local function map(mode, l, r, opts)
-					opts = opts or {}
-					opts.buffer = bufnr
-					vim.keymap.set(mode, l, r, opts)
-				end
-
-				-- Navigation
-				map("n", "]c", function()
-					if vim.wo.diff then
-						vim.cmd.normal({ "]c", bang = true })
-					else
-						---@diagnostic disable-next-line: param-type-mismatch
-						gitsigns.nav_hunk("next")
+					local function map(mode, l, r, opts)
+						opts = opts or {}
+						opts.buffer = bufnr
+						vim.keymap.set(mode, l, r, opts)
 					end
-				end)
 
-				map("n", "[c", function()
-					if vim.wo.diff then
-						vim.cmd.normal({ "[c", bang = true })
-					else
+					-- Navigation
+					map("n", "]c", function()
+						if vim.wo.diff then
+							vim.cmd.normal({ "]c", bang = true })
+						else
+							---@diagnostic disable-next-line: param-type-mismatch
+							gitsigns.nav_hunk("next")
+						end
+					end, { desc = "Next hunk" })
+
+					map("n", "[c", function()
+						if vim.wo.diff then
+							vim.cmd.normal({ "[c", bang = true })
+						else
+							---@diagnostic disable-next-line: param-type-mismatch
+							gitsigns.nav_hunk("prev")
+						end
+					end, { desc = "Prev hunk" })
+
+					-- Actions
+					map("n", "<leader>hs", gitsigns.stage_hunk, { desc = "Stage hunk" })
+					map("n", "<leader>hr", gitsigns.reset_hunk, { desc = "Reset hunk" })
+
+					map("v", "<leader>hs", function()
+						gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+					end, { desc = "Stage hunk" })
+
+					map("v", "<leader>hr", function()
+						gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+					end, { desc = "Reset hunk" })
+
+					map("n", "<leader>hS", gitsigns.stage_buffer, { desc = "Stage buffer" })
+					map("n", "<leader>hR", gitsigns.reset_buffer, { desc = "Reset buffer" })
+					map("n", "<leader>hp", gitsigns.preview_hunk, { desc = "Preview hunk" })
+					map("n", "<leader>hi", gitsigns.preview_hunk_inline, {
+						desc = "Preview hunk (inline)",
+					})
+
+					map("n", "<leader>hb", function()
+						gitsigns.blame_line({ full = true })
+					end, { desc = "Blame line" })
+
+					map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diff this" })
+
+					map("n", "<leader>hD", function()
 						---@diagnostic disable-next-line: param-type-mismatch
-						gitsigns.nav_hunk("prev")
-					end
-				end)
+						gitsigns.diffthis("~")
+					end, { desc = "Diff this (~)" })
 
-				-- Actions
-				map("n", "<leader>hs", gitsigns.stage_hunk)
-				map("n", "<leader>hr", gitsigns.reset_hunk)
+					map("n", "<leader>hQ", function()
+						---@diagnostic disable-next-line: param-type-mismatch
+						gitsigns.setqflist("all")
+					end, { desc = "Populate the quickfix list with All hunks" })
+					map("n", "<leader>hq", gitsigns.setqflist, {
+						desc = "Populate the quickfix list with hunks",
+					})
 
-				map("v", "<leader>hs", function()
-					gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-				end)
+					-- Toggles
+					map("n", "<leader>tb", gitsigns.toggle_current_line_blame, {
+						desc = "Toggle current line blame",
+					})
+					map("n", "<leader>tw", gitsigns.toggle_word_diff, {
+						desc = "Toggle word diff",
+					})
 
-				map("v", "<leader>hr", function()
-					gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-				end)
-
-				map("n", "<leader>hS", gitsigns.stage_buffer)
-				map("n", "<leader>hR", gitsigns.reset_buffer)
-				map("n", "<leader>hp", gitsigns.preview_hunk)
-				map("n", "<leader>hi", gitsigns.preview_hunk_inline)
-
-				map("n", "<leader>hb", function()
-					gitsigns.blame_line({ full = true })
-				end)
-
-				map("n", "<leader>hd", gitsigns.diffthis)
-
-				map("n", "<leader>hD", function()
-					---@diagnostic disable-next-line: param-type-mismatch
-					gitsigns.diffthis("~")
-				end)
-
-				map("n", "<leader>hQ", function()
-					---@diagnostic disable-next-line: param-type-mismatch
-					gitsigns.setqflist("all")
-				end)
-				map("n", "<leader>hq", gitsigns.setqflist)
-
-				-- Toggles
-				map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
-				map("n", "<leader>tw", gitsigns.toggle_word_diff)
-
-				-- Text object
-				map({ "o", "x" }, "ih", gitsigns.select_hunk)
-			end,
+					-- Text object
+					map({ "o", "x" }, "ih", gitsigns.select_hunk)
+				end,
+			},
 			keys = {
 				{ "]h", "<cmd>Gitsigns next_hunk<CR>", desc = "Next Git Hunk" },
 				{ "[h", "<cmd>Gitsigns prev_hunk<CR>", desc = "Previous Git Hunk" },
