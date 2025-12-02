@@ -4,7 +4,7 @@ password_command = cat $XDG_CONFIG_HOME/pianobar/password
 
 # Misc
 audio_quality = high
-autostart_station = 4623538101142932083
+autostart_station = 325326983847987827
 
 # Format strings
 format_msg_nowplaying = |> %s
