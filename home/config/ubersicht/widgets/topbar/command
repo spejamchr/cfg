@@ -26,6 +26,9 @@ CPUS=$(sysctl -n hw.ncpu)
 PERCENT_CPU=$(ps -A -o %cpu | awk '{s+=$1} END {print s}')
 LOADAVG=$(sysctl -n vm.loadavg | awk '{print $2}')
 
+AUDIO_OUT=$(SwitchAudioSource -c -t output -f json)
+AUDIO_IN=$(SwitchAudioSource -c -t input -f json)
+
 # Update the bar colors based on the current theme
 COLORS=$(cat ~/.config/ubersicht/colors.json)
 
@@ -49,6 +52,10 @@ cat <<-EOF
     "cpus": $CPUS,
     "percentCpu": $PERCENT_CPU,
     "loadavg": "$LOADAVG",
+    "audio": {
+      "out": $AUDIO_OUT,
+      "in": $AUDIO_IN
+    },
     "colors": $COLORS
 }
 EOF

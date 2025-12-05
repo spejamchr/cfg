@@ -252,6 +252,7 @@ function main() {
   brew_install ruby-install
   brew_install rustup
   brew_install sleepwatcher
+  brew_install switchaudio-osx
   brew_install tinted-theming/tinted/tinty
   brew_install wget
   brew_install yarn

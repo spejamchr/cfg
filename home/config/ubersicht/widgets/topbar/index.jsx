@@ -1,4 +1,5 @@
 import { React, styled } from "uebersicht";
+import Audio from "./Components/Audio.jsx";
 import Battery from "./Components/Battery.jsx";
 import CpuMeter from "./Components/CpuMeter.jsx";
 import DateTime from "./Components/DateTime.jsx";
@@ -53,6 +54,7 @@ export const render = prepare(
     power,
     spaces,
     windows,
+    audio,
   }) => {
     const OuterContainer = styled.div({
       ...containerStyles(colors, "100%"),
@@ -78,6 +80,7 @@ export const render = prepare(
 
     const rightSide = (
       <span style={containerStyles(colors, "fit")}>
+        <Audio audio={audio} colors={colors} />
         <LoadAvg loadavg={loadavg} cpus={cpus} colors={colors} />
         <CpuMeter percentCpu={percentCpu} cpus={cpus} colors={colors} />
         <Battery power={power} colors={colors} />
