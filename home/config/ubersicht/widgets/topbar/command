@@ -12,7 +12,7 @@ DATE=$(date "+%a %b %d")
 TIME=$(date "+%H:%M")
 
 PIANOBAR_ON=$([[ $(pgrep pianobar) ]] && printf 'true' || printf 'false')
-SONG=$(cat ~/.config/pianobar/out | grep ' by ' | grep ' on ' | tail -n 1 | sed -e 's/^.*|> //')
+SONG=$(cat ~/.config/pianobar/out | grep -e ' by ' -e ' on ' | tail -n 1 | sed 's/\x1b//g' | sed -e 's/^.*|>\[0m \[32m//' | sed -e 's/\[0m\[30m\[0m$//')
 SONG=${SONG//'"'/'\"'}
 
 PLUGGED=$([[ $(pmset -g ps | head -1) =~ 'AC' ]] && printf 'true' || printf 'false')

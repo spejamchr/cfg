@@ -7,10 +7,10 @@ audio_quality = high
 autostart_station = 325326983847987827
 
 # Format strings
-format_msg_nowplaying = |> %s
-format_nowplaying_song = %t by %a on %l%r%@%s
-ban_icon =  </3
-love_icon =  <3
-tired_icon =  zZ
+format_msg_nowplaying = [33m[1m|>[0m %s
+format_nowplaying_song = [32m%t[0m by [34m%a[0m on [4m%l[0m[30m%r[0m%@%s
+ban_icon =  [32m</3[0m
+love_icon =  [31m<3[0m
+tired_icon =  [33mzZ[0m
 format_nowplaying_station = Station [35m%n[0m (%i)
 format_list_song = %i) %a - %t%r (%d)%@%s

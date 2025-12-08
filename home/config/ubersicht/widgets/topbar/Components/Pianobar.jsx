@@ -4,12 +4,35 @@ import Item from "./item.jsx";
 // Uebersicht needs this to be imported
 React;
 
-const Pianobar = ({ pianobar, colors }) => {
-  const song = pianobar.song;
+/**
+ * @param {string} song
+ */
+const songDetails = (song, colors) => {
+  if (!song) return "音楽を始めます...";
+
+  const title = song.match("(^.*)\\[0m by \\[34m")[1];
+  const by = song.match("\\[0m by \\[34m(.*)\\[0m on \\[4m")[1];
+  const on = song.match("\\[0m on \\[4m(.*$)")[1];
 
   return (
+    <>
+      <span style={{ color: colors.Green }}>{title}</span> by{" "}
+      <span style={{ color: colors.Blue }}>{by}</span> on{" "}
+      <span style={{ textDecoration: "underline" }}>{on}</span>
+    </>
+  );
+};
+
+/**
+ * @param {{
+ * pianobar: {song: string},
+ * colors: {}
+ * }} params
+ */
+const Pianobar = ({ pianobar, colors }) => {
+  return (
     <Item
-      text={song || "音楽を始める..."}
+      text={songDetails(pianobar.song, colors)}
       hide={!pianobar.on}
       bg={colors.Black}
     />
