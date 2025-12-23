@@ -70,6 +70,10 @@ vim.diagnostic.config({
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
+
+-- Goyo Defaults
+vim.g.goyo_width = 100
+
 -- }}}
 
 -- Autocommands {{{
@@ -220,6 +224,32 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				arguments = { input },
 			}, { bufnr = ev.buf })
 		end, { desc = "Open daily note", nargs = "*" })
+	end,
+})
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "GoyoEnter",
+	desc = "Entering Goyo view",
+	group = init_lua_group,
+	nested = true,
+	callback = function()
+		require("lualine").hide({
+			place = { "statusline", "tabline", "winbar" },
+			unhide = false,
+		})
+	end,
+})
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "GoyoLeave",
+	desc = "Leaving Goyo view",
+	group = init_lua_group,
+	nested = true,
+	callback = function()
+		require("lualine").hide({
+			place = { "statusline", "tabline", "winbar" },
+			unhide = true,
+		})
 	end,
 })
 -- }}}
