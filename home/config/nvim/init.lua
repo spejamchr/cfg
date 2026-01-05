@@ -511,6 +511,7 @@ require("lazy").setup({
 						["--cycle"] = true,
 					},
 					grep = {
+						rg_opts = "--line-number --column --glob !.git/",
 						hidden = true,
 					},
 				}
