@@ -402,23 +402,23 @@ end
 
 -- For work
 
-vim.keymap.set("n", "<Leader>dp", function()
+vim.keymap.set("n", "<Leader>vp", function()
 	run_long("dev prepare", {
 		{ "dev", "prepare" },
 	})
 end, { desc = "dev prepare" })
-vim.keymap.set("n", "<Leader>dc", function()
+vim.keymap.set("n", "<Leader>vc", function()
 	run_long("dev prepare && dev check", {
 		{ "dev", "prepare" },
 		{ "dev", "check" },
 	})
 end, { desc = "dev prepare && dev check" })
-vim.keymap.set("n", "<Leader>do", function()
+vim.keymap.set("n", "<Leader>vo", function()
 	run_long("dev check", {
 		{ "dev", "check" },
 	})
 end, { desc = "dev check" })
-vim.keymap.set("n", "<Leader>dq", function()
+vim.keymap.set("n", "<Leader>vq", function()
 	run_long("bun-parallel", {
 		{ "bun", "run", "--filter", "*", "check" },
 		{ "bun", "run", "--filter", "stat.*", "lint" },
