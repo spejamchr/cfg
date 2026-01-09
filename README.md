@@ -77,7 +77,7 @@ Installed with `brew cask install`:
 - [`google-chrome`](https://www.google.com/chrome/): Web browser
 - [`joplin`](https://joplinapp.org/): Note taking and to-do application with synchronisation capabilities
 - [`keepassxc`](https://keepassxc.org/): Cross-platform Password Manager
-- [`kitty@nightly`](https://github.com/kovidgoyal/kitty): Cross-platform, fast, feature-rich, GPU based terminal
+- [`kitty`](https://github.com/kovidgoyal/kitty): Cross-platform, fast, feature-rich, GPU based terminal
 - [`mongodb-compass`](https://www.mongodb.com/products/compass): Interactive tool for analyzing MongoDB data
 - [`notunes`](https://github.com/tombonez/noTunes): Simple application that will prevent iTunes or Apple Music from launching
 - [`postgres-unofficial`](https://postgresapp.com/): App wrapper for Postgres

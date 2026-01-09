@@ -267,7 +267,7 @@ function main() {
   brew_cask_install google-chrome
   brew_cask_install joplin
   brew_cask_install keepassxc "spencer"
-  brew_cask_install kitty@nightly
+  brew_cask_install kitty
   brew_cask_install mongodb-compass "spencerchristiansen"
   brew_cask_install notunes
   brew_cask_install postgres-unofficial "spencer"
