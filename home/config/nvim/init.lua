@@ -233,6 +233,7 @@ vim.api.nvim_create_autocmd("User", {
 	group = init_lua_group,
 	nested = true,
 	callback = function()
+		vim.o.cmdheight = 0
 		require("lualine").hide({
 			place = { "statusline", "tabline", "winbar" },
 			unhide = false,
@@ -250,6 +251,7 @@ vim.api.nvim_create_autocmd("User", {
 			place = { "statusline", "tabline", "winbar" },
 			unhide = true,
 		})
+		vim.o.cmdheight = 1
 	end,
 })
 -- }}}
