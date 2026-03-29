@@ -253,6 +253,7 @@ function main() {
   brew_install rustup
   brew_install sleepwatcher
   brew_install switchaudio-osx
+  brew_install syncthing
   brew_install tinted-theming/tinted/tinty
   brew_install wget
   brew_install yarn
@@ -270,6 +271,7 @@ function main() {
   brew_cask_install kitty
   brew_cask_install mongodb-compass "spencerchristiansen"
   brew_cask_install notunes
+  brew_cask_install obsidian
   brew_cask_install postgres-unofficial "spencer"
   brew_cask_install slack 'spencerchristiansen'
   brew_cask_install ubersicht

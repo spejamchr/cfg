@@ -60,6 +60,7 @@ Installed with `brew install`:
 - [`skhd`](https://github.com/koekeishiya/skhd): Simple hotkey daemon for macOS
 - [`sleepwatcher`](https://www.bernhard-baehr.de/): Monitors sleep, wakeup, and idleness of a Mac
 - [`switchaudio-osx`](https://github.com/deweller/switchaudio-osx): Change the audio source for Mac OS X from the command line.
+- [`syncthing`](https://syncthing.net/): Open source continuous file synchronization application
 - [`tinty`](https://github.com/tinted-theming/tinty): A base16 and base24 color scheme manager
 - [`wget`](https://www.gnu.org/software/wget/): Internet file retriever
 - [`yabai`](https://github.com/koekeishiya/yabai): A tiling window manager for macOS based on binary space partitioning
@@ -80,6 +81,7 @@ Installed with `brew cask install`:
 - [`kitty`](https://github.com/kovidgoyal/kitty): Cross-platform, fast, feature-rich, GPU based terminal
 - [`mongodb-compass`](https://www.mongodb.com/products/compass): Interactive tool for analyzing MongoDB data
 - [`notunes`](https://github.com/tombonez/noTunes): Simple application that will prevent iTunes or Apple Music from launching
+- [`obsidian`](https://obsidian.md/): Knowledge base that works on top of a local folder of plain text Markdown files
 - [`postgres-unofficial`](https://postgresapp.com/): App wrapper for Postgres
 - [`slack`](https://slack.com/): Team communication and collaboration software
 - [`übersicht`](http://tracesof.net/uebersicht/): Run commands and display their output on the desktop
