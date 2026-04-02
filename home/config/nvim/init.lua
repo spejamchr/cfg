@@ -505,6 +505,7 @@ require("lazy").setup({
 				map("<Leader>li", fzflua.lsp_implementations, "[LSP] Implementations")
 				map("<Leader>lr", fzflua.lsp_references, "[LSP] References")
 				map("<Leader>la", fzflua.lsp_code_actions, "[LSP] Code Actions")
+				vim.keymap.set("v", "<Leader>la", fzflua.lsp_code_actions, { desc = "[LSP] Code Actions" })
 
 				fzflua.register_ui_select()
 
