@@ -1035,7 +1035,6 @@ require("lazy").setup({
 				sections = {
 					lualine_a = { "mode" },
 					lualine_b = {
-						{ "branch", icons_enabled = false },
 						{
 							"diff",
 							source = function()
