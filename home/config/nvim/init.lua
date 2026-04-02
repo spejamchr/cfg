@@ -1089,6 +1089,7 @@ require("lazy").setup({
 			"tinted-theming/tinted-nvim",
 			lazy = false,
 			priority = 1000,
+			version = "0.1.*",
 			config = function()
 				require("tinted-colorscheme").setup(nil, {
 					supports = {
