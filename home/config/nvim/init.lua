@@ -578,18 +578,6 @@ require("lazy").setup({
 				image = { enabled = true },
 				input = { enabled = true },
 				gh = {},
-				picker = {
-					sources = {
-						gh_issue = {
-							-- your gh_issue picker configuration comes here
-							-- or leave it empty to use the default settings
-						},
-						gh_pr = {
-							-- your gh_pr picker configuration comes here
-							-- or leave it empty to use the default settings
-						},
-					},
-				},
 			},
 			keys = {
 				{
@@ -779,7 +767,14 @@ require("lazy").setup({
 				--  Performant, batteries-included completion plugin for Neovim
 				"saghen/blink.cmp",
 				-- 💫 Extensible UI for Neovim notifications and LSP progress messages.
-				{ "j-hui/fidget.nvim", opts = {} },
+				{
+					"j-hui/fidget.nvim",
+					opts = {
+						notification = {
+							override_vim_notify = true,
+						},
+					},
+				},
 			},
 			config = function()
 				local capabilities = require("blink.cmp").get_lsp_capabilities()
