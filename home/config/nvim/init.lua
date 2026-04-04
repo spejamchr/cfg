@@ -1026,7 +1026,7 @@ require("lazy").setup({
 			lazy = false,
 			opts = {
 				options = {
-					theme = "auto",
+					theme = "tinted",
 				},
 				sections = {
 					lualine_a = { "mode" },
@@ -1082,25 +1082,21 @@ require("lazy").setup({
 		-- for Treesitter and LSP highlight groups.
 		{
 			"tinted-theming/tinted-nvim",
-			lazy = false,
-			priority = 1000,
-			version = "0.1.*",
-			config = function()
-				require("tinted-colorscheme").setup(nil, {
-					supports = {
-						tinty = true,
-						live_reload = false,
-					},
-				})
-
-				vim.schedule(function()
-					vim.cmd([[
-            if filereadable(expand("~/.vimrc_background"))
-              source ~/.vimrc_background
-            endif
-          ]])
-				end)
-			end,
+			priority = 1000, -- load colorscheme early
+			lazy = false, -- apply on startup
+			---@type tinted-nvim.Config
+			---@diagnostic disable-next-line: missing-fields
+			opts = {
+				compile = true, -- optional: precompile for faster startup
+				---@diagnostic disable-next-line: missing-fields
+				capabilities = {
+					undercurl = true,
+				},
+				---@diagnostic disable-next-line: missing-fields
+				selector = {
+					enabled = true,
+				},
+			},
 		},
 		-- }}}
 
