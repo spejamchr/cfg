@@ -78,8 +78,43 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
     }
   };
 
+  // Fall direction: along the lower half of each raindrop line.
+  // Each line has angle a = -1.1 rad; the "downward" end points toward
+  // (-cos(a), -sin(a)), which is leftward and downward in SVG coordinates.
+  const angle = -1.1;
+  const fallDirX = -Math.cos(angle); // ≈ -0.454 (leftward)
+  const fallDirY = -Math.sin(angle); // ≈  0.891 (downward)
+
+  // Translate from dfh above the viewport to dfh below it along the slant,
+  // so both endpoints of every drop's path are off-screen and resets are invisible.
+  const dx2 = 2 * (fallDirX / fallDirY) * dfh;
+  const dy2 = 2 * dfh;
+
+  // In seconds
+  const minDuration = 4;
+  const maxDuration = 100;
+
+  const seeds = genSeeds({ minX, maxX: maxX + Math.abs(dx2), minY, maxY }).map(
+    (s) => {
+      const dur = minDuration + rand() * (maxDuration - minDuration);
+      return {
+        ...s,
+        stroke: color(Math.max(minX, Math.min(maxX, s.x + dx2 / 2))),
+        dur,
+        delay: -(rand() * dur), // random phase so drops are spread out
+        opacity: 1 - (dur * 0.8) / maxDuration, // 0.2–1.0 - slower drops are dimmer
+      };
+    },
+  );
+
+  // CSS animation is GPU-composited; SMIL animateTransform is not.
+  const keyframes = `@keyframes rainFall {
+    from { transform: translate(0px, ${-dfh}px); }
+    to   { transform: translate(${dx2}px, ${dfh}px); }
+  }`;
+
   return (
-    <div style={bodyStyle}>
+    <div style={{ ...bodyStyle, position: "relative" }}>
       <svg
         viewBox={`${dfx} ${dfy} ${dfw} ${dfh}`}
         preserveAspectRatio="none"
@@ -87,20 +122,40 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
         height="100%"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g strokeWidth={2} strokeLinecap="round" fill="none">
-          {genSeeds({ minX, maxX, minY, maxY }).map((s) => (
-            <line
-              strokeWidth={(0.7 * (maxY - s.y)) / maxY + 1.3}
-              key={`${s.x},${s.y}`}
-              x1={s.x + s.l[0] * Math.cos(s.a)}
-              y1={s.y + s.l[0] * Math.sin(s.a)}
-              x2={s.x + s.l[1] * Math.cos(s.a + Math.PI)}
-              y2={s.y + s.l[1] * Math.sin(s.a + Math.PI)}
-              stroke={color(s.x)}
-            />
+        <style>{keyframes}</style>
+        <g strokeLinecap="round" fill="none">
+          {seeds.map((s, i) => (
+            <g
+              key={i}
+              style={{
+                opacity: s.opacity,
+                animation: `rainFall ${s.dur}s ${s.delay}s linear infinite`,
+                willChange: "transform",
+              }}
+            >
+              <line
+                strokeWidth={(0.7 * (maxY - s.y)) / maxY + 1.3}
+                x1={s.x + s.l[0] * Math.cos(s.a)}
+                y1={s.y + s.l[0] * Math.sin(s.a)}
+                x2={s.x + s.l[1] * Math.cos(s.a + Math.PI)}
+                y2={s.y + s.l[1] * Math.sin(s.a + Math.PI)}
+                stroke={s.stroke}
+              />
+            </g>
           ))}
         </g>
       </svg>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: `linear-gradient(to bottom, transparent 0%, ${colors.Black} 100%)`,
+          pointerEvents: "none",
+        }}
+      />
     </div>
   );
 });
