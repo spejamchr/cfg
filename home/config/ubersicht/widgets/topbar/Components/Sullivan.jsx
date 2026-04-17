@@ -29,6 +29,10 @@ export const className = {
 
 const rand = Math.random;
 
+// In Radians
+const minAngle = -1.5707963268;
+const maxAngle = -1.1;
+
 const genSeeds = ({ minX, maxX, minY, maxY }) => {
   const N = 5000;
 
@@ -40,7 +44,7 @@ const genSeeds = ({ minX, maxX, minY, maxY }) => {
     seeds.push({
       x: rand() * SX + minX,
       y: rand() * rand() * SY + minY,
-      a: -1.1,
+      a: minAngle + rand() * (maxAngle - minAngle), // random angle in [-0.9, -1.2]
       l: [50, 50],
     });
   }
@@ -78,40 +82,44 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
     }
   };
 
-  // Fall direction: along the lower half of each raindrop line.
-  // Each line has angle a = -1.1 rad; the "downward" end points toward
-  // (-cos(a), -sin(a)), which is leftward and downward in SVG coordinates.
-  const angle = -1.1;
-  const fallDirX = -Math.cos(angle); // ≈ -0.454 (leftward)
-  const fallDirY = -Math.sin(angle); // ≈  0.891 (downward)
-
-  // Translate from dfh above the viewport to dfh below it along the slant,
-  // so both endpoints of every drop's path are off-screen and resets are invisible.
-  const dx2 = 2 * (fallDirX / fallDirY) * dfh;
-  const dy2 = 2 * dfh;
+  // Fall direction per drop: along the lower half of the line (angle a).
+  // The shallower extreme (-0.9 rad) produces the largest leftward drift,
+  // so use it to size the seed x-range extension that fills the bottom-right corner.
+  const maxAbsDx2 = 2 * (Math.cos(0.9) / Math.sin(0.9)) * dfh;
 
   // In seconds
   const minDuration = 4;
   const maxDuration = 100;
 
-  const seeds = genSeeds({ minX, maxX: maxX + Math.abs(dx2), minY, maxY }).map(
-    (s) => {
-      const dur = minDuration + rand() * (maxDuration - minDuration);
+  const seeds = genSeeds({ minX, maxX: maxX + maxAbsDx2, minY, maxY }).map(
+    (s, i) => {
+      const dx2 = 2 * (-Math.cos(s.a) / -Math.sin(s.a)) * dfh;
+      // More angled drops are faster
+      const dur =
+        minDuration +
+        (1 - (s.a - minAngle) / (maxAngle - minAngle)) *
+          (maxDuration - minDuration);
       return {
         ...s,
+        dx2,
         stroke: color(Math.max(minX, Math.min(maxX, s.x + dx2 / 2))),
         dur,
         delay: -(rand() * dur), // random phase so drops are spread out
         opacity: 1 - (dur * 0.8) / maxDuration, // 0.2–1.0 - slower drops are dimmer
+        keyframeName: `rainFall${i}`,
       };
     },
   );
 
-  // CSS animation is GPU-composited; SMIL animateTransform is not.
-  const keyframes = `@keyframes rainFall {
-    from { transform: translate(0px, ${-dfh}px); }
-    to   { transform: translate(${dx2}px, ${dfh}px); }
-  }`;
+  // One keyframe block per drop since each has a unique angle (and thus dx2).
+  const keyframes = seeds
+    .map(
+      (s) => `@keyframes ${s.keyframeName} {
+      from { transform: translate(0px, ${-dfh}px); }
+      to   { transform: translate(${s.dx2}px, ${dfh}px); }
+    }`,
+    )
+    .join("\n");
 
   return (
     <div style={{ ...bodyStyle, position: "relative" }}>
@@ -129,7 +137,7 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
               key={i}
               style={{
                 opacity: s.opacity,
-                animation: `rainFall ${s.dur}s ${s.delay}s linear infinite`,
+                animation: `${s.keyframeName} ${s.dur}s ${s.delay}s linear infinite`,
                 willChange: "transform",
               }}
             >
