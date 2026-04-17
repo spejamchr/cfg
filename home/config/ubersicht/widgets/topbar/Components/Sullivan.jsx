@@ -52,7 +52,7 @@ const genSeeds = ({ minX, maxX, minY, maxY }) => {
   return seeds;
 };
 
-export const render = prepare("sullivan", ({ displays, colors }) => {
+export const render = prepare("sullivan", ({ displays, colors, power }) => {
   const bodyStyle = {
     backgroundColor: colors.Black,
     height: "100%",
@@ -137,7 +137,9 @@ export const render = prepare("sullivan", ({ displays, colors }) => {
               key={i}
               style={{
                 opacity: s.opacity,
-                animation: `${s.keyframeName} ${s.dur}s ${s.delay}s linear infinite`,
+                animation: power.plugged
+                  ? `${s.keyframeName} ${s.dur}s ${s.delay}s linear infinite`
+                  : "none",
                 willChange: "transform",
               }}
             >
