@@ -40,16 +40,6 @@ original_theme_name=$(tinty current)
 
 theme=$(
   tinty list |
-    # Exclude light themes
-    grep -v \
-      -e light \
-      -e cupertino \
-      -e cupcake \
-      -e brushtrees.sh \
-      -e fruit-soda \
-      -e github \
-      -e shapeshifter \
-      -e tomorrow.sh |
     fzf --preview="
     echo '[$original_theme_name] -> [{}]'
     bat --style=changes,numbers --color=always --theme=base16 '$example_file'
