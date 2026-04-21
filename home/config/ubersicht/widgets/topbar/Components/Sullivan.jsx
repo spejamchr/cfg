@@ -137,7 +137,10 @@ export const render = prepare("sullivan", ({ displays, colors, power }) => {
               key={i}
               style={{
                 opacity: s.opacity,
-                animation: `${s.keyframeName} ${s.dur}s ${s.delay}s linear infinite`,
+                animation:
+                  parseInt(power.battery) > 25 || power.plugged
+                    ? `${s.keyframeName} ${s.dur}s ${s.delay}s linear infinite`
+                    : "",
                 willChange: power.plugged ? "transform" : "auto",
               }}
             >
