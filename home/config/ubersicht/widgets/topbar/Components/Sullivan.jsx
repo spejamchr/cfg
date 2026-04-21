@@ -33,14 +33,12 @@ const rand = Math.random;
 const minAngle = -1.5707963268;
 const maxAngle = -1.1;
 
-const genSeeds = ({ minX, maxX, minY, maxY }) => {
-  const N = 5000;
-
+const genSeeds = ({ minX, maxX, minY, maxY, n }) => {
   const SX = maxX - minX;
   const SY = maxY - minY;
 
   const seeds = [];
-  while (seeds.length < N) {
+  while (seeds.length < n) {
     seeds.push({
       x: rand() * SX + minX,
       y: rand() * rand() * SY + minY,
@@ -82,6 +80,8 @@ export const render = prepare("sullivan", ({ displays, colors, power }) => {
     }
   };
 
+  const n = power.plugged ? 5000 : 800;
+
   // Fall direction per drop: along the lower half of the line (angle a).
   // The shallower extreme (-0.9 rad) produces the largest leftward drift,
   // so use it to size the seed x-range extension that fills the bottom-right corner.
@@ -91,7 +91,7 @@ export const render = prepare("sullivan", ({ displays, colors, power }) => {
   const minDuration = 4;
   const maxDuration = 100;
 
-  const seeds = genSeeds({ minX, maxX: maxX + maxAbsDx2, minY, maxY }).map(
+  const seeds = genSeeds({ minX, maxX: maxX + maxAbsDx2, minY, maxY, n }).map(
     (s, i) => {
       const dx2 = 2 * (-Math.cos(s.a) / -Math.sin(s.a)) * dfh;
       // More angled drops are faster
@@ -137,10 +137,8 @@ export const render = prepare("sullivan", ({ displays, colors, power }) => {
               key={i}
               style={{
                 opacity: s.opacity,
-                animation: power.plugged
-                  ? `${s.keyframeName} ${s.dur}s ${s.delay}s linear infinite`
-                  : "none",
-                willChange: "transform",
+                animation: `${s.keyframeName} ${s.dur}s ${s.delay}s linear infinite`,
+                willChange: power.plugged ? "transform" : "auto",
               }}
             >
               <line
