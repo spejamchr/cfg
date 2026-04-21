@@ -1006,15 +1006,16 @@ require("lazy").setup({
 		-- Nvim Treesitter configurations and abstraction layer
 		{
 			"nvim-treesitter/nvim-treesitter",
+			branch = "main",
 			lazy = false,
 			build = ":TSUpdate",
-			main = "nvim-treesitter.configs", -- Sets main module to use for opts
-			opts = {
-				auto_install = true,
-				highlight = {
-					enable = true,
-				},
-			},
+			config = function()
+				vim.api.nvim_create_autocmd("FileType", {
+					callback = function()
+						pcall(vim.treesitter.start)
+					end,
+				})
+			end,
 		},
 		-- }}}
 
