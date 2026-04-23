@@ -17,7 +17,7 @@ import prepare from "../Utils/Prepare.jsx";
 // Uebersicht needs this to be imported
 React;
 
-export const refreshFrequency = 1000 * 60 * 60 * 24;
+export const refreshFrequency = 1000 * 60;
 
 export const command = `./topbar/command`;
 
