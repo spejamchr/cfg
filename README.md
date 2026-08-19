@@ -59,6 +59,7 @@ Installed with `brew install`:
 - [`rustup`](https://github.com/rust-lang/rustup): Rust toolchain installer
 - [`skhd`](https://github.com/koekeishiya/skhd): Simple hotkey daemon for macOS
 - [`sleepwatcher`](https://www.bernhard-baehr.de/): Monitors sleep, wakeup, and idleness of a Mac
+- [`svg2png`](https://cairographics.org/): SVG to PNG converter
 - [`switchaudio-osx`](https://github.com/deweller/switchaudio-osx): Change the audio source for Mac OS X from the command line.
 - [`syncthing`](https://syncthing.net/): Open source continuous file synchronization application
 - [`tinty`](https://github.com/tinted-theming/tinty): A base16 and base24 color scheme manager

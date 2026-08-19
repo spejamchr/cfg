@@ -1,6 +1,7 @@
 shell = "sh -c '{}'"
 
 hooks = [
+  "ruby ~/.config/tinted-theming/tinty/build_wallpaper.rb",
   "ruby ~/.config/tinted-theming/tinty/write-ubersicht-colors.rb",
   "sh ~/.config/tinted-theming/tinty/refresh-ubersicht.sh",
 ]
