@@ -21,7 +21,7 @@ export const className = {
   width: "100%",
   height: "35px",
   color: "white",
-  fontFamily: "FiraCode Nerd Font",
+  fontFamily: "FiraCode Nerd Font Mono",
   fontSize: "11px",
   userSelect: "none",
   cursor: "default",
