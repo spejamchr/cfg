@@ -68,3 +68,5 @@
 	autocorrect = prompt
 [rebase]
 	updateRefs = true
+[core]
+	autocrlf = input
