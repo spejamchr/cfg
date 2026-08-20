@@ -779,8 +779,10 @@ require("lazy").setup({
 			config = function()
 				local capabilities = require("blink.cmp").get_lsp_capabilities()
 
+				-- The `mason_name` comes from Mason.
+				-- The `ls_config_name` comes from `nvim-lspconfig`. For the full list, see
+				-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 				local lsp_list = {
-					{ mason_name = "eslint-lsp", ls_config_name = "eslint", config = {} },
 					{ mason_name = "json-lsp", ls_config_name = "jsonls", config = {} },
 					{
 						mason_name = "lua-language-server",
@@ -797,6 +799,7 @@ require("lazy").setup({
 					},
 					{ mason_name = "markdown-oxide", ls_config_name = "markdown_oxide", config = {} },
 					{ mason_name = "omnisharp", ls_config_name = "omnisharp", config = {} },
+					{ mason_name = "oxlint", ls_config_name = "oxlint", config = {} },
 					{ mason_name = "prisma-language-server", ls_config_name = "prismals", config = {} },
 					{
 						mason_name = "rust-analyzer",
@@ -823,9 +826,10 @@ require("lazy").setup({
 					},
 					{ mason_name = "tailwindcss-language-server", ls_config_name = "tailwindcss", config = {} },
 					{ mason_name = "taplo", ls_config_name = "taplo", config = {} },
+					{ mason_name = "yaml-language-server", ls_config_name = "yamlls", config = {} },
 					{
-						mason_name = "typescript-language-server",
-						ls_config_name = "ts_ls",
+						mason_name = "tsc",
+						ls_config_name = "tsc",
 						config = {
 							settings = {
 								typescript = {
