@@ -95,7 +95,7 @@ end
 def ensure_pianobar_is_running
   return if pianobar_running?
 
-  File.truncate(EVENTS_PATH)
+  File.truncate(EVENTS_PATH, 0) if File.exist?(EVENTS_PATH)
 
   Process.fork do
     Process.daemon
@@ -113,7 +113,7 @@ def exit_when_pianobar_stops
     sleep 1
     next if pianobar_running?
 
-    File.truncate(EVENTS_PATH)
+    File.truncate(EVENTS_PATH, 0)
     `kitten @ set-window-logo --self none`
     exit(0)
   end

@@ -29,6 +29,17 @@ end
 
 EVENT_NAME = ARGV.pop.freeze
 
+def ensure_events_path_is_present
+  return if File.exist?(EVENTS_PATH) && File.ftype(EVENTS_PATH) == "file"
+
+  if File.exist?(EVENTS_PATH)
+    puts "#{EVENTS_PATH} exists, but is not a FIFO. Can you delete it and try again?"
+    exit(1)
+  end
+
+  `touch "#{EVENTS_PATH}"`
+end
+
 append_event("debug", msg: "pianobar-eventcmd is running", event_name: EVENT_NAME)
 
 # Read environment variables sent by pianobar
