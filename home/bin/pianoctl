@@ -7,9 +7,11 @@
 # continue.
 
 require "io/console"
-require "io/wait"
+require "json"
+require 'open3'
 
 OUT_PATH = File.expand_path("~/.config/pianobar/out")
+EVENTS_PATH = File.expand_path("~/.config/pianobar/events")
 CONTROL_PATH = File.expand_path("~/.config/pianobar/ctl")
 
 # Don't display what the user types
@@ -19,27 +21,63 @@ def pianobar_running?
   `pgrep pianobar` != ""
 end
 
-def display_output
-  file = File.open(OUT_PATH)
+# @param cover_art_event [Hash]
+def show_album_artwork(cover_art_event)
+  return unless cover_art_event.is_a?(Hash)
+  return unless cover_art_event.key?("download_destination")
 
-  loop do
-    sleep(0.1)
-    # Not raw -- that makes the output look funky
-    $stdout.cooked { |io| io.print(file.read) }
+  download_destination = cover_art_event["download_destination"]
+  `kitten @ set-window-logo --self --position=top-right "#{download_destination}"`
+end
+
+def handle_events # rubocop:disable Metrics/MethodLength
+  File.open(EVENTS_PATH) do |file|
+    find_album_art_thread = nil
+    loop do
+      sleep(0.1)
+      events = file.readlines.map do |line|
+        JSON.parse(line)
+      rescue StandardError
+        { "kind" => "invalid_json", "original" => line }
+      end
+
+      # Handle only the most recent "cover_art" event
+      cover_art_event = events
+        .filter { |e| e.fetch("kind") == "cover_art" }
+        .last
+
+      next unless cover_art_event
+
+      find_album_art_thread&.kill
+      find_album_art_thread = Thread.new { show_album_artwork(cover_art_event) }
+    end
+  end
+end
+
+def display_output
+  File.open(OUT_PATH) do |file|
+    loop do
+      sleep(0.1)
+      content = file.read
+
+      # Not raw -- that makes the output look funky
+      $stdout.cooked { |io| io.print(content) }
+    end
   end
 end
 
 def process_input
-  ctl = File.open(CONTROL_PATH, "a")
-  # Don't buffer `print`s to `ctl`
-  ctl.sync = true
+  File.open(CONTROL_PATH, "a") do |ctl|
+    # Don't buffer `print`s to `ctl`
+    ctl.sync = true
 
-  loop do
-    input = $stdin.getch
-    input = "\n" if input == "\r"
-    exit(0) if input == "\u0003" # CTRL-C
+    loop do
+      input = $stdin.getch
+      input = "\n" if input == "\r"
+      exit(0) if input == "\u0003" # CTRL-C
 
-    ctl.print(input)
+      ctl.print(input)
+    end
   end
 end
 
@@ -57,8 +95,11 @@ end
 def ensure_pianobar_is_running
   return if pianobar_running?
 
+  File.truncate(EVENTS_PATH)
+
   Process.fork do
     Process.daemon
+    Dir.chdir(File.expand_path("~"))
     exec("pianobar > ~/.config/pianobar/out")
   end
 
@@ -70,14 +111,24 @@ end
 def exit_when_pianobar_stops
   loop do
     sleep 1
-    exit(0) unless pianobar_running?
+    next if pianobar_running?
+
+    File.truncate(EVENTS_PATH)
+    `kitten @ set-window-logo --self none`
+    exit(0)
   end
 end
 
-ensure_pianobar_ctl_fifo_is_present
+begin
+  ensure_pianobar_ctl_fifo_is_present
 
-ensure_pianobar_is_running
+  ensure_pianobar_is_running
 
-Thread.new { display_output }
-Thread.new { exit_when_pianobar_stops }
-process_input
+  Thread.new { handle_events }
+  Thread.new { display_output }
+  Thread.new { exit_when_pianobar_stops }
+  process_input
+rescue SystemExit, Interrupt, StandardError => e
+  `kitten @ set-window-logo --self none`
+  raise e
+end

@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'fileutils'
+require 'json'
+require 'open-uri'
+require 'securerandom'
+require 'tempfile'
+
+EVENTS_PATH = File.expand_path("~/.config/pianobar/events")
+
+# @param kind [String]
+# @param data [Hash]
+def append_event(kind, **data)
+  json_line = { **data, kind: }.to_json
+  File.write(EVENTS_PATH, "#{json_line}\n", mode: 'a+')
+end
+
+# @param name [String]
+def do_fallible(name, &block)
+  append_event("debug", msg: "Start #{name}")
+  result = block.call
+  append_event("debug", msg: "Finished #{name}")
+  result
+rescue StandardError => e
+  append_event("error", while: name, e:)
+  exit(1)
+end
+
+EVENT_NAME = ARGV.pop.freeze
+
+append_event("debug", msg: "pianobar-eventcmd is running", event_name: EVENT_NAME)
+
+# Read environment variables sent by pianobar
+VALUES =
+  do_fallible("reading input") do
+    $stdin.set_encoding("UTF-8")
+      .read
+      .split("\n")
+      .to_h { |line| (line.split('=') + [nil, nil]).slice(0, 2) }
+      .freeze
+  end
+
+case EVENT_NAME
+when "songstart"
+  unless VALUES["coverArt"]
+    append_event("error", reason: 'missing "coverArt" in VALUES')
+    exit(1)
+  end
+
+  # Download the cover art to a temp folder
+  uri = do_fallible("parsing URL") { URI.parse(VALUES["coverArt"]) }
+  download_destination = "/tmp/pianobar-coverArt-#{SecureRandom.uuid_v7}"
+  uri.open do |download|
+    do_fallible("downloading image") do
+      IO.copy_stream(download, download_destination)
+    end
+  end
+  append_event("cover_art", download_destination:)
+end

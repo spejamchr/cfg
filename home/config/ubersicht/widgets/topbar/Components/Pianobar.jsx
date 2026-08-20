@@ -14,7 +14,7 @@ const songDetails = (song, colors) => {
   const by = song.match("\\[0m by \\[34m(.*)\\[0m on \\[4m")[1];
   const on = song.match("\\[0m on \\[4m([^\\[]*)")[1];
   const loveMatch = song.match(
-    "\\[0m on \\[4m([^\\[]*)\\[0m\\[30m \\[31m(.*)\\[0m\\[0m$",
+    "\\[0m on \\[4m([^\\[]*)\\[0m\\[30m \\[31m(.*)\\[0m\\[0m\\]8;;$",
   );
   const loveIcon = loveMatch ? loveMatch[2] : null;
 
