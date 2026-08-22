@@ -32,3 +32,5 @@
 .*@neomake*
 
 sjc/
+
+.aider*

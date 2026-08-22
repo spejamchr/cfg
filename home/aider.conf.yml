@@ -1,0 +1,44 @@
+# Optimized .aider.conf.yml for M1 Max with 64GB RAM using Ollama
+# See also: https://aider.chat/docs/llms/ollama.html
+
+### Main model ###
+
+model: "ollama_chat/qwen3.6:latest"
+
+### API Keys and settings ###
+
+set-env:
+  - OLLAMA_API_BASE=http://127.0.0.1:11434
+
+### Model settings ###
+
+# Timeout in seconds for API calls (important for local models)
+timeout: 300
+
+# Use the efficient search/replace diff block format instead of rewriting the whole file
+edit-format: "diff"
+
+# Use a larger context window
+max-chat-history-tokens: 32768
+
+### Cache settings ###
+
+# Cache settings for improved performance with large context windows
+cache-prompts: true
+
+### Repomap settings ###
+
+map-tokens: 8192
+
+### Other ###
+
+dark-mode: true
+
+notifications: true
+
+auto-test: true
+
+analytics: false
+
+# I might use this later, but not now
+disable-playwright: true
