@@ -51,6 +51,7 @@ Installed with `brew install`:
 - [`fzf`](https://github.com/junegunn/fzf): 🌸 A command-line fuzzy finder
 - [`git`](https://git-scm.com/): Distributed revision control system
 - [`htop`](https://hisham.hm/htop/): Improved top (interactive process viewer)
+- [`librsvg`](https://wiki.gnome.org/Projects/LibRsvg): Library to render SVG files using Cairo
 - [`neovim`](https://neovim.io/): Ambitious Vim-fork focused on extensibility and agility
 - [`node@20`](https://nodejs.org/): Platform built on V8 to build network applications
 - [`pianobar`](https://github.com/PromyLOPh/pianobar/): Command-line player for [pandora](https://pandora.com)
@@ -59,7 +60,6 @@ Installed with `brew install`:
 - [`rustup`](https://github.com/rust-lang/rustup): Rust toolchain installer
 - [`skhd`](https://github.com/koekeishiya/skhd): Simple hotkey daemon for macOS
 - [`sleepwatcher`](https://www.bernhard-baehr.de/): Monitors sleep, wakeup, and idleness of a Mac
-- [`svg2png`](https://cairographics.org/): SVG to PNG converter
 - [`switchaudio-osx`](https://github.com/deweller/switchaudio-osx): Change the audio source for Mac OS X from the command line.
 - [`syncthing`](https://syncthing.net/): Open source continuous file synchronization application
 - [`tinty`](https://github.com/tinted-theming/tinty): A base16 and base24 color scheme manager

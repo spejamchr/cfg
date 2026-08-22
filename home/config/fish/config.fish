@@ -5,15 +5,11 @@ set -gx XDG_CONFIG_HOME ~/.config
 set -gx EDITOR nvim
 set -gx DOTNET_ROOT "/opt/homebrew/Cellar/dotnet/9.0.0/libexec"
 
-fish_add_path ~/code/scripts
-fish_add_path ~/.bin
-fish_add_path ~/.cargo/bin
+fish_add_path -m --path ~/code/scripts
+fish_add_path -m --path ~/.bin
+fish_add_path -m --path ~/.cargo/bin
 
-if test (arch) = i386
-    set HOMEBREW_PREFIX /usr/local
-else
-    set HOMEBREW_PREFIX /opt/homebrew
-end
+set -gx HOMEBREW_PREFIX $(brew --prefix)
 
 fish_add_path -m --path $HOMEBREW_PREFIX/bin
 
@@ -24,5 +20,5 @@ if status is-interactive
 end
 
 # bun
-set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTALL/bin $PATH
+set -gx BUN_INSTALL "$HOME/.bun"
+fish_add_path -m --path $BUN_INSTALL/bin

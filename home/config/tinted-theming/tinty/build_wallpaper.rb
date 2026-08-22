@@ -13,6 +13,7 @@ FileUtils.mkdir_p WALLPAPER_DIR
 class Display
   attr_reader :index, :w, :h
 
+  # @param display_hash [Hash] From yabai
   def initialize(display_hash)
     @index = display_hash.fetch("index")
 
@@ -125,23 +126,28 @@ DISPLAYS.each do |display|
 
   File.write(svg_path(display), svg)
 
+  # Multiplier for resolution scaling, since my builtin display uses HiDPI.
+  mult = display.index == 1 ? 2 : 1
+
   system(
-    "svg2png",
-    "-w",
-    (display.w.to_i * 2).to_s,
-    "-h",
-    (display.h.to_i * 2).to_s,
+    "rsvg-convert",
+    "-w", (display.w * mult).to_s,
+    "-h", (display.h * mult).to_s,
     svg_path(display),
-    png_path(display),
+    "-o",
+    png_path(display)
   )
 
-  script = <<~APPLESCRIPT
-    tell application "System Events"
-    set picture of desktop #{display.index} to POSIX file "#{png_path(display)}"
-    end tell
-  APPLESCRIPT
-
-  system('osascript', '-e', script)
+  # Use kitty's remote control to set the background image directly
+  system(
+    "kitten",
+    "@",
+    "--to",
+    "unix:/tmp/mykittywallpaper#{display.index}",
+    "set-background-image",
+    "--layout=scaled",
+    png_path(display),
+  )
 end
 
 new_wallpaper_paths = DISPLAYS.map { |d| png_path(d) }

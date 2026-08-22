@@ -215,6 +215,44 @@ function install_sleepwatcher_plist() {
   fi
 }
 
+function install_wallpaper_kitty() {
+  plist_dir="$HOME/Library/LaunchAgents"
+  ensure_dir "$plist_dir"
+  filename="com.user.wallpaper_kitty.plist"
+  plist_path="$plist_dir/$filename"
+  if [[ -f "$plist_path" && ! -L "$plist_path" ]]; then
+    backup_or_remove "$plist_path" || exit 1
+  fi
+
+  if [[ ! -L "$plist_path" ]]; then
+    from_path="$CFG/assets/$filename"
+    try_to "Create symlink at $plist_path to $from_path" \
+      "ln -s \"$from_path\" \"$plist_path\"" \
+      "rm \"$plist_path\""
+
+    retVal=$?
+    if [ $retVal -ne 0 ]; then
+      return $retVal
+    fi
+  fi
+
+  if [[ ! $(launchctl list | grep wallpaper_kitty) ]]; then
+    try_to "Load $filename agent into your current login session" \
+      "launchctl bootstrap gui/$(id -u) \"$plist_path\"" \
+      "launchctl bootout gui/$(id -u) \"$plist_path\""
+  elif launchctl list | grep -e "^\\d\+[[:space:]]\+0[[:space:]]\+com.user.wallpaper_kitty"; then
+    infcho "$filename is running in your current login session"
+  elif try_to "Boot out $filename because it is not running correctly" \
+    "launchctl bootout gui/$(id -u) \"$plist_path\""; then
+
+    try_to "Load $filename agent into your current login session" \
+      "launchctl bootstrap gui/$(id -u) \"$plist_path\"" \
+      "launchctl bootout gui/$(id -u) \"$plist_path\""
+  else
+    errcho "$filename is not running correctly, but could not boot it out. Wallpaper is not working."
+  fi
+}
+
 function main() {
   health_checks
 
@@ -243,6 +281,7 @@ function main() {
   brew_install htop
   brew_install koekeishiya/formulae/skhd
   brew_install koekeishiya/formulae/yabai
+  brew_install librsvg
   brew_install neovim
   brew_install node "spencer"
   brew_install node@20 "spencerchristiansen"
@@ -252,7 +291,6 @@ function main() {
   brew_install ruby-install
   brew_install rustup
   brew_install sleepwatcher
-  brew_install svg2png
   brew_install switchaudio-osx
   brew_install syncthing
   brew_install tinted-theming/tinted/tinty
@@ -279,12 +317,15 @@ function main() {
   brew_cask_install visual-studio-code "spencerchristiansen"
   brew_cask_install zoom "spencer"
 
-  bun add --global prettier-plugin-organize-imports
+  try_to "Install prettier-plugin-organize-imports package globally with bun" \
+    "bun add --global prettier-plugin-organize-imports" \
+    "bun remove --global prettier-plugin-organize-imports"
 
   backup_existing_config_files
   create_symlinks
 
   install_sleepwatcher_plist
+  install_wallpaper_kitty
 }
 
 main

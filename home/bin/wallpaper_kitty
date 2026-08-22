@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'json'
+require 'shellwords'
+
+def log(msg)
+  puts "#{Time.now} | #{msg}"
+end
+
+log "Beginning"
+
+FISH_NO_PROMPT = "function fish_prompt; end;"
+FISH_NO_CURSOR = "printf '\e[?25l';"
+FISH_COMMAND = [
+  "fish",
+  "--init-command",
+  "#{FISH_NO_PROMPT}; #{FISH_NO_CURSOR}",
+].freeze
+
+STATIC_OPTIONS = [
+  "--edge", "background",
+  # Extend to the physical edges of the screen, so it looks like a wallpaper
+  "-o", "macos_use_physical_screen_frame=yes",
+  "-o", "background_opacity=1",
+  # Start with whichever picture is there at launch
+  "-o", "background_image=~/Pictures/GeneratedWallpapers/*",
+  "-o", "background_image_layout=cscaled",
+  "-o", "default_pointer_shape=arrow",
+  "-o", "pointer_shape_when_dragging=arrow"
+].freeze
+
+# Resolve kitty binary from PATH, fallback to Homebrew default
+KITTY_BIN = `which kitty`.strip.freeze
+raise "kitty not found in PATH: #{ENV.fetch('PATH', nil)}" unless File.exist?(KITTY_BIN)
+
+DISPLAY_NAMES = JSON.parse(`#{KITTY_BIN} +kitten panel --output-name=listjson`)
+  .map { |h| h.fetch("name") }
+  .freeze
+
+log "Got DISPLAY_NAMES"
+
+# @param name [String]
+# @param index [Integer] 1-based
+def handle_display(name, index)
+  log "Handling display #{name} [#{index}]"
+
+  return if system(
+    KITTY_BIN, "+kitten", "panel",
+    "--output-name=#{name.shellescape}",
+    "--listen-on=unix:/tmp/mykittywallpaper#{index}",
+    *STATIC_OPTIONS,
+    *FISH_COMMAND
+  )
+
+  log "ERROR: Failed to start kitty panel on display #{name}"
+end
+
+threads = DISPLAY_NAMES
+  .map.with_index { |name, index| Thread.new { handle_display(name, index + 1) } }
+
+Signal.trap("SIGINT") do
+  log "Interrupted. Shutting down..."
+  threads.each(&:kill)
+  exit
+end
+
+threads.each(&:join)
