@@ -30,26 +30,23 @@ def show_album_artwork(cover_art_event)
   `kitten @ set-window-logo --self --position=top-right "#{download_destination}"`
 end
 
-def handle_events # rubocop:disable Metrics/MethodLength
+def handle_events
   File.open(EVENTS_PATH) do |file|
-    find_album_art_thread = nil
-    loop do
-      sleep(0.1)
-      events = file.readlines.map do |line|
-        JSON.parse(line)
-      rescue StandardError
-        { "kind" => "invalid_json", "original" => line }
+    queue = Queue.new
+    # Reader thread to fetch new events from the file
+    Thread.new do
+      loop do
+        sleep(0.1)
+        file.readlines.each { |line| queue << line }
       end
+    end
 
-      # Handle only the most recent "cover_art" event
-      cover_art_event = events
-        .filter { |e| e.fetch("kind") == "cover_art" }
-        .last
+    loop do
+      line = queue.pop
+      event = JSON.parse(line) rescue next
+      next unless event["kind"] == "cover_art"
 
-      next unless cover_art_event
-
-      find_album_art_thread&.kill
-      find_album_art_thread = Thread.new { show_album_artwork(cover_art_event) }
+      show_album_artwork(event)
     end
   end
 end
