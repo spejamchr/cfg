@@ -13,6 +13,25 @@ require 'open3'
 OUT_PATH = File.expand_path("~/.config/pianobar/out")
 EVENTS_PATH = File.expand_path("~/.config/pianobar/events")
 CONTROL_PATH = File.expand_path("~/.config/pianobar/ctl")
+LOG_PATH = File.expand_path("~/.config/pianobar/pianoctl.log")
+
+# Thread-safe mutex for logging to prevent interleaved writes
+LOG_MUTEX = Mutex.new
+
+def log(msg, level = :info)
+  return unless msg.is_a?(String)
+  
+  timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+  line = "[#{timestamp}] [#{level.to_s.upcase}] pianoctl: #{msg}\n"
+  
+  LOG_MUTEX.synchronize do
+    begin
+      File.open(LOG_PATH, 'a') { |f| f.write(line) }
+    rescue StandardError => e
+      # Silently ignore logging errors to prevent TUI disruption
+    end
+  end
+end
 
 # Don't display what the user types
 $stdin.echo = false
@@ -21,13 +40,20 @@ def pianobar_running?
   `pgrep pianobar` != ""
 end
 
-# @param cover_art_event [Hash]
 def show_album_artwork(cover_art_event)
   return unless cover_art_event.is_a?(Hash)
   return unless cover_art_event.key?("download_destination")
 
   download_destination = cover_art_event["download_destination"]
-  `kitten @ set-window-logo --self --position=top-right "#{download_destination}"`
+  log("Setting album artwork: #{download_destination}", :info)
+  
+  cmd_output = `kitten @ set-window-logo --self --position=top-right "#{download_destination}"`
+  exit_status = $?.exitstatus
+  log("kitten command output: #{cmd_output.strip}, exit status: #{exit_status}", :debug)
+  
+  if exit_status != 0
+    log("Warning: kitten command failed with status #{exit_status}", :warn)
+  end
 end
 
 def handle_events
@@ -46,6 +72,8 @@ def handle_events
       event = JSON.parse(line) rescue next
       next unless event["kind"] == "cover_art"
 
+      log("Received cover_art event from pianobar", :info)
+      log("Event details: #{event.inspect}", :debug)
       show_album_artwork(event)
     end
   end
@@ -86,12 +114,14 @@ def ensure_pianobar_ctl_fifo_is_present
     exit(1)
   end
 
+  log("Creating control FIFO at #{CONTROL_PATH}", :info)
   File.mkfifo(CONTROL_PATH)
 end
 
 def ensure_pianobar_is_running
   return if pianobar_running?
 
+  log("Pianobar is not running. Starting daemon...", :info)
   File.truncate(EVENTS_PATH, 0) if File.exist?(EVENTS_PATH)
 
   Process.fork do
@@ -100,8 +130,7 @@ def ensure_pianobar_is_running
     exec("pianobar > ~/.config/pianobar/out")
   end
 
-  # Let pianobar get started before we try reading from `OUT_PATH` or writing
-  # to `CONTROL_PATH`.
+  log("Pianobar daemon forked. Waiting for startup...", :info)
   sleep 0.1
 end
 
@@ -110,8 +139,10 @@ def exit_when_pianobar_stops
     sleep 1
     next if pianobar_running?
 
+    log("Pianobar process not found. Clearing artwork.", :warn)
     File.truncate(EVENTS_PATH, 0)
     `kitten @ set-window-logo --self none`
+    log("Artwork cleared successfully.", :info)
     exit(0)
   end
 end
@@ -126,6 +157,7 @@ begin
   Thread.new { exit_when_pianobar_stops }
   process_input
 rescue SystemExit, Interrupt, StandardError => e
+  log("Caught exception: #{e.class} - #{e.message}", :error)
   `kitten @ set-window-logo --self none`
   raise e
 end

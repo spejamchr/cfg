@@ -8,12 +8,27 @@ require 'securerandom'
 require 'tempfile'
 
 EVENTS_PATH = File.expand_path("~/.config/pianobar/events")
+LOG_PATH = File.expand_path("~/.config/pianobar/pianoctl.log")
+
+def log(msg, level = :info)
+  return unless msg.is_a?(String)
+  
+  timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+  line = "[#{timestamp}] [#{level.to_s.upcase}] pianobar-eventcmd: #{msg}\n"
+  
+  begin
+    File.open(LOG_PATH, 'a') { |f| f.write(line) }
+  rescue StandardError => e
+    # Silently ignore logging errors to prevent crashing the event handler
+  end
+end
 
 # @param kind [String]
 # @param data [Hash]
 def append_event(kind, **data)
   json_line = { **data, kind: }.to_json
   File.write(EVENTS_PATH, "#{json_line}\n", mode: 'a+')
+  log("Appended event: #{kind}", :debug)
 end
 
 # @param name [String]
@@ -23,7 +38,7 @@ def do_fallible(name, &block)
   append_event("debug", msg: "Finished #{name}")
   result
 rescue StandardError => e
-  append_event("error", while: name, e:)
+  append_event("error", while: name, e: e.message)
   exit(1)
 end
 
@@ -40,7 +55,8 @@ def ensure_events_path_is_present
   `touch "#{EVENTS_PATH}"`
 end
 
-append_event("debug", msg: "pianobar-eventcmd is running", event_name: EVENT_NAME)
+log("pianobar-eventcmd is running", :info)
+append_event("debug", msg: "pianobar-eventcmd initialized", event_name: EVENT_NAME)
 
 # Read environment variables sent by pianobar
 VALUES =
@@ -52,20 +68,38 @@ VALUES =
       .freeze
   end
 
+log("Received event: #{EVENT_NAME}", :info)
+log("Values keys: #{VALUES.keys.join(', ')}", :debug)
+
 case EVENT_NAME
 when "songstart"
-  unless VALUES["coverArt"]
+  cover_url = VALUES["coverArt"] || VALUES["COVERART"]
+  
+  unless cover_url
     append_event("error", reason: 'missing "coverArt" in VALUES')
     exit(1)
   end
 
+  # Extract song/album info for debugging (pass all available metadata)
+  song_info = VALUES.reject { |_, v| v.nil? || v.empty? }
+
+  log("Song start detected. Info: #{song_info.inspect}", :info)
+
   # Download the cover art to a temp folder
-  uri = do_fallible("parsing URL") { URI.parse(VALUES["coverArt"]) }
+  uri = do_fallible("parsing URL") { URI.parse(cover_url) }
   download_destination = "/tmp/pianobar-coverArt-#{SecureRandom.uuid_v7}"
-  uri.open do |download|
-    do_fallible("downloading image") do
-      IO.copy_stream(download, download_destination)
+  
+  log("Downloading cover art to: #{download_destination}", :info)
+  begin
+    uri.open do |download|
+      do_fallible("downloading image") do
+        IO.copy_stream(download, download_destination)
+      end
     end
+    log("Cover art downloaded successfully.", :info)
+    append_event("cover_art", **song_info, download_destination:)
+  rescue StandardError => e
+    log("Failed to download cover art: #{e.message}", :error)
+    append_event("error", reason: "download_failed", details: e.message)
   end
-  append_event("cover_art", download_destination:)
 end
