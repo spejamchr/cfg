@@ -10,6 +10,22 @@ require 'tempfile'
 EVENTS_PATH = File.expand_path("~/.config/pianobar/events")
 LOG_PATH = File.expand_path("~/.config/pianobar/pianoctl.log")
 
+# Log rotation configuration
+MAX_LOG_SIZE = 5 * 1024 * 1024 # 5 MB
+MAX_BACKUPS  = 3
+
+def rotate_log_if_needed
+  return unless File.exist?(LOG_PATH)
+  return if File.size(LOG_PATH) < MAX_LOG_SIZE
+  
+  (MAX_BACKUPS - 1).downto(1) do |i|
+    File.rename("#{LOG_PATH}.#{i}", "#{LOG_PATH}.#{i + 1}") if File.exist?("#{LOG_PATH}.#{i}")
+  end
+  File.rename(LOG_PATH, "#{LOG_PATH}.1")
+rescue StandardError => e
+  # Silently ignore to prevent TUI disruption or race conditions
+end
+
 def log(msg, level = :info)
   return unless msg.is_a?(String)
   
@@ -17,6 +33,7 @@ def log(msg, level = :info)
   line = "[#{timestamp}] [#{level.to_s.upcase}] pianobar-eventcmd: #{msg}\n"
   
   begin
+    rotate_log_if_needed # Check & rotate before writing
     File.open(LOG_PATH, 'a') { |f| f.write(line) }
   rescue StandardError => e
     # Silently ignore logging errors to prevent crashing the event handler
