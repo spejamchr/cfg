@@ -22,12 +22,12 @@ MAX_BACKUPS  = 3
 def rotate_log_if_needed
   return unless File.exist?(LOG_PATH)
   return if File.size(LOG_PATH) < MAX_LOG_SIZE
-  
+
   (MAX_BACKUPS - 1).downto(1) do |i|
     File.rename("#{LOG_PATH}.#{i}", "#{LOG_PATH}.#{i + 1}") if File.exist?("#{LOG_PATH}.#{i}")
   end
   File.rename(LOG_PATH, "#{LOG_PATH}.1")
-rescue StandardError => e
+rescue StandardError
   # Silently ignore to prevent TUI disruption or race conditions
 end
 
@@ -36,15 +36,15 @@ LOG_MUTEX = Mutex.new
 
 def log(msg, level = :info)
   return unless msg.is_a?(String)
-  
+
   timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
   line = "[#{timestamp}] [#{level.to_s.upcase}] pianoctl: #{msg}\n"
-  
+
   LOG_MUTEX.synchronize do
     rotate_log_if_needed # Check & rotate before writing
     begin
       File.open(LOG_PATH, 'a') { |f| f.write(line) }
-    rescue StandardError => e
+    rescue StandardError
       # Silently ignore write errors
     end
   end
@@ -63,14 +63,14 @@ def show_album_artwork(cover_art_event)
 
   download_destination = cover_art_event["download_destination"]
   log("Setting album artwork: #{download_destination}", :info)
-  
+
   cmd_output = `kitten @ set-window-logo --self --position=top-right "#{download_destination}"`
   exit_status = $?.exitstatus
   log("kitten command output: #{cmd_output.strip}, exit status: #{exit_status}", :debug)
-  
-  if exit_status != 0
-    log("Warning: kitten command failed with status #{exit_status}", :warn)
-  end
+
+  return unless exit_status != 0
+
+  log("Warning: kitten command failed with status #{exit_status}", :warn)
 end
 
 def handle_events
@@ -80,14 +80,20 @@ def handle_events
     Thread.new do
       loop do
         sleep(0.1)
-        file.readlines.each { |line| queue << line }
+        queue << file.readlines
       end
     end
 
     loop do
-      line = queue.pop
-      event = JSON.parse(line) rescue next
-      next unless event["kind"] == "cover_art"
+      lines = queue.pop
+      events = lines.map do |line|
+        JSON.parse(line)
+      rescue StandardError
+        {}
+      end
+      events.filter { |event| event["kind"] == "cover_art" }
+      event = events.last
+      next unless event
 
       log("Received cover_art event from pianobar", :info)
       log("Event details: #{event.inspect}", :debug)
