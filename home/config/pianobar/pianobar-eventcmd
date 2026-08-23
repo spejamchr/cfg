@@ -17,25 +17,25 @@ MAX_BACKUPS  = 3
 def rotate_log_if_needed
   return unless File.exist?(LOG_PATH)
   return if File.size(LOG_PATH) < MAX_LOG_SIZE
-  
+
   (MAX_BACKUPS - 1).downto(1) do |i|
     File.rename("#{LOG_PATH}.#{i}", "#{LOG_PATH}.#{i + 1}") if File.exist?("#{LOG_PATH}.#{i}")
   end
   File.rename(LOG_PATH, "#{LOG_PATH}.1")
-rescue StandardError => e
+rescue StandardError
   # Silently ignore to prevent TUI disruption or race conditions
 end
 
 def log(msg, level = :info)
   return unless msg.is_a?(String)
-  
+
   timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
   line = "[#{timestamp}] [#{level.to_s.upcase}] pianobar-eventcmd: #{msg}\n"
-  
+
   begin
     rotate_log_if_needed # Check & rotate before writing
     File.open(LOG_PATH, 'a') { |f| f.write(line) }
-  rescue StandardError => e
+  rescue StandardError
     # Silently ignore logging errors to prevent crashing the event handler
   end
 end
@@ -91,7 +91,7 @@ log("Values keys: #{VALUES.keys.join(', ')}", :debug)
 case EVENT_NAME
 when "songstart"
   cover_url = VALUES["coverArt"] || VALUES["COVERART"]
-  
+
   unless cover_url
     append_event("error", reason: 'missing "coverArt" in VALUES')
     exit(1)
@@ -105,7 +105,7 @@ when "songstart"
   # Download the cover art to a temp folder
   uri = do_fallible("parsing URL") { URI.parse(cover_url) }
   download_destination = "/tmp/pianobar-coverArt-#{SecureRandom.uuid_v7}"
-  
+
   log("Downloading cover art to: #{download_destination}", :info)
   begin
     uri.open do |download|
