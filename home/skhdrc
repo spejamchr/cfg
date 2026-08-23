@@ -10,7 +10,7 @@ ctrl - return : kitty -1 --directory=$HOME --listen-on unix:/tmp/mykitty
 # Control pianobar with the media keys
 play : pgrep pianobar > /dev/null && \
   echo -n 'p' > ~/.config/pianobar/ctl || \
-  cd ~ && pianobar > ~/.config/pianobar/out
+  cd && pianobar > ~/.config/pianobar/out 2>&1
 
 fast : pgrep pianobar > /dev/null && echo -n 'n' > ~/.config/pianobar/ctl
 rewind : pgrep pianobar > /dev/null && pkill pianobar
@@ -18,7 +18,7 @@ rewind : pgrep pianobar > /dev/null && pkill pianobar
 # Control pianobar with external keyboard, too
 cmd + alt + ctrl + shift - p : pgrep pianobar > /dev/null && \
   echo -n 'p' > ~/.config/pianobar/ctl || \
-  pianobar > ~/.config/pianobar/out
+  cd && pianobar > ~/.config/pianobar/out
 
 cmd + alt + ctrl + shift - n : pgrep pianobar > /dev/null && echo -n 'n' > ~/.config/pianobar/ctl
 cmd + alt + ctrl + shift - b : pgrep pianobar > /dev/null && pkill pianobar

@@ -14,6 +14,8 @@ LOG_PATH = File.expand_path("~/.config/pianobar/pianoctl.log")
 MAX_LOG_SIZE = 5 * 1024 * 1024 # 5 MB
 MAX_BACKUPS  = 3
 
+EVENT_NAME = ARGV.pop.freeze
+
 def rotate_log_if_needed
   return unless File.exist?(LOG_PATH)
   return if File.size(LOG_PATH) < MAX_LOG_SIZE
@@ -43,7 +45,7 @@ end
 # @param kind [String]
 # @param data [Hash]
 def append_event(kind, **data)
-  json_line = { **data, kind: }.to_json
+  json_line = { **data, kind: kind }.to_json
   File.write(EVENTS_PATH, "#{json_line}\n", mode: 'a+')
   log("Appended event: #{kind}", :debug)
 end
@@ -59,8 +61,6 @@ rescue StandardError => e
   exit(1)
 end
 
-EVENT_NAME = ARGV.pop.freeze
-
 def ensure_events_path_is_present
   return if File.exist?(EVENTS_PATH) && File.ftype(EVENTS_PATH) == "file"
 
@@ -74,6 +74,7 @@ end
 
 log("pianobar-eventcmd is running", :info)
 append_event("debug", msg: "pianobar-eventcmd initialized", event_name: EVENT_NAME)
+append_event("RUBY_VERSION", version: RUBY_VERSION)
 
 # Read environment variables sent by pianobar
 VALUES =
@@ -104,7 +105,7 @@ when "songstart"
 
   # Download the cover art to a temp folder
   uri = do_fallible("parsing URL") { URI.parse(cover_url) }
-  download_destination = "/tmp/pianobar-coverArt-#{SecureRandom.uuid_v7}"
+  download_destination = "/tmp/pianobar-coverArt-#{SecureRandom.uuid}"
 
   log("Downloading cover art to: #{download_destination}", :info)
   begin
@@ -114,7 +115,7 @@ when "songstart"
       end
     end
     log("Cover art downloaded successfully.", :info)
-    append_event("cover_art", **song_info, download_destination:)
+    append_event("cover_art", download_destination: download_destination, song_info: song_info)
   rescue StandardError => e
     log("Failed to download cover art: #{e.message}", :error)
     append_event("error", reason: "download_failed", details: e.message)
