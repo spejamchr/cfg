@@ -10,9 +10,9 @@ React;
 const songDetails = (song, colors) => {
   if (!song) return "音楽を始めます...";
 
-  const title = song.match("(^.*)\\[0m by \\[34m")[1];
-  const by = song.match("\\[0m by \\[34m(.*)\\[0m on \\[4m")[1];
-  const on = song.match("\\[0m on \\[4m([^\\[]*)")[1];
+  const title = song.match("(^.*)\\[0m by \\[34m")?.[1];
+  const by = song.match("\\[0m by \\[34m(.*)\\[0m on \\[4m")?.[1];
+  const on = song.match("\\[0m on \\[4m([^\\[]*)")?.[1];
   const loveMatch = song.match(
     "\\[0m on \\[4m([^\\[]*)\\[0m\\[30m \\[31m(.*)\\[0m\\[0m\\]8;;$",
   );
