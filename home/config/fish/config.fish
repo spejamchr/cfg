@@ -2,6 +2,14 @@
 
 set -gx fish_greeting '' # turn off https://fishshell.com/docs/current/cmds/fish_greeting.html
 set -gx XDG_CONFIG_HOME ~/.config
+# macOS's $TMPDIR (used as the default XDG_RUNTIME_DIR fallback) has a
+# per-boot random path whose length can push nvim/fzf-lua's unix socket
+# path over the ~104 char sun_path limit, causing intermittent
+# "Failed to start server: invalid argument" errors. Use a short, stable dir.
+set -gx XDG_RUNTIME_DIR ~/.cache/xdg-runtime
+if not test -d $XDG_RUNTIME_DIR
+    mkdir -p -m 700 $XDG_RUNTIME_DIR
+end
 set -gx EDITOR nvim
 set -gx DOTNET_ROOT "/opt/homebrew/Cellar/dotnet/9.0.0/libexec"
 
