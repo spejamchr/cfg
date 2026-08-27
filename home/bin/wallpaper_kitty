@@ -54,7 +54,7 @@ def handle_display(name)
 
   return if system(
     KITTY_BIN, "+kitten", "panel",
-    "--output-name=#{name.shellescape}",
+    "--output-name=#{name}",
     "--listen-on=unix:#{socket_path}",
     *STATIC_OPTIONS,
     *FISH_COMMAND
