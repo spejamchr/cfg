@@ -44,7 +44,7 @@ def physical_resolutions_map
 
   entries.each do |entry|
     # Look for display name lines: "        <name>:" (8-space indent, no colon in name)
-    entry.lines.each do |line|
+    entry.lines.each_with_index do |line, idx|
       next unless line =~ /^        ([^:\n]+):$/
 
       sp_display_name = Regexp.last_match(1).strip
@@ -52,8 +52,9 @@ def physical_resolutions_map
 
       next unless sp_display_name
 
-      # Check if this display has a Resolution line in the same entry block
-      res_match = entry.match(/^          Resolution:\s*(\d+)\s*x\s*(\d+)/m)
+      # Check if this display has a Resolution line in the next 5 lines
+      next_lines = entry.lines[idx..idx+5].join("\n")
+      res_match = next_lines.match(/^          Resolution:\s*(\d+)\s*x\s*(\d+)/m)
       next unless res_match
 
       map[sp_display_name] = [Regexp.last_match(1).to_i, Regexp.last_match(2).to_i]
@@ -62,6 +63,8 @@ def physical_resolutions_map
 
   map
 end
+
+PHYSICAL_RESOLUTIONS_MAP = physical_resolutions_map.freeze
 
 # Build a Display object for each Kitty output name.
 class Display
@@ -81,7 +84,7 @@ class Display
   private
 
   def resolve_physical_resolution
-    sp_map = physical_resolutions_map
+    sp_map = PHYSICAL_RESOLUTIONS_MAP
     return if sp_map.empty?
 
     matched_key = nil
