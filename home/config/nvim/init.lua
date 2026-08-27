@@ -199,33 +199,33 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
-vim.api.nvim_create_autocmd("LspAttach", {
-	desc = "Setup Markdown Oxide command",
-	group = init_lua_group,
-	callback = function(ev)
-		local client = vim.lsp.get_client_by_id(ev.data.client_id)
-
-		if client == nil or client.name ~= "markdown_oxide" then
-			return
-		end
-
-		-- Set up daily command & hotkeys
-
-		vim.keymap.set("n", "<Leader>ot", "<cmd>LspToday<CR>", { desc = "Open today's note" })
-		vim.keymap.set("n", "<Leader>om", "<cmd>LspTomorrow<CR>", { desc = "Open tomorrow's note" })
-		vim.keymap.set("n", "<Leader>oy", "<cmd>LspYesterday<CR>", { desc = "Open yesterday's note" })
-
-		vim.api.nvim_create_user_command("Daily", function(args)
-			local input = args.args
-
-			client:exec_cmd({
-				title = "Open daily note",
-				command = "jump",
-				arguments = { input },
-			}, { bufnr = ev.buf })
-		end, { desc = "Open daily note", nargs = "*" })
-	end,
-})
+-- vim.api.nvim_create_autocmd("LspAttach", {
+-- 	desc = "Setup Markdown Oxide command",
+-- 	group = init_lua_group,
+-- 	callback = function(ev)
+-- 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+--
+-- 		if client == nil or client.name ~= "markdown_oxide" then
+-- 			return
+-- 		end
+--
+-- 		-- Set up daily command & hotkeys
+--
+-- 		vim.keymap.set("n", "<Leader>ot", "<cmd>LspToday<CR>", { desc = "Open today's note" })
+-- 		vim.keymap.set("n", "<Leader>om", "<cmd>LspTomorrow<CR>", { desc = "Open tomorrow's note" })
+-- 		vim.keymap.set("n", "<Leader>oy", "<cmd>LspYesterday<CR>", { desc = "Open yesterday's note" })
+--
+-- 		vim.api.nvim_create_user_command("Daily", function(args)
+-- 			local input = args.args
+--
+-- 			client:exec_cmd({
+-- 				title = "Open daily note",
+-- 				command = "jump",
+-- 				arguments = { input },
+-- 			}, { bufnr = ev.buf })
+-- 		end, { desc = "Open daily note", nargs = "*" })
+-- 	end,
+-- })
 
 vim.api.nvim_create_autocmd("User", {
 	pattern = "GoyoEnter",
@@ -797,7 +797,7 @@ require("lazy").setup({
 							},
 						},
 					},
-					{ mason_name = "markdown-oxide", ls_config_name = "markdown_oxide", config = {} },
+					-- { mason_name = "markdown-oxide", ls_config_name = "markdown_oxide", config = {} },
 					{ mason_name = "omnisharp", ls_config_name = "omnisharp", config = {} },
 					{ mason_name = "oxlint", ls_config_name = "oxlint", config = {} },
 					{ mason_name = "prisma-language-server", ls_config_name = "prismals", config = {} },
@@ -827,6 +827,7 @@ require("lazy").setup({
 					{ mason_name = "tailwindcss-language-server", ls_config_name = "tailwindcss", config = {} },
 					{ mason_name = "taplo", ls_config_name = "taplo", config = {} },
 					{ mason_name = "yaml-language-server", ls_config_name = "yamlls", config = {} },
+					-- { mason_name = "css_lsp", ls_config_name = "css_lsp", config = {} },
 					{
 						mason_name = "tsc",
 						ls_config_name = "tsc",
@@ -919,6 +920,7 @@ require("lazy").setup({
 				},
 				formatters_by_ft = {
 					bash = { "shfmt" },
+					css = { "prettier" },
 					html = { "prettier" },
 					javascript = { "prettier" },
 					javascriptreact = { "prettier" },
@@ -1129,6 +1131,25 @@ require("lazy").setup({
 			dependencies = {
 				{ "lambdalisue/vim-fern-git-status", lazy = false },
 				{ "lambdalisue/vim-fern-hijack", lazy = false },
+			},
+		},
+		-- }}}
+
+		-- obsidian-nvim/obsidian.nvim {{{
+		-- Obsidian 🤝 Neovim (actively maintained version)
+		{
+			"obsidian-nvim/obsidian.nvim",
+			version = "*", -- use latest release, remove to use latest commit
+			---@module 'obsidian'
+			---@type obsidian.config
+			opts = {
+				legacy_commands = false, -- this will be removed in the next major release
+				workspaces = {
+					{
+						name = "personal",
+						path = "~/Syncthing/HomeRock",
+					},
+				},
 			},
 		},
 		-- }}}

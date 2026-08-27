@@ -30,25 +30,32 @@ STATIC_OPTIONS = [
   "-o", "pointer_shape_when_dragging=arrow"
 ].freeze
 
-# Resolve kitty binary from PATH, fallback to Homebrew default
 KITTY_BIN = `which kitty`.strip.freeze
 raise "kitty not found in PATH: #{ENV.fetch('PATH', nil)}" unless File.exist?(KITTY_BIN)
 
-DISPLAY_NAMES = JSON.parse(`#{KITTY_BIN} +kitten panel --output-name=listjson`)
+# Get output names from Kitty — these are the macOS display names (e.g., "Built-in Retina Display")
+OUTPUT_NAMES = JSON.parse(`#{KITTY_BIN} +kitten panel --output-name=listjson`)
   .map { |h| h.fetch("name") }
   .freeze
 
-log "Got DISPLAY_NAMES"
+log "Got OUTPUT_NAMES: #{OUTPUT_NAMES}"
 
 # @param name [String]
-# @param index [Integer] 1-based
-def handle_display(name, index)
-  log "Handling display #{name} [#{index}]"
+def handle_display(name)
+  # Use the display name as the socket identifier — safe because macOS display names
+  # are consistent and we can safely slugify them for filesystem compatibility.
+  safe_name = name.gsub(/[^a-zA-Z0-9_]/, '_')
+  socket_path = "/tmp/mykittywallboard_#{safe_name}"
+
+  log "Handling display #{name} -> socket #{socket_path}"
+
+  # Remove any stale socket before binding (avoids "address already in use" on restart)
+  File.delete(socket_path) if File.exist?(socket_path)
 
   return if system(
     KITTY_BIN, "+kitten", "panel",
     "--output-name=#{name.shellescape}",
-    "--listen-on=unix:/tmp/mykittywallpaper#{index}",
+    "--listen-on=unix:#{socket_path}",
     *STATIC_OPTIONS,
     *FISH_COMMAND
   )
@@ -56,8 +63,8 @@ def handle_display(name, index)
   log "ERROR: Failed to start kitty panel on display #{name}"
 end
 
-threads = DISPLAY_NAMES
-  .map.with_index { |name, index| Thread.new { handle_display(name, index + 1) } }
+threads = OUTPUT_NAMES
+  .map { |name| Thread.new { handle_display(name) } }
 
 Signal.trap("SIGINT") do
   log "Interrupted. Shutting down..."
