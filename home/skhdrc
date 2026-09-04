@@ -8,9 +8,10 @@ ctrl - return : kitty -1 --directory=$HOME --listen-on unix:/tmp/mykitty
 # ctrl - s : kitty -1 --directory=$HOME --title="htop" ~/code/scripts/start_htop
 
 # Control pianobar with the media keys
-play : pgrep pianobar > /dev/null && \
-  echo -n 'p' > ~/.config/pianobar/ctl || \
-  cd && pianobar > ~/.config/pianobar/out 2>&1
+# Remember, this runs with my current shell, Fish
+play : pgrep pianobar >/dev/null; and \
+  printf 'p' > ~/.config/pianobar/ctl; or \
+  begin; cd; and pianobar > ~/.config/pianobar/out 2>&1; end
 
 fast : pgrep pianobar > /dev/null && echo -n 'n' > ~/.config/pianobar/ctl
 rewind : pgrep pianobar > /dev/null && pkill pianobar
