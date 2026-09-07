@@ -3,7 +3,7 @@
 
 ### Main model ###
 
-model: "ollama_chat/qwen3.6:latest"
+model: "ollama_chat/qwen3.8:latest"
 
 ### API Keys and settings ###
 
