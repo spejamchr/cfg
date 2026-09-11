@@ -8,7 +8,7 @@ use clap::Parser;
 use serde::Deserialize;
 use sysinfo::{LoadAvg, System};
 use termion::color::Color;
-use termion::{color, style, terminal_size, terminal_size_pixels};
+use termion::{color, terminal_size, terminal_size_pixels};
 use unicode_ellipsis::truncate_str;
 use unicode_width::UnicodeWidthStr;
 
@@ -225,13 +225,18 @@ fn make_pianobar_item(
         Some(s) => {
             let by = " by ";
             let on = " on ";
+            let heart = match s.is_loved {
+                true => " <3",
+                false => "",
+            };
 
             let (used_width, pieces) = vec![
-                (s.title.as_str(), fg_colorer(&color::Green, false)),
-                (by, fg_colorer(&color::White, false)),
-                (s.artist.as_str(), fg_colorer(&color::Blue, false)),
-                (on, fg_colorer(&color::White, false)),
-                (s.album.as_str(), fg_colorer(&color::White, true)),
+                (s.title.as_str(), fg_colorer(&color::Green)),
+                (by, fg_colorer(&color::White)),
+                (s.artist.as_str(), fg_colorer(&color::Blue)),
+                (on, fg_colorer(&color::White)),
+                (s.album.as_str(), fg_colorer(&color::Yellow)),
+                (heart, fg_colorer(&color::Red)),
             ]
             .into_iter()
             .fold(
@@ -247,10 +252,20 @@ fn make_pianobar_item(
                 },
             );
 
-            (
-                used_width + QUOTE_WIDTH_ADDITION,
-                Some(quote(&pieces.join(""))),
-            )
+            // const URL_START: &str = "\u{1b}]8;;";
+            // const BELL: char = '\u{7}';
+            // const RESET: &str = "\u{1b}[0m";
+            // const UNDERLINE: &str = "\u{1b}[4m";
+            // const RED: &str = "\u{1b}[31m";
+            // const GREEN: &str = "\u{1b}[32m";
+            // const BLUE: &str = "\u{1b}[34m";
+            let hyperlinked = format!(
+                "\u{1b}]8;;{}\u{1b}\\{}\u{1b}]8;;\u{1b}\\",
+                s.url,
+                pieces.join("")
+            );
+
+            (used_width + QUOTE_WIDTH_ADDITION, Some(quote(&hyperlinked)))
         }
         None => {
             let msg = "音楽を始めます...";
@@ -332,18 +347,8 @@ fn fg_color(color: &dyn Color, msg: &str) -> String {
     format!("{}{}{}", color::Fg(color), msg, color::Fg(color::Reset))
 }
 
-fn fg_colorer(color: &dyn Color, underlined: bool) -> impl FnOnce(&str) -> String {
-    move |msg: &str| {
-        let msg = match underlined {
-            true => underline(msg),
-            false => msg.to_string(),
-        };
-        fg_color(color, &msg)
-    }
-}
-
-fn underline(msg: &str) -> String {
-    format!("{}{}{}", style::Underline, msg, style::NoUnderline)
+fn fg_colorer(color: &dyn Color) -> impl FnOnce(&str) -> String {
+    move |msg: &str| fg_color(color, msg)
 }
 
 const QUOTE_WIDTH_ADDITION: usize = 4;
@@ -463,136 +468,21 @@ fn make_cpu_percent_item(
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "kebab-case")]
-enum SpaceType {
-    Bsp,
-    Float,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "kebab-case")]
-#[allow(dead_code)]
 struct Space {
-    id: usize,
-    uuid: String,
     index: usize,
-    label: String,
-    r#type: SpaceType,
     display: usize,
-    windows: Vec<usize>,
-    first_window: usize,
-    last_window: usize,
     has_focus: bool,
     is_visible: bool,
-    is_native_fullscreen: bool,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "kebab-case")]
-#[allow(dead_code)]
-struct Frame {
-    x: f64,
-    y: f64,
-    w: f64,
-    h: f64,
-}
-
-#[derive(Debug, Deserialize)]
-enum WindowRole {
-    AXWindow,
-    #[serde(rename = "")]
-    Empty,
-}
-
-#[derive(Debug, Deserialize)]
-enum WindowSubRole {
-    AXStandardWindow,
-    AXDialog,
-    #[serde(rename = "")]
-    Empty,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "kebab-case")]
-enum WindowLayer {
-    Normal,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "kebab-case")]
-enum WindowSubLayer {
-    Normal,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "kebab-case")]
-enum WindowSplitType {
-    None,
-    Vertical,
-    Horizontal,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "snake_case")]
-enum WindowSplitChild {
-    FirstChild,
-    SecondChild,
-    None,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "kebab-case")]
-#[allow(dead_code)]
 struct Window {
-    id: usize,
-    pid: usize,
     app: String,
-    title: String,
-    scratchpad: String,
-    frame: Frame,
-    role: WindowRole,
-    subrole: WindowSubRole,
-    root_window: bool,
-    display: usize,
-    space: usize,
-    level: usize,
-    sub_level: usize,
-    layer: WindowLayer,
-    sub_layer: WindowSubLayer,
-    opacity: f64,
-    split_type: WindowSplitType,
-    split_child: WindowSplitChild,
-    stack_index: usize,
-    can_move: bool,
-    can_resize: bool,
-    has_focus: bool,
-    has_shadow: bool,
-    has_parent_zoom: bool,
-    has_fullscreen_zoom: bool,
-    has_ax_reference: bool,
-    is_native_fullscreen: bool,
-    is_visible: bool,
-    is_minimized: bool,
-    is_hidden: bool,
-    is_floating: bool,
-    is_sticky: bool,
-    is_grabbed: bool,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "kebab-case")]
-#[allow(dead_code)]
-struct Display {
-    id: usize,
-    uuid: String,
-    index: usize,
-    label: String,
-    frame: Frame,
-    spaces: Vec<usize>,
     has_focus: bool,
 }
 
 #[derive(Debug)]
-#[allow(dead_code)]
 struct TrackInfo {
     url: String,
     title: String,
@@ -659,7 +549,6 @@ fn parse_track(input: &str) -> Option<TrackInfo> {
 }
 
 #[derive(Debug)]
-#[allow(dead_code)]
 struct BatteryInfo {
     is_plugged_in: bool,
     charged_percent: Option<usize>,
@@ -690,18 +579,6 @@ fn get_battery_info() -> BatteryInfo {
 }
 
 #[derive(Debug, Deserialize)]
-#[serde(rename_all = "snake_case")]
-#[allow(dead_code)]
-enum AudioIOType {
-    Input,
-    Output,
-}
-
-#[derive(Debug, Deserialize)]
-#[allow(dead_code)]
 struct AudioIO {
-    name: String,
-    r#type: AudioIOType,
-    id: String,
     uid: String,
 }
