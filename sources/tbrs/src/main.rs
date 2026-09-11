@@ -106,7 +106,7 @@ fn main() -> io::Result<()> {
         .expect("Couldn't get windows")
         .unwrap_or_default();
 
-    print!("{}{}\n\n", termion::clear::All, termion::cursor::Goto(1, 1));
+    print!("{}{}", termion::clear::All, termion::cursor::Goto(1, 1));
 
     let (spaces_width, spaces_item) = make_spaces_item(&args, &spaces);
     let (audio_width, audio_item) = make_audio_item(&audio_out);

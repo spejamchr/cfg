@@ -23,6 +23,8 @@ FISH_COMMAND = ->(display_name) {
 STATIC_OPTIONS = [
   "--edge", "background",
   "-o", "modify_font=cell_height 180%",
+  "-o", "window_margin_width=0",
+  "-o", "placement_strategy=top",
   "-o", "modify_font=baseline 1",
   "-o", "font_size=11.0",
   # Extend to the physical edges of the screen, so it looks like a wallpaper
