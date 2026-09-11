@@ -22,19 +22,16 @@ struct Args {
 
 fn main() -> io::Result<()> {
     let args = Args::parse();
-    print!("{}{}", termion::clear::All, termion::cursor::Goto(1, 1));
 
-    let (columns, rows) = terminal_size()?;
+    let (columns, _rows) = terminal_size()?;
     let (width_px, _height_px) = terminal_size_pixels()?;
 
-    let getting_pianobar_on = thread::spawn(|| {
-        sysinfo::System::new_all()
-            .processes_by_exact_name("pianobar".as_ref())
-            .count()
-            > 0
-    });
+    let getting_pianobar_on = sysinfo::System::new_all()
+        .processes_by_exact_name("pianobar".as_ref())
+        .count()
+        > 0;
 
-    let getting_pianobar_song = thread::spawn(last_pianobar_track);
+    let getting_pianobar_song = last_pianobar_track();
 
     let getting_battery_info = thread::spawn(get_battery_info);
 
@@ -58,17 +55,7 @@ fn main() -> io::Result<()> {
             .and_then(|s| serde_json::from_slice::<Vec<Window>>(&s).map_err(Into::into))
     });
 
-    let getting_displays = thread::spawn(|| -> io::Result<Vec<Display>> {
-        Command::new("yabai")
-            .arg("-m")
-            .arg("query")
-            .arg("--displays")
-            .output()
-            .map(|o| o.stdout)
-            .and_then(|s| serde_json::from_slice(&s).map_err(Into::into))
-    });
-
-    let getting_cpus = thread::spawn(std::thread::available_parallelism);
+    let getting_cpus = std::thread::available_parallelism();
 
     let getting_percent_cpu = thread::spawn(|| -> Option<f64> {
         let output = Command::new("ps")
@@ -85,7 +72,7 @@ fn main() -> io::Result<()> {
             .try_fold(0.0, |sum, s| s.parse::<f64>().ok().map(|num| num + sum))
     });
 
-    let getting_loadavg = thread::spawn(System::load_average);
+    let getting_loadavg = System::load_average();
 
     let getting_audio_out = thread::spawn(|| -> io::Result<AudioIO> {
         Command::new("SwitchAudioSource")
@@ -99,34 +86,17 @@ fn main() -> io::Result<()> {
             .and_then(|s| serde_json::from_slice(&s).map_err(Into::into))
     });
 
-    let getting_audio_in = thread::spawn(|| -> io::Result<AudioIO> {
-        Command::new("SwitchAudioSource")
-            .arg("-c")
-            .arg("-t")
-            .arg("input")
-            .arg("-f")
-            .arg("json")
-            .output()
-            .map(|o| o.stdout)
-            .and_then(|s| serde_json::from_slice(&s).map_err(Into::into))
-    });
-
     let battery_info = getting_battery_info
         .join()
         .expect("Couldn't get battery_info");
-    let cpus = getting_cpus.join().expect("Couldn't get cpus");
+    let cpus = getting_cpus;
     let percent_cpu = getting_percent_cpu
         .join()
         .expect("Couldn't get percent_cpu");
-    let loadavg = getting_loadavg.join().expect("Couldn't get loadavg");
+    let loadavg = getting_loadavg;
     let audio_out = getting_audio_out.join().expect("Couldn't get audio_out");
-    let audio_in = getting_audio_in.join().expect("Couldn't get audio_in");
-    let pianobar_on = getting_pianobar_on
-        .join()
-        .expect("Couldn't get pianobar_on");
-    let pianobar_song = getting_pianobar_song
-        .join()
-        .expect("Couldn't get pianobar_song");
+    let pianobar_on = getting_pianobar_on;
+    let pianobar_song = getting_pianobar_song;
     let spaces = getting_spaces
         .join()
         .expect("Couldn't get spaces")
@@ -135,38 +105,11 @@ fn main() -> io::Result<()> {
         .join()
         .expect("Couldn't get windows")
         .unwrap_or_default();
-    let displays = getting_displays
-        .join()
-        .expect("Couldn't get displays")
-        .unwrap_or_default();
-
-    let s = format!(
-        "Columns: {}{}{}, Rows: {}{}{}, spaces: {:?}",
-        color::Fg(color::Cyan),
-        columns,
-        color::Fg(color::Reset),
-        color::Fg(color::Magenta),
-        rows,
-        color::Fg(color::Reset),
-        spaces
-    );
-    println!("battery_info: {:?}", battery_info);
-    println!("cpus: {:?}", cpus);
-    println!("percent_cpu: {:?}", percent_cpu);
-    println!("loadavg: {:?}", loadavg);
-    println!("audio_out: {:?}", audio_out);
-    println!("audio_in: {:?}", audio_in);
-    println!("pianobar_on: {}", pianobar_on);
-    println!("pianobar_song: [{:?}]", pianobar_song);
-    println!("Windows: {:?}", windows);
-    println!("Displays: {:?}", displays);
-    println!("{}", s);
-    println!("String length: {}", s.len());
 
     print!("{}{}\n\n", termion::clear::All, termion::cursor::Goto(1, 1));
 
     let (spaces_width, spaces_item) = make_spaces_item(&args, &spaces);
-    let (audio_width, audio_item) = make_audio_item(&audio_out, &audio_in);
+    let (audio_width, audio_item) = make_audio_item(&audio_out);
     let (loadavg_width, loadavg_item) = make_loadavg_item(&loadavg, &cpus);
     let (cpu_percent_width, cpu_percent_item) = make_cpu_percent_item(percent_cpu, &cpus);
     let (battery_width, battery_item) = make_battery_item(&battery_info);
@@ -235,23 +178,13 @@ fn main() -> io::Result<()> {
         _ => {
             let (current_app_width, current_app_item) = make_current_app_item(
                 &windows,
-                // Subtract 1 to reserve gap spaces, and 0 to reserve no minimum for pianobar &
-                // current app
-                columns as usize - spaces_width - 1 - 0 - 1 - 0 - 1 - top_right_corner_width,
+                columns as usize - spaces_width - 3 - top_right_corner_width,
             );
 
             let (pianobar_width, pianobar_item) = make_pianobar_item(
                 pianobar_on,
                 &pianobar_song,
-                // Subtract 1 to reserve space for a gap, and 0 to reserve no minimum for pianobar
-                columns as usize
-                    - spaces_width
-                    - 1
-                    - 0
-                    - 1
-                    - current_app_width
-                    - 1
-                    - top_right_corner_width,
+                columns as usize - spaces_width - 3 - current_app_width - top_right_corner_width,
             );
 
             let all_but_last_pieces: Vec<_> = [Some(spaces_item), pianobar_item, current_app_item]
@@ -326,10 +259,7 @@ fn make_pianobar_item(
     }
 }
 
-fn make_audio_item(
-    audio_out: &io::Result<AudioIO>,
-    _audio_in: &io::Result<AudioIO>,
-) -> (usize, Option<String>) {
+fn make_audio_item(audio_out: &io::Result<AudioIO>) -> (usize, Option<String>) {
     match audio_out {
         Ok(a) if a.uid == "BuiltInSpeakerDevice" => (0, None),
         Err(_) => (0, None),
