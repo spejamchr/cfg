@@ -12,14 +12,19 @@ log "Beginning"
 
 FISH_NO_PROMPT = "function fish_prompt; end;"
 FISH_NO_CURSOR = "printf '\e[?25l';"
-FISH_COMMAND = [
-  "fish",
-  "--init-command",
-  "#{FISH_NO_PROMPT}; #{FISH_NO_CURSOR}",
-].freeze
+FISH_COMMAND = ->(display_name) {
+  [
+    "fish",
+    "--init-command",
+    "#{FISH_NO_PROMPT}; #{FISH_NO_CURSOR}; while true; tbrs --display-name #{display_name.shellescape}; sleep 1; end",
+  ].freeze
+}
 
 STATIC_OPTIONS = [
   "--edge", "background",
+  "-o", "modify_font=cell_height 180%",
+  "-o", "modify_font=baseline 1",
+  "-o", "font_size=11.0",
   # Extend to the physical edges of the screen, so it looks like a wallpaper
   "-o", "macos_use_physical_screen_frame=yes",
   "-o", "background_opacity=1",
@@ -57,7 +62,7 @@ def handle_display(name)
     "--output-name=#{name}",
     "--listen-on=unix:#{socket_path}",
     *STATIC_OPTIONS,
-    *FISH_COMMAND
+    *FISH_COMMAND[name]
   )
 
   log "ERROR: Failed to start kitty panel on display #{name}"
