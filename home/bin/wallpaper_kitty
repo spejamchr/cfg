@@ -16,14 +16,14 @@ FISH_COMMAND = ->(display_name) {
   [
     "fish",
     "--init-command",
-    "#{FISH_NO_PROMPT}; #{FISH_NO_CURSOR}; while true; tbrs --display-name #{display_name.shellescape}; sleep 1; end",
+    "#{FISH_NO_PROMPT}; #{FISH_NO_CURSOR}; sleep 1; while true; tbrs --display-name #{display_name.shellescape}; sleep 1; end",
   ].freeze
 }
 
 STATIC_OPTIONS = [
   "--edge", "background",
   "-o", "modify_font=cell_height 180%",
-  "-o", "window_margin_width=0",
+  "-o", "window_margin_width=4",
   "-o", "placement_strategy=top",
   "-o", "modify_font=baseline 1",
   "-o", "font_size=11.0",
