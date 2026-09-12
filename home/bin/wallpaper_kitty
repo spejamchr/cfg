@@ -13,10 +13,11 @@ log "Beginning"
 FISH_NO_PROMPT = "function fish_prompt; end;"
 FISH_NO_CURSOR = "printf '\e[?25l';"
 FISH_COMMAND = ->(display_name) {
+  command = "sleep 0.2; while true; tbrs --display-name #{display_name.shellescape}; sleep 1; end"
   [
     "fish",
     "--init-command",
-    "#{FISH_NO_PROMPT}; #{FISH_NO_CURSOR}; sleep 1; while true; tbrs --display-name #{display_name.shellescape}; sleep 1; end",
+    "#{FISH_NO_PROMPT}; #{FISH_NO_CURSOR}; #{command}",
   ].freeze
 }
 
