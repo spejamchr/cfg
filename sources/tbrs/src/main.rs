@@ -218,6 +218,7 @@ fn make_pianobar_item(
     pianobar_song: &Option<TrackInfo>,
     max_width: usize,
 ) -> (usize, Option<String>) {
+    let max_width = max_width - QUOTE_WIDTH_ADDITION;
     if !pianobar_on {
         return (0, None);
     }
