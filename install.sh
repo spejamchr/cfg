@@ -289,7 +289,6 @@ function main() {
   brew_install pianobar
   brew_install ripgrep
   brew_install ruby-install
-  brew_install rustup
   brew_install sleepwatcher
   brew_install switchaudio-osx
   brew_install syncthing
@@ -316,6 +315,12 @@ function main() {
   brew_cask_install ubersicht
   brew_cask_install visual-studio-code "spencerchristiansen"
   brew_cask_install zoom "spencer"
+
+  if ! which rustup >&-; then
+    try_to "Install rust" \
+      "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y" \
+      "rustup self uninstall"
+  fi
 
   try_to "Install prettier-plugin-organize-imports package globally with bun" \
     "bun add --global prettier-plugin-organize-imports" \

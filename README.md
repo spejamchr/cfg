@@ -57,7 +57,6 @@ Installed with `brew install`:
 - [`pianobar`](https://github.com/PromyLOPh/pianobar/): Command-line player for [pandora](https://pandora.com)
 - [`ripgrep`](https://github.com/BurntSushi/ripgrep): Search tool like grep and The Silver Searcher
 - [`ruby-install`](https://github.com/postmodern/ruby-install): Install Ruby, JRuby, Rubinius, TruffleRuby, or mruby
-- [`rustup`](https://github.com/rust-lang/rustup): Rust toolchain installer
 - [`skhd`](https://github.com/koekeishiya/skhd): Simple hotkey daemon for macOS
 - [`sleepwatcher`](https://www.bernhard-baehr.de/): Monitors sleep, wakeup, and idleness of a Mac
 - [`switchaudio-osx`](https://github.com/deweller/switchaudio-osx): Change the audio source for Mac OS X from the command line.
@@ -91,6 +90,8 @@ Installed with `brew cask install`:
 
 Other:
 
+- [`rustup`](https://github.com/rust-lang/rustup): Rust toolchain installer
+  - Installed non-interactively, with: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`
 - [`prettier-plugin-organize-imports`](https://github.com/simonhaenisch/prettier-plugin-organize-imports): Make Prettier organize your imports using the TypeScript language service API.
   - Installed with `bun add --global`
 
