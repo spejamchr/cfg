@@ -1,10 +1,12 @@
 # `TBRS`
 
+> TopBaRS
+
 Render a system menu bar, with info such as desktop number, current Pandora
 song, current application, CPU usage, battery percent, date & time.
 
-## Building
+## Building & Installing
 
 ```sh
-cargo build --release
+cargo build --release && cp ~/cfg/sources/tbrs/target/release/tbrs ~/.bin/tbrs
 ```
