@@ -135,8 +135,6 @@ fn main() {
 
 /// Encode an RGBA8 buffer as a PNG file. Returns true on success.
 fn encode_png(path: &std::path::Path, width: u32, height: u32, rgba: &[u8]) -> bool {
-    use std::io::Write;
-
     let file = match fs::File::create(path) {
         Ok(f) => f,
         Err(e) => {
@@ -147,7 +145,7 @@ fn encode_png(path: &std::path::Path, width: u32, height: u32, rgba: &[u8]) -> b
 
     let mut encoder = png::Encoder::new(file, width, height);
     encoder.set_color(png::ColorType::Rgba);
-    encoder.set_bit_depth(png::BitDepth::Eight);
+    encoder.set_depth(png::BitDepth::Eight);
 
     let mut writer = match encoder.write_header() {
         Ok(w) => w,
