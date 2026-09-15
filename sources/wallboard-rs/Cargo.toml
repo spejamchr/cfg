@@ -1,0 +1,13 @@
+[package]
+name = "wallboard"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "build_wallboard"
+path = "src/main.rs"
+
+[dependencies]
+rand = "0.9"
+serde_json = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }

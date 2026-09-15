@@ -40,5 +40,7 @@ auto-test: true
 
 analytics: false
 
+watch-files: true
+
 # I might use this later, but not now
 disable-playwright: true

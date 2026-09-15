@@ -1,4 +1,4 @@
 .install.log
 home/config/fish/fish_variables
 home/config/htop/htop_history
-sources/tbrs/target
+sources/**/target
