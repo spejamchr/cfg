@@ -17,7 +17,7 @@ use chrono::SecondsFormat;
 
 use self::display_info as di;
 use crate::palette::Palette;
-use crate::svg_gen::{DisplayDims, build_svg};
+use crate::svg_gen::{DisplayDims, render_wallpaper};
 
 fn main() {
     let now_ts = chrono::offset::Local::now()
@@ -56,41 +56,29 @@ fn main() {
 
     // ---- Process each display ----
     for display in &displays {
-        // Generate SVG (fast: direct Vec<u8> write, no per-line allocations)
-        let svg_buf = build_svg(
+        let physical_w = display.physical_w.max(1);
+        let physical_h = display.physical_h.max(1);
+
+        // Rasterize anti-aliased lines directly into an RGBA buffer at physical resolution
+        let rgba_buf = render_wallpaper(
             &DisplayDims {
                 logical_w: display.logical_w,
                 logical_h: display.logical_h,
+                physical_w,
+                physical_h,
             },
             &palette,
         );
 
         let slugified = di::slugify(&display.name);
         let base_name = format!("generated-{}-{}", slugified, now_ts);
-        let svg_path = wallpaper_dir.join(format!("{base_name}.svg"));
         let png_path = wallpaper_dir.join(format!("{base_name}.png"));
 
-        // Write SVG (matches Ruby File.write behavior)
-        fs::write(&svg_path, &svg_buf).expect("Failed to write SVG");
+        // Encode RGBA → PNG in-process
+        let png_ok = encode_png(&png_path, physical_w, physical_h, &rgba_buf);
 
-        println!("{:?}", svg_path);
-
-        // Render SVG → PNG via rsvg-convert at physical pixel dimensions (HiDPI)
-        let physical_w = display.physical_w.max(1);
-        let physical_h = display.physical_h.max(1);
-
-        let convert_ok = Command::new("rsvg-convert")
-            .args(["-w", &physical_w.to_string(), "-h", &physical_h.to_string()])
-            .arg(&svg_path)
-            .arg("-o")
-            .arg(&png_path)
-            .status()
-            .ok()
-            .map(|s| s.success())
-            .unwrap_or(false);
-
-        if !convert_ok {
-            eprintln!("{} | rsvg-convert FAILED for {}", now_ts, display.name);
+        if !png_ok {
+            eprintln!("{} | PNG encoding FAILED for {}", now_ts, display.name);
         }
 
         // Update kitty background via IPC (matches Ruby system(...))
@@ -141,6 +129,39 @@ fn main() {
             {
                 let _ = fs::remove_file(entry.path());
             }
+        }
+    }
+}
+
+/// Encode an RGBA8 buffer as a PNG file. Returns true on success.
+fn encode_png(path: &std::path::Path, width: u32, height: u32, rgba: &[u8]) -> bool {
+    use std::io::Write;
+
+    let file = match fs::File::create(path) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("  Failed to create {}: {}", path.display(), e);
+            return false;
+        }
+    };
+
+    let mut encoder = png::Encoder::new(file, width, height);
+    encoder.set_color(png::ColorType::Rgba);
+    encoder.set_bit_depth(png::BitDepth::Eight);
+
+    let mut writer = match encoder.write_header() {
+        Ok(w) => w,
+        Err(e) => {
+            eprintln!("  PNG header error: {}", e);
+            return false;
+        }
+    };
+
+    match writer.write_image_data(rgba) {
+        Ok(()) => true,
+        Err(e) => {
+            eprintln!("  PNG write error: {}", e);
+            false
         }
     }
 }
