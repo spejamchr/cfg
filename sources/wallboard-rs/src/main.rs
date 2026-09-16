@@ -8,6 +8,7 @@
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
+use std::time::Instant;
 
 use chrono::SecondsFormat;
 
@@ -16,6 +17,7 @@ use wallboard::palette::Palette;
 use wallboard::svg_gen::{DisplayDims, render_wallpaper};
 
 fn main() {
+    let t_main = Instant::now();
     let now_ts = chrono::offset::Local::now()
         .to_rfc3339_opts(SecondsFormat::Secs, false)
         .replace(':', ""); // matches Ruby strftime("%Y%m%d%H%M%S")
@@ -26,8 +28,13 @@ fn main() {
     fs::create_dir_all(&wallpaper_dir).ok();
 
     // ---- Fetch display data once (no repeated calls!) ----
+    let t = Instant::now();
     let yabai_displays = di::fetch_yabai_displays();
+    eprintln!("[perf] fetch_yabai_displays: {:.1} ms", t.elapsed().as_secs_f64() * 1000.0);
+
+    let t = Instant::now();
     let kitty_outputs = di::fetch_kitty_outputs();
+    eprintln!("[perf] fetch_kitty_outputs: {:.1} ms", t.elapsed().as_secs_f64() * 1000.0);
 
     if kitty_outputs.is_empty() {
         eprintln!("{} | No Kitty panel outputs found.", now_ts);
@@ -35,7 +42,9 @@ fn main() {
     }
 
     // Parse system_profiler ONCE (Ruby called it twice: once for map, once in heuristic)
+    let t = Instant::now();
     let sp_map = di::fetch_physical_resolutions();
+    eprintln!("[perf] fetch_physical_resolutions: {:.1} ms", t.elapsed().as_secs_f64() * 1000.0);
 
     // ---- Build Display configs ----
     let displays: Vec<di::Display> = kitty_outputs
@@ -51,11 +60,16 @@ fn main() {
     let palette = Palette::build();
 
     // ---- Process each display ----
+    let t_total_render = Instant::now();
+    let t_total_png = Instant::now();
+    let t_total_kitty = Instant::now();
+
     for display in &displays {
         let physical_w = display.physical_w.max(1);
         let physical_h = display.physical_h.max(1);
 
         // Rasterize anti-aliased lines directly into an RGBA buffer at physical resolution
+        let t = Instant::now();
         let rgba_buf = render_wallpaper(
             &DisplayDims {
                 logical_w: display.logical_w,
@@ -65,13 +79,18 @@ fn main() {
             },
             &palette,
         );
+        let render_ms = t.elapsed().as_secs_f64() * 1000.0;
+        eprintln!("[perf] render_wallpaper ({}): {:.1} ms", display.name, render_ms);
 
         let slugified = di::slugify(&display.name);
         let base_name = format!("generated-{}-{}", slugified, now_ts);
         let png_path = wallpaper_dir.join(format!("{base_name}.png"));
 
         // Encode RGBA → PNG in-process
+        let t = Instant::now();
         let png_ok = encode_png(&png_path, physical_w, physical_h, &rgba_buf);
+        let png_ms = t.elapsed().as_secs_f64() * 1000.0;
+        eprintln!("[perf] encode_png ({}): {:.1} ms", display.name, png_ms);
 
         if !png_ok {
             eprintln!("{} | PNG encoding FAILED for {}", now_ts, display.name);
@@ -79,6 +98,7 @@ fn main() {
 
         // Update kitty background via IPC (matches Ruby system(...))
         let socket = display.kitty_socket();
+        let t = Instant::now();
         let kitty_ok = Command::new("kitty")
             .args([
                 "@",
@@ -92,6 +112,8 @@ fn main() {
             .ok()
             .map(|s| s.success())
             .unwrap_or(false);
+        let kitty_ms = t.elapsed().as_secs_f64() * 1000.0;
+        eprintln!("[perf] kitty set-background-image ({}): {:.1} ms", display.name, kitty_ms);
 
         let logical = format!("{}x{}", display.logical_w, display.logical_h);
         let physical = format!("{}x{}", physical_w, physical_h);
@@ -107,6 +129,13 @@ fn main() {
             now_ts, display.name, logical, physical, scale, status
         );
     }
+
+    eprintln!(
+        "[perf] TOTAL — render: {:.1} ms | png: {:.1} ms | kitty: {:.1} ms",
+        t_total_render.elapsed().as_secs_f64() * 1000.0,
+        t_total_png.elapsed().as_secs_f64() * 1000.0,
+        t_total_kitty.elapsed().as_secs_f64() * 1000.0,
+    );
 
     // ---- Cleanup old wallpaper files (only keep ones we just generated) ----
     let valid_files: Vec<String> = displays
@@ -127,6 +156,8 @@ fn main() {
             }
         }
     }
+
+    eprintln!("[perf] main() total: {:.1} ms", t_main.elapsed().as_secs_f64() * 1000.0);
 }
 
 /// Encode an RGBA8 buffer as a PNG file. Returns true on success.
