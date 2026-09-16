@@ -1,6 +1,8 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use std::iter::repeat_n;
+
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
 use wallboard::palette::Palette;
-use wallboard::svg_gen::{draw_aa_line, render_wallpaper, DisplayDims};
+use wallboard::svg_gen::{DisplayDims, draw_aa_line, render_wallpaper};
 
 /// Typical 13" MacBook Pro: 1512x982 logical, 3024x1964 physical.
 fn typical_dims() -> DisplayDims {
@@ -24,17 +26,23 @@ fn bench_render_wallpaper(c: &mut Criterion) {
 fn bench_draw_aa_line(c: &mut Criterion) {
     let w = 3024;
     let h = 1964;
-    let mut buf = vec![0u8, w * h * 4];
+    let mut buf: Vec<_> = repeat_n(0u8, w * h * 4).collect();
 
     // A representative diagonal line spanning a good portion of the canvas
     c.bench_function("draw_aa_line (single, ~1500px diagonal)", |b| {
         b.iter(|| {
             draw_aa_line(
-                &mut buf, w, h,
-                200.0, 300.0,
-                1700.0, 1400.0,
+                &mut buf,
+                w.into(),
+                h.into(),
+                200.0,
+                300.0,
+                1700.0,
+                1400.0,
                 2.5,
-                200, 100, 50,
+                200,
+                100,
+                50,
             )
         })
     });
@@ -43,11 +51,17 @@ fn bench_draw_aa_line(c: &mut Criterion) {
     c.bench_function("draw_aa_line (single, ~75px short)", |b| {
         b.iter(|| {
             draw_aa_line(
-                &mut buf, w, h,
-                1000.0, 800.0,
-                1075.0, 850.0,
+                &mut buf,
+                w.into(),
+                h.into(),
+                1000.0,
+                800.0,
+                1075.0,
+                850.0,
                 1.8,
-                50, 200, 100,
+                50,
+                200,
+                100,
             )
         })
     });
