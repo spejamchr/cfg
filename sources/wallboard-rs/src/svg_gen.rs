@@ -1,6 +1,8 @@
 //! In-process wallpaper rasterizer — anti-aliased line segments onto an RGBA buffer.
 //! No external rendering dependency; uses distance-to-segment for smooth edges.
 
+use std::iter::repeat_n;
+
 use crate::palette::Palette;
 use rand::Rng;
 
@@ -20,18 +22,24 @@ pub fn render_wallpaper(dims: &DisplayDims, palette: &Palette) -> Vec<u8> {
     let scale = dims.physical_w as f64 / dims.logical_w.max(1) as f64;
 
     // Opaque black background
-    let mut buf = vec![0u8; w * h * 4];
-    for i in (3..buf.len()).step_by(4) {
-        buf[i] = 255;
-    }
+    let (r, g, b) = parse_hex(&palette.black);
+    let mut buf: Vec<_> = repeat_n([r, g, b, 255], w * h).flatten().collect();
 
     let lw = dims.logical_w as f64;
     let lh = dims.logical_h as f64;
 
     // Pre-parse palette colors
     let white = parse_hex(&palette.white);
-    let warm = [parse_hex(&palette.red), parse_hex(&palette.magenta), parse_hex(&palette.yellow)];
-    let cool = [parse_hex(&palette.blue), parse_hex(&palette.green), parse_hex(&palette.cyan)];
+    let warm = [
+        parse_hex(&palette.red),
+        parse_hex(&palette.magenta),
+        parse_hex(&palette.yellow),
+    ];
+    let cool = [
+        parse_hex(&palette.blue),
+        parse_hex(&palette.green),
+        parse_hex(&palette.cyan),
+    ];
 
     for _ in 0..5000 {
         // --- Seed position (same distribution as Ruby) ---

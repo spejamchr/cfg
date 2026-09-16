@@ -33,16 +33,26 @@ impl Palette {
                 })
         };
 
-        let black      = hex_for(0, "R") + &hex_for(0, "G")[1..] + &hex_for(0, "B")[1..];
+        let black = hex_for(0, "R") + &hex_for(0, "G")[1..] + &hex_for(0, "B")[1..];
         let bright_black = hex_for(3, "R") + &hex_for(3, "G")[1..] + &hex_for(3, "B")[1..];
-        let white      = hex_for(5, "R") + &hex_for(5, "G")[1..] + &hex_for(5, "B")[1..];
-        let red        = hex_for(8, "R") + &hex_for(8, "G")[1..] + &hex_for(8, "B")[1..];
-        let magenta    = hex_for(14, "R") + &hex_for(14, "G")[1..] + &hex_for(14, "B")[1..];
-        let yellow     = hex_for(10, "R") + &hex_for(10, "G")[1..] + &hex_for(10, "B")[1..];
-        let blue       = hex_for(13, "R") + &hex_for(13, "G")[1..] + &hex_for(13, "B")[1..];
-        let green      = hex_for(11, "R") + &hex_for(11, "G")[1..] + &hex_for(11, "B")[1..];
-        let cyan       = hex_for(12, "R") + &hex_for(12, "G")[1..] + &hex_for(12, "B")[1..];
+        let white = hex_for(5, "R") + &hex_for(5, "G")[1..] + &hex_for(5, "B")[1..];
+        let red = hex_for(8, "R") + &hex_for(8, "G")[1..] + &hex_for(8, "B")[1..];
+        let magenta = hex_for(14, "R") + &hex_for(14, "G")[1..] + &hex_for(14, "B")[1..];
+        let yellow = hex_for(10, "R") + &hex_for(10, "G")[1..] + &hex_for(10, "B")[1..];
+        let blue = hex_for(13, "R") + &hex_for(13, "G")[1..] + &hex_for(13, "B")[1..];
+        let green = hex_for(11, "R") + &hex_for(11, "G")[1..] + &hex_for(11, "B")[1..];
+        let cyan = hex_for(12, "R") + &hex_for(12, "G")[1..] + &hex_for(12, "B")[1..];
 
-        Self { black, white, bright_black, red, magenta, yellow, blue, green, cyan }
+        Self {
+            black,
+            white,
+            bright_black,
+            red,
+            magenta,
+            yellow,
+            blue,
+            green,
+            cyan,
+        }
     }
 }
