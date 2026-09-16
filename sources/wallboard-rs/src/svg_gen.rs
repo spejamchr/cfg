@@ -80,7 +80,7 @@ pub fn render_wallpaper(dims: &DisplayDims, palette: &Palette) -> Vec<u8> {
 
 /// Draw a single anti-aliased line segment using distance-to-segment.
 /// `buf` is a flat RGBA8 buffer of size `w * h * 4`.
-fn draw_aa_line(
+pub fn draw_aa_line(
     buf: &mut [u8],
     w: usize,
     h: usize,

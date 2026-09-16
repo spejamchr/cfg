@@ -5,19 +5,15 @@
 //! - `system_profiler` called once and cached (Ruby called it TWICE per display)
 //! - serde_json for fast, zero-copy-friendly parsing
 
-mod display_info;
-mod palette;
-mod svg_gen;
-
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
 
 use chrono::SecondsFormat;
 
-use self::display_info as di;
-use crate::palette::Palette;
-use crate::svg_gen::{DisplayDims, render_wallpaper};
+use wallboard::display_info as di;
+use wallboard::palette::Palette;
+use wallboard::svg_gen::{DisplayDims, render_wallpaper};
 
 fn main() {
     let now_ts = chrono::offset::Local::now()
