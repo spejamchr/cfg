@@ -27,24 +27,20 @@ fn main() {
     // Create output directory (matches Ruby FileUtils.mkdir_p)
     fs::create_dir_all(&wallpaper_dir).ok();
 
-    // ---- Fetch display data once (no repeated calls!) ----
-    let t = Instant::now();
-    let yabai_displays = di::fetch_yabai_displays();
-    eprintln!("[perf] fetch_yabai_displays: {:.1} ms", t.elapsed().as_secs_f64() * 1000.0);
-
-    let t = Instant::now();
-    let kitty_outputs = di::fetch_kitty_outputs();
-    eprintln!("[perf] fetch_kitty_outputs: {:.1} ms", t.elapsed().as_secs_f64() * 1000.0);
+    // ---- Fetch display data in parallel (all independent subprocess calls) ----
+    let t_fetch = Instant::now();
+    let (yabai_displays, kitty_outputs, sp_map) = std::thread::scope(|s| {
+        let h1 = s.spawn(|| di::fetch_yabai_displays());
+        let h2 = s.spawn(|| di::fetch_kitty_outputs());
+        let h3 = s.spawn(|| di::fetch_physical_resolutions());
+        (h1.join().unwrap(), h2.join().unwrap(), h3.join().unwrap())
+    });
+    eprintln!("[perf] fetch_all (parallel): {:.1} ms", t_fetch.elapsed().as_secs_f64() * 1000.0);
 
     if kitty_outputs.is_empty() {
         eprintln!("{} | No Kitty panel outputs found.", now_ts);
         return;
     }
-
-    // Parse system_profiler ONCE (Ruby called it twice: once for map, once in heuristic)
-    let t = Instant::now();
-    let sp_map = di::fetch_physical_resolutions();
-    eprintln!("[perf] fetch_physical_resolutions: {:.1} ms", t.elapsed().as_secs_f64() * 1000.0);
 
     // ---- Build Display configs ----
     let displays: Vec<di::Display> = kitty_outputs
@@ -59,12 +55,14 @@ fn main() {
     // ---- Build palette once (deterministic via env vars) ----
     let palette = Palette::build();
 
-    // ---- Process each display ----
+    // ---- Process each display in parallel ----
     let t_total_render = Instant::now();
     let t_total_png = Instant::now();
     let t_total_kitty = Instant::now();
 
-    for display in &displays {
+    std::thread::scope(|s| {
+        for display in &displays {
+            s.spawn(|| {
         let physical_w = display.physical_w.max(1);
         let physical_h = display.physical_h.max(1);
 
@@ -128,7 +126,9 @@ fn main() {
             "{} | Wallpaper for {} ({} → {}, scale: {}) {}",
             now_ts, display.name, logical, physical, scale, status
         );
-    }
+            });
+        }
+    });
 
     eprintln!(
         "[perf] TOTAL — render: {:.1} ms | png: {:.1} ms | kitty: {:.1} ms",
@@ -173,6 +173,7 @@ fn encode_png(path: &std::path::Path, width: u32, height: u32, rgba: &[u8]) -> b
     let mut encoder = png::Encoder::new(file, width, height);
     encoder.set_color(png::ColorType::Rgba);
     encoder.set_depth(png::BitDepth::Eight);
+    encoder.set_compression(png::Compression::Fast);
 
     let mut writer = match encoder.write_header() {
         Ok(w) => w,
