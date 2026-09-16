@@ -29,13 +29,16 @@ fn main() {
 
     // ---- Fetch display data in parallel (all independent subprocess calls) ----
     let t_fetch = Instant::now();
-    let (yabai_displays, kitty_outputs, sp_map) = std::thread::scope(|s| {
+    let (yabai_displays, kitty_outputs, sp_map) = dbg!(std::thread::scope(|s| {
         let h1 = s.spawn(|| di::fetch_yabai_displays());
         let h2 = s.spawn(|| di::fetch_kitty_outputs());
         let h3 = s.spawn(|| di::fetch_physical_resolutions());
         (h1.join().unwrap(), h2.join().unwrap(), h3.join().unwrap())
-    });
-    eprintln!("[perf] fetch_all (parallel): {:.1} ms", t_fetch.elapsed().as_secs_f64() * 1000.0);
+    }));
+    eprintln!(
+        "[perf] fetch_all (parallel): {:.1} ms",
+        t_fetch.elapsed().as_secs_f64() * 1000.0
+    );
 
     if kitty_outputs.is_empty() {
         eprintln!("{} | No Kitty panel outputs found.", now_ts);
@@ -63,69 +66,75 @@ fn main() {
     std::thread::scope(|s| {
         for display in &displays {
             s.spawn(|| {
-        let physical_w = display.physical_w.max(1);
-        let physical_h = display.physical_h.max(1);
+                let physical_w = display.physical_w.max(1);
+                let physical_h = display.physical_h.max(1);
 
-        // Rasterize anti-aliased lines directly into an RGBA buffer at physical resolution
-        let t = Instant::now();
-        let rgba_buf = render_wallpaper(
-            &DisplayDims {
-                logical_w: display.logical_w,
-                logical_h: display.logical_h,
-                physical_w,
-                physical_h,
-            },
-            &palette,
-        );
-        let render_ms = t.elapsed().as_secs_f64() * 1000.0;
-        eprintln!("[perf] render_wallpaper ({}): {:.1} ms", display.name, render_ms);
+                // Rasterize anti-aliased lines directly into an RGBA buffer at physical resolution
+                let t = Instant::now();
+                let rgba_buf = render_wallpaper(
+                    &DisplayDims {
+                        logical_w: display.logical_w,
+                        logical_h: display.logical_h,
+                        physical_w,
+                        physical_h,
+                    },
+                    &palette,
+                );
+                let render_ms = t.elapsed().as_secs_f64() * 1000.0;
+                eprintln!(
+                    "[perf] render_wallpaper ({}): {:.1} ms",
+                    display.name, render_ms
+                );
 
-        let slugified = di::slugify(&display.name);
-        let base_name = format!("generated-{}-{}", slugified, now_ts);
-        let png_path = wallpaper_dir.join(format!("{base_name}.png"));
+                let slugified = di::slugify(&display.name);
+                let base_name = format!("generated-{}-{}", slugified, now_ts);
+                let png_path = wallpaper_dir.join(format!("{base_name}.png"));
 
-        // Encode RGBA → PNG in-process
-        let t = Instant::now();
-        let png_ok = encode_png(&png_path, physical_w, physical_h, &rgba_buf);
-        let png_ms = t.elapsed().as_secs_f64() * 1000.0;
-        eprintln!("[perf] encode_png ({}): {:.1} ms", display.name, png_ms);
+                // Encode RGBA → PNG in-process
+                let t = Instant::now();
+                let png_ok = encode_png(&png_path, physical_w, physical_h, &rgba_buf);
+                let png_ms = t.elapsed().as_secs_f64() * 1000.0;
+                eprintln!("[perf] encode_png ({}): {:.1} ms", display.name, png_ms);
 
-        if !png_ok {
-            eprintln!("{} | PNG encoding FAILED for {}", now_ts, display.name);
-        }
+                if !png_ok {
+                    eprintln!("{} | PNG encoding FAILED for {}", now_ts, display.name);
+                }
 
-        // Update kitty background via IPC (matches Ruby system(...))
-        let socket = display.kitty_socket();
-        let t = Instant::now();
-        let kitty_ok = Command::new("kitty")
-            .args([
-                "@",
-                "--to",
-                &socket,
-                "set-background-image",
-                "--layout=cscaled",
-            ])
-            .arg(&png_path)
-            .status()
-            .ok()
-            .map(|s| s.success())
-            .unwrap_or(false);
-        let kitty_ms = t.elapsed().as_secs_f64() * 1000.0;
-        eprintln!("[perf] kitty set-background-image ({}): {:.1} ms", display.name, kitty_ms);
+                // Update kitty background via IPC (matches Ruby system(...))
+                let socket = display.kitty_socket();
+                let t = Instant::now();
+                let kitty_ok = Command::new("kitty")
+                    .args([
+                        "@",
+                        "--to",
+                        &socket,
+                        "set-background-image",
+                        "--layout=cscaled",
+                    ])
+                    .arg(&png_path)
+                    .status()
+                    .ok()
+                    .map(|s| s.success())
+                    .unwrap_or(false);
+                let kitty_ms = t.elapsed().as_secs_f64() * 1000.0;
+                eprintln!(
+                    "[perf] kitty set-background-image ({}): {:.1} ms",
+                    display.name, kitty_ms
+                );
 
-        let logical = format!("{}x{}", display.logical_w, display.logical_h);
-        let physical = format!("{}x{}", physical_w, physical_h);
-        let scale = display.scale_factor();
-        let status = if kitty_ok {
-            "."
-        } else {
-            " [kitty update FAILED]"
-        };
+                let logical = format!("{}x{}", display.logical_w, display.logical_h);
+                let physical = format!("{}x{}", physical_w, physical_h);
+                let scale = display.scale_factor();
+                let status = if kitty_ok {
+                    "."
+                } else {
+                    " [kitty update FAILED]"
+                };
 
-        println!(
-            "{} | Wallpaper for {} ({} → {}, scale: {}) {}",
-            now_ts, display.name, logical, physical, scale, status
-        );
+                println!(
+                    "{} | Wallpaper for {} ({} → {}, scale: {}) {}",
+                    now_ts, display.name, logical, physical, scale, status
+                );
             });
         }
     });
@@ -157,7 +166,10 @@ fn main() {
         }
     }
 
-    eprintln!("[perf] main() total: {:.1} ms", t_main.elapsed().as_secs_f64() * 1000.0);
+    eprintln!(
+        "[perf] main() total: {:.1} ms",
+        t_main.elapsed().as_secs_f64() * 1000.0
+    );
 }
 
 /// Encode an RGBA8 buffer as a PNG file. Returns true on success.
