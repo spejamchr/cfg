@@ -81,8 +81,10 @@ pub fn render_wallpaper(dims: &DisplayDims, palette: &Palette) -> Vec<u8> {
 /// Draw a single anti-aliased line segment using distance-to-segment.
 /// `buf` is a flat RGBA8 buffer of size `w * h * 4`.
 ///
-/// Uses a two-stage test: cheap distance-to-infinite-line rejection, then
-/// full segment distance only for pixels near the line. Inner loop in f32.
+/// For each row, analytically computes the tight x-range where the distance
+/// to the infinite line is within the AA threshold, then checks segment
+/// distance only for those few pixels. This avoids scanning the full
+/// bounding-box width (O(bbox_area) → O(rows × stroke_width)).
 pub fn draw_aa_line(
     buf: &mut [u8],
     w: usize,
@@ -97,14 +99,12 @@ pub fn draw_aa_line(
     b: u8,
 ) {
     let half_sw = stroke_width * 0.5;
+    let threshold = half_sw + 1.0; // max distance we render (1px AA falloff)
 
-    // Bounding box expanded by half stroke + 1px AA margin
-    let min_x = ((x1.min(x2) - half_sw - 1.0).max(0.0)) as i32;
-    let max_x = ((x1.max(x2) + half_sw + 1.0).min(w as f64 - 1.0)) as i32;
-    let min_y = ((y1.min(y2) - half_sw - 1.0).max(0.0)) as i32;
-    let max_y = ((y1.max(y2) + half_sw + 1.0).min(h as f64 - 1.0)) as i32;
+    let min_y = ((y1.min(y2) - threshold).max(0.0)) as i32;
+    let max_y = ((y1.max(y2) + threshold).min(h as f64 - 1.0)) as i32;
 
-    if min_x > max_x || min_y > max_y {
+    if min_y > max_y {
         return;
     }
 
@@ -116,8 +116,9 @@ pub fn draw_aa_line(
     }
     let len = len_sq.sqrt();
 
-    // Line equation: dy*x - dx*y + c = 0, distance = |dy*px - dx*py + c| / len
+    // Line: dy*x - dx*y + c = 0
     let c = dx * y1 - dy * x1;
+    let threshold_len = threshold * len;
 
     // f32 constants for the inner loop
     let x1f = x1 as f32;
@@ -125,42 +126,64 @@ pub fn draw_aa_line(
     let dxf = dx as f32;
     let dyf = dy as f32;
     let len_sq_f = len_sq as f32;
-    let c_f = c as f32;
-    let inv_len_f = (1.0 / len) as f32;
     let half_sw_f = half_sw as f32;
-    let threshold_f = (half_sw + 1.0) as f32;
+    let max_dist_sq_f = (half_sw_f + 0.5) * (half_sw_f + 0.5);
     let r_f = r as f32;
     let g_f = g as f32;
     let b_f = b as f32;
 
     for py in min_y..=max_y {
-        let py_f = (py as f64 + 0.5) as f32;
+        let py_f64 = py as f64 + 0.5;
+
+        // Compute tight x-range: |dy*px + (-dx*py + c)| <= threshold * len
+        let b_const = -dx * py_f64 + c;
+
+        let (x_lo, x_hi): (f64, f64) = if dy.abs() > 1e-10 {
+            let inv_dy = 1.0 / dy;
+            let a = (-b_const - threshold_len) * inv_dy;
+            let b = (-b_const + threshold_len) * inv_dy;
+            if a < b { (a, b) } else { (b, a) }
+        } else {
+            // Near-horizontal: entire row qualifies or none does
+            if b_const.abs() > threshold_len {
+                continue;
+            }
+            (0.0, w as f64)
+        };
+
+        let min_x = x_lo.max(0.0) as i32;
+        let max_x = x_hi.min(w as f64 - 1.0) as i32;
+
+        if min_x > max_x {
+            continue;
+        }
+
+        let py_f = py_f64 as f32;
         let row_offset = (py as usize) * w * 4;
+
         for px in min_x..=max_x {
             let px_f = (px as f64 + 0.5) as f32;
 
-            // Stage 1: cheap reject — distance to infinite line
-            let dist_to_line = (dyf * px_f - dxf * py_f + c_f).abs() * inv_len_f;
-            if dist_to_line > threshold_f {
-                continue;
-            }
-
-            // Stage 2: full segment distance (project + clamp)
+            // Segment distance (project onto line, clamp to [0,1])
             let t = ((px_f - x1f) * dxf + (py_f - y1f) * dyf) / len_sq_f;
             let tc = t.clamp(0.0, 1.0);
             let cx = x1f + tc * dxf;
             let cy = y1f + tc * dyf;
-            let dist = ((px_f - cx) * (px_f - cx) + (py_f - cy) * (py_f - cy)).sqrt();
+            let dist_sq = (px_f - cx) * (px_f - cx) + (py_f - cy) * (py_f - cy);
 
-            // Anti-aliased coverage: 1px smooth falloff at the edge
-            let coverage = (half_sw_f + 0.5 - dist).clamp(0.0, 1.0);
-            if coverage > 0.0 {
-                let idx = row_offset + (px as usize) * 4;
-                let inv = 1.0 - coverage;
-                buf[idx] = (buf[idx] as f32 * inv + r_f * coverage) as u8;
-                buf[idx + 1] = (buf[idx + 1] as f32 * inv + g_f * coverage) as u8;
-                buf[idx + 2] = (buf[idx + 2] as f32 * inv + b_f * coverage) as u8;
+            // Early-out: skip sqrt if clearly outside stroke
+            if dist_sq > max_dist_sq_f {
+                continue;
             }
+
+            let dist = dist_sq.sqrt();
+            let coverage = (half_sw_f + 0.5 - dist).clamp(0.0, 1.0);
+
+            let idx = row_offset + (px as usize) * 4;
+            let inv = 1.0 - coverage;
+            buf[idx] = (buf[idx] as f32 * inv + r_f * coverage) as u8;
+            buf[idx + 1] = (buf[idx + 1] as f32 * inv + g_f * coverage) as u8;
+            buf[idx + 2] = (buf[idx + 2] as f32 * inv + b_f * coverage) as u8;
         }
     }
 }
