@@ -80,6 +80,9 @@ pub fn render_wallpaper(dims: &DisplayDims, palette: &Palette) -> Vec<u8> {
 
 /// Draw a single anti-aliased line segment using distance-to-segment.
 /// `buf` is a flat RGBA8 buffer of size `w * h * 4`.
+///
+/// Uses a two-stage test: cheap distance-to-infinite-line rejection, then
+/// full segment distance only for pixels near the line. Inner loop in f32.
 pub fn draw_aa_line(
     buf: &mut [u8],
     w: usize,
@@ -111,26 +114,46 @@ pub fn draw_aa_line(
     if len_sq < 1e-10 {
         return;
     }
+    let len = len_sq.sqrt();
 
+    // Line equation: dy*x - dx*y + c = 0, distance = |dy*px - dx*py + c| / len
+    let c = dx * y1 - dy * x1;
+
+    // f32 constants for the inner loop
+    let x1f = x1 as f32;
+    let y1f = y1 as f32;
+    let dxf = dx as f32;
+    let dyf = dy as f32;
+    let len_sq_f = len_sq as f32;
+    let c_f = c as f32;
+    let inv_len_f = (1.0 / len) as f32;
+    let half_sw_f = half_sw as f32;
+    let threshold_f = (half_sw + 1.0) as f32;
     let r_f = r as f32;
     let g_f = g as f32;
     let b_f = b as f32;
 
     for py in min_y..=max_y {
-        let py_f = py as f64 + 0.5;
+        let py_f = (py as f64 + 0.5) as f32;
         let row_offset = (py as usize) * w * 4;
         for px in min_x..=max_x {
-            let px_f = px as f64 + 0.5;
+            let px_f = (px as f64 + 0.5) as f32;
 
-            // Project point onto segment, clamp to [0,1]
-            let t = ((px_f - x1) * dx + (py_f - y1) * dy) / len_sq;
+            // Stage 1: cheap reject — distance to infinite line
+            let dist_to_line = (dyf * px_f - dxf * py_f + c_f).abs() * inv_len_f;
+            if dist_to_line > threshold_f {
+                continue;
+            }
+
+            // Stage 2: full segment distance (project + clamp)
+            let t = ((px_f - x1f) * dxf + (py_f - y1f) * dyf) / len_sq_f;
             let tc = t.clamp(0.0, 1.0);
-            let cx = x1 + tc * dx;
-            let cy = y1 + tc * dy;
-            let dist = ((px_f - cx).powi(2) + (py_f - cy).powi(2)).sqrt();
+            let cx = x1f + tc * dxf;
+            let cy = y1f + tc * dyf;
+            let dist = ((px_f - cx) * (px_f - cx) + (py_f - cy) * (py_f - cy)).sqrt();
 
             // Anti-aliased coverage: 1px smooth falloff at the edge
-            let coverage = (half_sw + 0.5 - dist).clamp(0.0, 1.0) as f32;
+            let coverage = (half_sw_f + 0.5 - dist).clamp(0.0, 1.0);
             if coverage > 0.0 {
                 let idx = row_offset + (px as usize) * 4;
                 let inv = 1.0 - coverage;
