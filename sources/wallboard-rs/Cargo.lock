@@ -718,6 +718,7 @@ dependencies = [
  "criterion",
  "png",
  "rand",
+ "serde",
  "serde_json",
 ]
 

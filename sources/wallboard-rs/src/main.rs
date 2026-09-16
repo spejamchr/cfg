@@ -16,6 +16,35 @@ use wallboard::display_info as di;
 use wallboard::palette::Palette;
 use wallboard::svg_gen::{DisplayDims, render_wallpaper};
 
+/// Cached results for the slow subprocess calls (kitty outputs, physical resolutions).
+/// `yabai_displays` serves as the cache-buster: if it changes, we re-fetch everything.
+#[derive(serde::Serialize, serde::Deserialize)]
+struct FetchCache {
+    yabai_displays: Vec<serde_json::Value>,
+    kitty_outputs: Vec<String>,
+    sp_map: std::collections::HashMap<String, [u32; 2]>,
+}
+
+fn cache_path() -> PathBuf {
+    let home = std::env::var("HOME").expect("HOME must be set");
+    PathBuf::from(home).join(".cache/wallboard-rs/fetch_cache.json")
+}
+
+fn load_cache() -> Option<FetchCache> {
+    let content = fs::read_to_string(cache_path()).ok()?;
+    serde_json::from_str(&content).ok()
+}
+
+fn save_cache(cache: &FetchCache) {
+    let path = cache_path();
+    if let Some(parent) = path.parent() {
+        let _ = fs::create_dir_all(parent);
+    }
+    if let Ok(json) = serde_json::to_string(cache) {
+        let _ = fs::write(&path, json);
+    }
+}
+
 fn main() {
     let t_main = Instant::now();
     let now_ts = chrono::offset::Local::now()
@@ -27,16 +56,55 @@ fn main() {
     // Create output directory (matches Ruby FileUtils.mkdir_p)
     fs::create_dir_all(&wallpaper_dir).ok();
 
-    // ---- Fetch display data in parallel (all independent subprocess calls) ----
+    // ---- Fetch display data (yabai always; kitty + sp_map cached) ----
     let t_fetch = Instant::now();
-    let (yabai_displays, kitty_outputs, sp_map) = dbg!(std::thread::scope(|s| {
-        let h1 = s.spawn(|| di::fetch_yabai_displays());
-        let h2 = s.spawn(|| di::fetch_kitty_outputs());
-        let h3 = s.spawn(|| di::fetch_physical_resolutions());
-        (h1.join().unwrap(), h2.join().unwrap(), h3.join().unwrap())
-    }));
+    let yabai_displays = di::fetch_yabai_displays();
+
+    let (kitty_outputs, sp_map) = if let Some(cached) = load_cache() {
+        if cached.yabai_displays == yabai_displays {
+            eprintln!("[perf] fetch: cache HIT");
+            let sp_map: std::collections::HashMap<String, (u32, u32)> = cached
+                .sp_map
+                .into_iter()
+                .map(|(k, [w, h])| (k, (w, h)))
+                .collect();
+            (cached.kitty_outputs, sp_map)
+        } else {
+            eprintln!("[perf] fetch: cache MISS (yabai changed)");
+            let (kitty_outputs, sp_map) = std::thread::scope(|s| {
+                let h1 = s.spawn(|| di::fetch_kitty_outputs());
+                let h2 = s.spawn(|| di::fetch_physical_resolutions());
+                (h1.join().unwrap(), h2.join().unwrap())
+            });
+            save_cache(&FetchCache {
+                yabai_displays: yabai_displays.clone(),
+                kitty_outputs: kitty_outputs.clone(),
+                sp_map: sp_map
+                    .iter()
+                    .map(|(k, (w, h))| (k.clone(), [*w, *h]))
+                    .collect(),
+            });
+            (kitty_outputs, sp_map)
+        }
+    } else {
+        eprintln!("[perf] fetch: cache MISS (no cache file)");
+        let (kitty_outputs, sp_map) = std::thread::scope(|s| {
+            let h1 = s.spawn(|| di::fetch_kitty_outputs());
+            let h2 = s.spawn(|| di::fetch_physical_resolutions());
+            (h1.join().unwrap(), h2.join().unwrap())
+        });
+        save_cache(&FetchCache {
+            yabai_displays: yabai_displays.clone(),
+            kitty_outputs: kitty_outputs.clone(),
+            sp_map: sp_map
+                .iter()
+                .map(|(k, (w, h))| (k.clone(), [*w, *h]))
+                .collect(),
+        });
+        (kitty_outputs, sp_map)
+    };
     eprintln!(
-        "[perf] fetch_all (parallel): {:.1} ms",
+        "[perf] fetch_all: {:.1} ms",
         t_fetch.elapsed().as_secs_f64() * 1000.0
     );
 
