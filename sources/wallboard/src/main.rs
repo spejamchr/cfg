@@ -12,6 +12,7 @@ use std::time::Instant;
 
 use chrono::SecondsFormat;
 
+use debug_print::debug_eprintln;
 use wallboard::display_info as di;
 use wallboard::palette::Palette;
 use wallboard::svg_gen::{DisplayDims, render_wallpaper};
@@ -46,7 +47,7 @@ fn save_cache(cache: &FetchCache) {
 }
 
 fn main() {
-    let t_main = Instant::now();
+    let _t_main = Instant::now();
     let now_ts = chrono::offset::Local::now()
         .to_rfc3339_opts(SecondsFormat::Secs, false)
         .replace(':', ""); // matches Ruby strftime("%Y%m%d%H%M%S")
@@ -57,12 +58,12 @@ fn main() {
     fs::create_dir_all(&wallpaper_dir).ok();
 
     // ---- Fetch display data (yabai always; kitty + sp_map cached) ----
-    let t_fetch = Instant::now();
+    let _t_fetch = Instant::now();
     let yabai_displays = di::fetch_yabai_displays();
 
     let (kitty_outputs, sp_map) = if let Some(cached) = load_cache() {
         if cached.yabai_displays == yabai_displays {
-            eprintln!("[perf] fetch: cache HIT");
+            debug_eprintln!("[perf] fetch: cache HIT");
             let sp_map: std::collections::HashMap<String, (u32, u32)> = cached
                 .sp_map
                 .into_iter()
@@ -70,7 +71,7 @@ fn main() {
                 .collect();
             (cached.kitty_outputs, sp_map)
         } else {
-            eprintln!("[perf] fetch: cache MISS (yabai changed)");
+            debug_eprintln!("[perf] fetch: cache MISS (yabai changed)");
             let (kitty_outputs, sp_map) = std::thread::scope(|s| {
                 let h1 = s.spawn(|| di::fetch_kitty_outputs());
                 let h2 = s.spawn(|| di::fetch_physical_resolutions());
@@ -87,7 +88,7 @@ fn main() {
             (kitty_outputs, sp_map)
         }
     } else {
-        eprintln!("[perf] fetch: cache MISS (no cache file)");
+        debug_eprintln!("[perf] fetch: cache MISS (no cache file)");
         let (kitty_outputs, sp_map) = std::thread::scope(|s| {
             let h1 = s.spawn(|| di::fetch_kitty_outputs());
             let h2 = s.spawn(|| di::fetch_physical_resolutions());
@@ -103,13 +104,13 @@ fn main() {
         });
         (kitty_outputs, sp_map)
     };
-    eprintln!(
+    debug_eprintln!(
         "[perf] fetch_all: {:.1} ms",
-        t_fetch.elapsed().as_secs_f64() * 1000.0
+        _t_fetch.elapsed().as_secs_f64() * 1000.0
     );
 
     if kitty_outputs.is_empty() {
-        eprintln!("{} | No Kitty panel outputs found.", now_ts);
+        debug_eprintln!("{} | No Kitty panel outputs found.", now_ts);
         return;
     }
 
@@ -127,9 +128,9 @@ fn main() {
     let palette = Palette::build();
 
     // ---- Process each display in parallel ----
-    let t_total_render = Instant::now();
-    let t_total_png = Instant::now();
-    let t_total_kitty = Instant::now();
+    let _t_total_render = Instant::now();
+    let _t_total_png = Instant::now();
+    let _t_total_kitty = Instant::now();
 
     std::thread::scope(|s| {
         for display in &displays {
@@ -148,10 +149,11 @@ fn main() {
                     },
                     &palette,
                 );
-                let render_ms = t.elapsed().as_secs_f64() * 1000.0;
-                eprintln!(
+                let _render_ms = t.elapsed().as_secs_f64() * 1000.0;
+                debug_eprintln!(
                     "[perf] render_wallpaper ({}): {:.1} ms",
-                    display.name, render_ms
+                    display.name,
+                    _render_ms
                 );
 
                 let slugified = di::slugify(&display.name);
@@ -161,11 +163,11 @@ fn main() {
                 // Encode RGBA → PNG in-process
                 let t = Instant::now();
                 let png_ok = encode_png(&png_path, physical_w, physical_h, &rgba_buf);
-                let png_ms = t.elapsed().as_secs_f64() * 1000.0;
-                eprintln!("[perf] encode_png ({}): {:.1} ms", display.name, png_ms);
+                let _png_ms = t.elapsed().as_secs_f64() * 1000.0;
+                debug_eprintln!("[perf] encode_png ({}): {:.1} ms", display.name, _png_ms);
 
                 if !png_ok {
-                    eprintln!("{} | PNG encoding FAILED for {}", now_ts, display.name);
+                    debug_eprintln!("{} | PNG encoding FAILED for {}", now_ts, display.name);
                 }
 
                 // Update kitty background via IPC (matches Ruby system(...))
@@ -184,34 +186,40 @@ fn main() {
                     .ok()
                     .map(|s| s.success())
                     .unwrap_or(false);
-                let kitty_ms = t.elapsed().as_secs_f64() * 1000.0;
-                eprintln!(
+                let _kitty_ms = t.elapsed().as_secs_f64() * 1000.0;
+                debug_eprintln!(
                     "[perf] kitty set-background-image ({}): {:.1} ms",
-                    display.name, kitty_ms
+                    display.name,
+                    _kitty_ms
                 );
 
-                let logical = format!("{}x{}", display.logical_w, display.logical_h);
-                let physical = format!("{}x{}", physical_w, physical_h);
-                let scale = display.scale_factor();
-                let status = if kitty_ok {
+                let _logical = format!("{}x{}", display.logical_w, display.logical_h);
+                let _physical = format!("{}x{}", physical_w, physical_h);
+                let _scale = display.scale_factor();
+                let _status = if kitty_ok {
                     "."
                 } else {
                     " [kitty update FAILED]"
                 };
 
-                println!(
+                debug_eprintln!(
                     "{} | Wallpaper for {} ({} → {}, scale: {}) {}",
-                    now_ts, display.name, logical, physical, scale, status
+                    now_ts,
+                    display.name,
+                    _logical,
+                    _physical,
+                    _scale,
+                    _status
                 );
             });
         }
     });
 
-    eprintln!(
+    debug_eprintln!(
         "[perf] TOTAL — render: {:.1} ms | png: {:.1} ms | kitty: {:.1} ms",
-        t_total_render.elapsed().as_secs_f64() * 1000.0,
-        t_total_png.elapsed().as_secs_f64() * 1000.0,
-        t_total_kitty.elapsed().as_secs_f64() * 1000.0,
+        _t_total_render.elapsed().as_secs_f64() * 1000.0,
+        _t_total_png.elapsed().as_secs_f64() * 1000.0,
+        _t_total_kitty.elapsed().as_secs_f64() * 1000.0,
     );
 
     // ---- Cleanup old wallpaper files (only keep ones we just generated) ----
@@ -234,9 +242,9 @@ fn main() {
         }
     }
 
-    eprintln!(
+    debug_eprintln!(
         "[perf] main() total: {:.1} ms",
-        t_main.elapsed().as_secs_f64() * 1000.0
+        _t_main.elapsed().as_secs_f64() * 1000.0
     );
 }
 
@@ -244,8 +252,8 @@ fn main() {
 fn encode_png(path: &std::path::Path, width: u32, height: u32, rgba: &[u8]) -> bool {
     let file = match fs::File::create(path) {
         Ok(f) => f,
-        Err(e) => {
-            eprintln!("  Failed to create {}: {}", path.display(), e);
+        Err(_e) => {
+            debug_eprintln!("  Failed to create {}: {}", path.display(), _e);
             return false;
         }
     };
@@ -257,16 +265,16 @@ fn encode_png(path: &std::path::Path, width: u32, height: u32, rgba: &[u8]) -> b
 
     let mut writer = match encoder.write_header() {
         Ok(w) => w,
-        Err(e) => {
-            eprintln!("  PNG header error: {}", e);
+        Err(_e) => {
+            debug_eprintln!("  PNG header error: {}", _e);
             return false;
         }
     };
 
     match writer.write_image_data(rgba) {
         Ok(()) => true,
-        Err(e) => {
-            eprintln!("  PNG write error: {}", e);
+        Err(_e) => {
+            debug_eprintln!("  PNG write error: {}", _e);
             false
         }
     }
