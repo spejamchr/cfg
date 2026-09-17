@@ -27,7 +27,7 @@ struct FetchCache {
 
 fn cache_path() -> PathBuf {
     let home = std::env::var("HOME").expect("HOME must be set");
-    PathBuf::from(home).join(".cache/wallboard-rs/fetch_cache.json")
+    PathBuf::from(home).join(".cache/wallboard/fetch_cache.json")
 }
 
 fn load_cache() -> Option<FetchCache> {

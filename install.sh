@@ -322,24 +322,24 @@ function main() {
       "rustup self uninstall"
   fi
 
-  # Build wallboard-rs and install to PATH
-  local wallboard_src="$CFG/sources/wallboard-rs"
-  local wallboard_bin="$wallboard_src/target/release/wallboard-rs"
-  local wallboard_dest="$HOMEBIN/wallboard-rs"
+  # Build wallboard and install to PATH
+  local wallboard_src="$CFG/sources/wallboard"
+  local wallboard_bin="$wallboard_src/target/release/wallboard"
+  local wallboard_dest="$HOMEBIN/wallboard"
 
   if [[ -d "$wallboard_src" ]]; then
     if [[ ! -f "$wallboard_bin" ]]; then
-      try_to "Build wallboard-rs (Rust)" \
+      try_to "Build wallboard (Rust)" \
         "cd \"$wallboard_src\" && cargo build --release" \
         "rm -rf \"$wallboard_src/target\""
     fi
 
     if [[ -f "$wallboard_bin" && ! -e "$wallboard_dest" ]]; then
-      try_to "Install wallboard-rs to $wallboard_dest" \
+      try_to "Install wallboard to $wallboard_dest" \
         "ln -s \"$wallboard_bin\" \"$wallboard_dest\"" \
         "rm \"$wallboard_dest\""
     elif [[ -L "$wallboard_dest" ]]; then
-      infcho "wallboard-rs is already installed at $wallboard_dest"
+      infcho "wallboard is already installed at $wallboard_dest"
     fi
   fi
 
