@@ -328,11 +328,9 @@ function main() {
   local wallboard_dest="$HOMEBIN/wallboard"
 
   if [[ -d "$wallboard_src" ]]; then
-    if [[ ! -f "$wallboard_bin" ]]; then
-      try_to "Build wallboard (Rust)" \
-        "cd \"$wallboard_src\" && cargo build --release" \
-        "rm -rf \"$wallboard_src/target\""
-    fi
+    try_to "Build wallboard" \
+      "cd \"$wallboard_src\" && cargo build --release" \
+      "rm -rf \"$wallboard_src/target\""
 
     if [[ -f "$wallboard_bin" && ! -e "$wallboard_dest" ]]; then
       try_to "Install wallboard to $wallboard_dest" \
