@@ -2,7 +2,13 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'fileutils'
 require 'shellwords'
+require 'io/wait'
+
+# Flush log lines immediately (stdout is redirected to a file by launchd, which would
+# otherwise fully buffer output and delay it until exit).
+$stdout.sync = true
 
 def log(msg)
   puts "#{Time.now} | #{msg}"
@@ -41,43 +47,181 @@ STATIC_OPTIONS = [
 KITTY_BIN = `which kitty`.strip.freeze
 raise "kitty not found in PATH: #{ENV.fetch('PATH', nil)}" unless File.exist?(KITTY_BIN)
 
-# Get output names from Kitty — these are the macOS display names (e.g., "Built-in Retina Display")
-OUTPUT_NAMES = JSON.parse(`#{KITTY_BIN} +kitten panel --output-name=listjson`)
-  .map { |h| h.fetch("name") }
-  .freeze
+SWIFT_BIN = `which swift`.strip.freeze
 
-log "Got OUTPUT_NAMES: #{OUTPUT_NAMES}"
+# Fallback poll interval, only used if the Swift display-change listener is unavailable.
+POLL_INTERVAL_SECONDS = 2
+
+# Registers CGDisplayRegisterReconfigurationCallback and prints a line to stdout each time
+# macOS reports a display reconfiguration (connect, disconnect, mode/position change). This
+# lets us react to hotplug events instead of polling `kitty +kitten panel --output-name=listjson`.
+SWIFT_DISPLAY_LISTENER = <<~SWIFT
+  import CoreGraphics
+  import AppKit
+  import Foundation
+
+  func onReconfigure(_ display: CGDirectDisplayID, _ flags: CGDisplayChangeSummaryFlags, _ userInfo: UnsafeMutableRawPointer?) {
+      print("changed")
+      fflush(stdout)
+  }
+
+  // Plain command-line tools aren't connected to the window server by default, so
+  // CGDisplayRegisterReconfigurationCallback silently never fires without this.
+  _ = NSApplication.shared
+  CGDisplayRegisterReconfigurationCallback(onReconfigure, nil)
+  CFRunLoopRun()
+SWIFT
+
+# Spawns the Swift listener (fed via stdin, so no extra file is needed) and returns its IO,
+# or nil if swift isn't available (caller should fall back to polling).
+#
+# @return [IO, nil]
+def spawn_display_watcher
+  return nil if SWIFT_BIN.empty?
+
+  io = IO.popen([SWIFT_BIN, "-"], "r+")
+  io.write(SWIFT_DISPLAY_LISTENER)
+  io.close_write
+  io
+rescue StandardError => e
+  log "ERROR: Failed to start display watcher: #{e.message}"
+  nil
+end
+
+# @return [Array<String>] the macOS display names (e.g., "Built-in Retina Display")
+def current_output_names
+  JSON.parse(`#{KITTY_BIN} +kitten panel --output-name=listjson`)
+    .map { |h| h.fetch("name") }
+rescue JSON::ParserError => e
+  log "ERROR: Failed to list outputs: #{e.message}"
+  []
+end
 
 # @param name [String]
-def handle_display(name)
+# @return [String]
+def socket_path_for(name)
   # Use the display name as the socket identifier — safe because macOS display names
   # are consistent and we can safely slugify them for filesystem compatibility.
   safe_name = name.gsub(/[^a-zA-Z0-9_]/, '_')
-  socket_path = "/tmp/mykittywallboard_#{safe_name}"
+  "/tmp/mykittywallboard_#{safe_name}"
+end
+
+# Spawns a kitty panel for the given display and returns its pid.
+#
+# @param name [String]
+# @return [Integer]
+def spawn_display(name)
+  socket_path = socket_path_for(name)
 
   log "Handling display #{name} -> socket #{socket_path}"
 
   # Remove any stale socket before binding (avoids "address already in use" on restart)
-  File.delete(socket_path) if File.exist?(socket_path)
+  FileUtils.rm_f(socket_path)
 
-  return if system(
+  Process.spawn(
     KITTY_BIN, "+kitten", "panel",
     "--output-name=#{name}",
     "--listen-on=unix:#{socket_path}",
     *STATIC_OPTIONS,
     *FISH_COMMAND[name]
   )
-
-  log "ERROR: Failed to start kitty panel on display #{name}"
 end
 
-threads = OUTPUT_NAMES
-  .map { |name| Thread.new { handle_display(name) } }
+# name => { pid:, thread: }
+running = {}
+running_mutex = Mutex.new
 
-Signal.trap("SIGINT") do
-  log "Interrupted. Shutting down..."
-  threads.each(&:kill)
-  exit
+def stop_display(name, info)
+  log "Display #{name} disconnected. Stopping panel (pid #{info[:pid]})..."
+  begin
+    Process.kill("TERM", info[:pid])
+    Process.wait(info[:pid])
+  rescue Errno::ESRCH, Errno::ECHILD
+    # Already exited; nothing to do.
+  end
+  FileUtils.rm_f(socket_path_for(name))
 end
 
-threads.each(&:join)
+def start_display(name, running, running_mutex)
+  pid = spawn_display(name)
+  thread = Thread.new do
+    begin
+      _, status = Process.wait2(pid)
+      log "Panel for display #{name} (pid #{pid}) exited (#{status})."
+    rescue Errno::ECHILD
+      # Already reaped by stop_display's own Process.wait; nothing to do.
+    end
+    running_mutex.synchronize { running.delete(name) }
+  end
+  running_mutex.synchronize { running[name] = { pid: pid, thread: thread } }
+end
+
+# Starts/stops panels so `running` matches whatever displays are currently connected.
+def reconcile!(running, running_mutex)
+  wanted = current_output_names
+  current = running_mutex.synchronize { running.keys }
+
+  (current - wanted).each do |name|
+    info = running_mutex.synchronize { running.delete(name) }
+    next unless info
+
+    stop_display(name, info)
+    info[:thread].kill
+  end
+
+  (wanted - current).each { |name| start_display(name, running, running_mutex) }
+end
+
+shutting_down = false
+
+['INT', 'TERM'].each do |sig|
+  Signal.trap(sig) do
+    shutting_down = true
+  end
+end
+
+watcher_io = spawn_display_watcher
+if watcher_io
+  log "Watching for display changes via CoreGraphics listener"
+else
+  log "WARNING: swift not found; falling back to #{POLL_INTERVAL_SECONDS}s polling"
+end
+
+reconcile!(running, running_mutex) # Handle whatever's connected at startup
+
+loop do
+  if shutting_down
+    log "Shutting down..."
+    if watcher_io
+      begin
+        Process.kill("TERM", watcher_io.pid)
+      rescue Errno::ESRCH
+        # Already exited; nothing to do.
+      end
+      watcher_io.close
+    end
+    running_mutex.synchronize do
+      running.each { |name, info| stop_display(name, info) }
+      running.clear
+    end
+    exit
+  end
+
+  if watcher_io
+    # Block here until the listener reports a change (or briefly times out, just so we
+    # notice `shutting_down`) — no fixed-interval display polling.
+    if watcher_io.wait_readable(1)
+      line = watcher_io.gets
+      if line.nil? # listener process died
+        log "WARNING: display watcher exited; falling back to #{POLL_INTERVAL_SECONDS}s polling"
+        watcher_io.close
+        watcher_io = nil
+      else
+        reconcile!(running, running_mutex)
+      end
+    end
+  else
+    sleep POLL_INTERVAL_SECONDS
+    reconcile!(running, running_mutex)
+  end
+end
