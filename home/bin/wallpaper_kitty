@@ -156,6 +156,16 @@ def start_display(name, running, running_mutex)
   running_mutex.synchronize { running[name] = { pid: pid, thread: thread } }
 end
 
+# Wait for the kitty panels to be online
+def wait_for_sockets(names, timeout: 4.0, interval: 0.02)
+  deadline = Time.now + timeout
+  until names.all? { |n| File.socket?(socket_path_for(n)) }
+    break if Time.now > deadline
+
+    sleep interval
+  end
+end
+
 # Starts/stops panels so `running` matches whatever displays are currently connected.
 def reconcile!(running, running_mutex)
   wanted = current_output_names
@@ -169,7 +179,11 @@ def reconcile!(running, running_mutex)
     info[:thread].kill
   end
 
-  (wanted - current).each { |name| start_display(name, running, running_mutex) }
+  new_names = wanted - current
+  new_names.each { |name| start_display(name, running, running_mutex) }
+
+  wait_for_sockets(new_names)
+  `tinty apply $(tinty current)`
 end
 
 shutting_down = false
