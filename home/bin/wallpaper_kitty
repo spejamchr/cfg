@@ -52,6 +52,9 @@ SWIFT_BIN = `which swift`.strip.freeze
 # Fallback poll interval, only used if the Swift display-change listener is unavailable.
 POLL_INTERVAL_SECONDS = 2
 
+# Display events often arrive in bursts (e.g. on wake); reconcile once after this quiet period.
+DEBOUNCE_SECONDS = 1.0
+
 # Registers CGDisplayRegisterReconfigurationCallback and prints a line to stdout each time
 # macOS reports a display reconfiguration (connect, disconnect, mode/position change). This
 # lets us react to hotplug events instead of polling `kitty +kitten panel --output-name=listjson`.
@@ -231,6 +234,14 @@ loop do
         watcher_io.close
         watcher_io = nil
       else
+        # Debounce: wait until no more events arrive for DEBOUNCE_SECONDS.
+        while watcher_io.wait_readable(DEBOUNCE_SECONDS)
+          if watcher_io.gets.nil?
+            watcher_io.close
+            watcher_io = nil
+            break
+          end
+        end
         reconcile!(running, running_mutex)
       end
     end
