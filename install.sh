@@ -312,7 +312,6 @@ function main() {
   brew_cask_install obsidian
   brew_cask_install postgres-unofficial "spencer"
   brew_cask_install slack 'spencerchristiansen'
-  brew_cask_install ubersicht
   brew_cask_install visual-studio-code "spencerchristiansen"
   brew_cask_install zoom "spencer"
 

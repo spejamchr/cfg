@@ -84,7 +84,6 @@ Installed with `brew cask install`:
 - [`obsidian`](https://obsidian.md/): Knowledge base that works on top of a local folder of plain text Markdown files
 - [`postgres-unofficial`](https://postgresapp.com/): App wrapper for Postgres
 - [`slack`](https://slack.com/): Team communication and collaboration software
-- [`übersicht`](http://tracesof.net/uebersicht/): Run commands and display their output on the desktop
 - [`visual-studio-code`](https://code.visualstudio.com/): Open-source code editor
 - [`zoom`](https://www.zoom.us/): Video communication and virtual meeting platform
 
