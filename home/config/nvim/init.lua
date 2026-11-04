@@ -797,8 +797,6 @@ require("lazy").setup({
 							},
 						},
 					},
-					-- { mason_name = "markdown-oxide", ls_config_name = "markdown_oxide", config = {} },
-					{ mason_name = "omnisharp", ls_config_name = "omnisharp", config = {} },
 					{ mason_name = "oxlint", ls_config_name = "oxlint", config = {} },
 					{ mason_name = "prisma-language-server", ls_config_name = "prismals", config = {} },
 					{
@@ -862,7 +860,7 @@ require("lazy").setup({
 
 				require("mason-tool-installer").setup({
 					ensure_installed = {
-						"prettier",
+						"oxfmt",
 						"shfmt",
 						"stylua",
 						"tree-sitter-cli",
@@ -906,32 +904,24 @@ require("lazy").setup({
 			end,
 			opts = {
 				formatters = {
-					prettier = {
-						append_args = {
-							"--plugin",
-							vim.fn.expand(
-								"$HOME/.bun/install/global/node_modules/prettier-plugin-organize-imports/index.js"
-							),
-						},
-					},
 					shfmt = {
 						append_args = { "--case-indent", "--language-dialect", "bash" },
 					},
 				},
 				formatters_by_ft = {
 					bash = { "shfmt" },
-					css = { "prettier" },
-					html = { "prettier" },
-					javascript = { "prettier" },
-					javascriptreact = { "prettier" },
+					css = { "oxfmt" },
+					html = { "oxfmt" },
+					javascript = { "oxfmt" },
+					javascriptreact = { "oxfmt" },
 					lua = { "stylua" },
-					markdown = { "prettier" },
+					markdown = { "oxfmt" },
 					rust = { "rustfmt", lsp_format = "fallback" },
 					sh = { "shfmt" },
 					shell = { "shfmt" },
-					typescript = { "prettier" },
-					typescriptreact = { "prettier" },
-					yaml = { "prettier" },
+					typescript = { "oxfmt" },
+					typescriptreact = { "oxfmt" },
+					yaml = { "oxfmt" },
 					zsh = { "shfmt" },
 				},
 				format_on_save = function(bufnr)
