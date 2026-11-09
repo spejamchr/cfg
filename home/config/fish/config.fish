@@ -30,3 +30,8 @@ end
 # bun
 set -gx BUN_INSTALL "$HOME/.bun"
 fish_add_path -m --path $BUN_INSTALL/bin
+
+# Machine-local, uncommitted environment (created by install.sh)
+if test -f ~/.config/fish/local.fish
+    source ~/.config/fish/local.fish
+end

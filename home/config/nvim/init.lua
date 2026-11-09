@@ -427,6 +427,245 @@ vim.keymap.set("n", "<Leader>vq", function()
 	})
 end, { desc = "bun-parallel-check" })
 
+--- Env: GHTODOS_REPO (default owner/repo), GHTODOS_FINAL_REVIEWER (GitHub login of the final reviewer).
+--- :GHTodos [owner/repo] -- Stream a markdown TODO list of my open PRs below the cursor. {{{
+local ghtodos_ns = vim.api.nvim_create_namespace("ghtodos")
+
+---@param login string
+local function ghtodos_is_bot(login)
+	local l = login:lower()
+	return l:find("coderabbit", 1, true) ~= nil or l:find("copilot", 1, true) ~= nil or l:find("[bot]", 1, true) ~= nil
+end
+
+---@param args string[]
+---@param cb fun(data: any?, err: string?)
+local function ghtodos_gh(args, cb)
+	vim.system(
+		vim.list_extend({ "gh" }, args),
+		{ text = true },
+		vim.schedule_wrap(function(out)
+			if out.code ~= 0 then
+				return cb(nil, vim.trim(out.stderr or "gh failed"))
+			end
+			local ok, data = pcall(vim.json.decode, out.stdout, { luanil = { object = true, array = true } })
+			if not ok then
+				return cb(nil, "invalid JSON from gh")
+			end
+			cb(data)
+		end)
+	)
+end
+
+---@param pr table
+---@param me string
+---@param final string
+---@return string[]
+local function ghtodos_pr_lines(pr, me, final)
+	local humans, final_state, peer_ok = {}, nil, false
+	for _, r in ipairs(pr.latestReviews or {}) do
+		local login = r.author.login
+		if login ~= me then
+			if login == final then
+				final_state = r.state
+			end
+			if not ghtodos_is_bot(login) then
+				table.insert(humans, r)
+				if login ~= final and r.state == "APPROVED" then
+					peer_ok = true
+				end
+			end
+		end
+	end
+
+	local needs_peer_label, demo_label = false, false
+	for _, l in ipairs(pr.labels or {}) do
+		needs_peer_label = needs_peer_label or l.name:find("peer review", 1, true) ~= nil
+		demo_label = demo_label or l.name:find("demo", 1, true) ~= nil
+	end
+
+	local failed = {}
+	for _, c in ipairs(pr.statusCheckRollup or {}) do
+		if c.conclusion == "FAILURE" then
+			table.insert(failed, c.name or c.context)
+		end
+	end
+
+	local status
+	if pr.isDraft then
+		status = "Draft"
+	elseif final_state == "APPROVED" and peer_ok then
+		status = "Approved by peer and " .. final
+	elseif peer_ok and final_state == "COMMENTED" then
+		status = "Peer-approved; " .. final .. " commented, no final approval yet"
+	elseif peer_ok then
+		status = "Peer-approved; waiting on final review"
+	elseif #humans > 0 then
+		status = "Human reviewers commented, no peer approval yet"
+	elseif needs_peer_label then
+		status = "Waiting on peer review"
+	else
+		status = "No label; bot reviews only"
+	end
+
+	local actions = {}
+	if pr.mergeable == "CONFLICTING" then
+		table.insert(actions, "Rebase / resolve conflicts")
+	end
+	if #failed > 0 then
+		table.insert(actions, "Fix failing checks: " .. table.concat(failed, ", "))
+	end
+	if final_state == "APPROVED" and peer_ok then
+		table.insert(actions, demo_label and "Test in demo env, then merge" or "Test in demo env; add demo label")
+	elseif final_state == "COMMENTED" then
+		table.insert(actions, "Address feedback from " .. final)
+	elseif #humans > 0 then
+		table.insert(actions, "Address reviewer feedback")
+	elseif not needs_peer_label and not peer_ok and not pr.isDraft then
+		table.insert(actions, "Address Copilot/CodeRabbit feedback; add peer review label")
+	end
+
+	local lines = { ("- %s - #%d"):format(pr.title, pr.number), "  - " .. status }
+	for _, a in ipairs(actions) do
+		table.insert(lines, "  - [ ] " .. a)
+	end
+	table.insert(lines, "")
+	return lines
+end
+
+---@param repo string
+local function ghtodos(repo)
+	local final = vim.env.GHTODOS_FINAL_REVIEWER or ""
+	local buf = vim.api.nvim_get_current_buf()
+	local row = vim.api.nvim_win_get_cursor(0)[1] -- 0-based row of the line below the cursor
+	local mark = vim.api.nvim_buf_set_extmark(buf, ghtodos_ns, row, 0, { strict = false })
+
+	local status = "<!-- ghtodos: starting... -->"
+	local usage_lines = {}
+	local review_lines = {}
+	---@type {number: integer, title: string, lines: string[]?}[]
+	local prs = {}
+	local rendered = 0
+
+	local function render()
+		if not vim.api.nvim_buf_is_valid(buf) then
+			return
+		end
+		local lines = {}
+		if status then
+			table.insert(lines, status)
+		end
+		vim.list_extend(lines, usage_lines)
+		vim.list_extend(lines, review_lines)
+		for _, pr in ipairs(prs) do
+			vim.list_extend(lines, pr.lines or { ("- %s - #%d"):format(pr.title, pr.number), "  - loading...", "" })
+		end
+		local start = vim.api.nvim_buf_get_extmark_by_id(buf, ghtodos_ns, mark, {})[1] or row
+		vim.api.nvim_buf_set_lines(buf, start, start + rendered, false, lines)
+		rendered = #lines
+		vim.api.nvim_buf_set_extmark(buf, ghtodos_ns, start, 0, { id = mark, strict = false })
+	end
+
+	local function fail(err)
+		status = "<!-- ghtodos failed: " .. err:gsub("%s+", " ") .. " -->"
+		render()
+	end
+
+	render()
+	status = "<!-- ghtodos: fetching user... -->"
+	render()
+	ghtodos_gh({ "api", "user" }, function(user, err)
+		if not user then
+			return fail(err)
+		end
+		local me = user.login
+		local base = { "--state", "open", "--repo", repo, "--json", "number,title,author" }
+
+		status = "<!-- ghtodos: fetching Copilot usage... -->"
+		render()
+		ghtodos_gh({ "api", "/copilot_internal/user" }, function(copilot)
+			local credits = copilot
+				and copilot.quota_snapshots
+				and copilot.quota_snapshots.premium_interactions
+				and copilot.quota_snapshots.premium_interactions.credits_used
+			if credits then
+				usage_lines = { ("> Copilot usage: %d AI credits used"):format(credits), "" }
+			end
+
+			status = "<!-- ghtodos: fetching review requests... -->"
+			render()
+			ghtodos_gh(
+				vim.list_extend({ "search", "prs", "--review-requested", "@me" }, base),
+				function(requested, rerr)
+					if not requested then
+						return fail(rerr)
+					end
+					review_lines = { "- Review PRs" }
+					for _, pr in ipairs(requested) do
+						table.insert(
+							review_lines,
+							("  - [ ] %s: %s - #%d"):format(pr.author.login, pr.title, pr.number)
+						)
+					end
+					table.insert(review_lines, "")
+
+					status = "<!-- ghtodos: fetching your PRs... -->"
+					render()
+					ghtodos_gh(vim.list_extend({ "search", "prs", "--author", "@me" }, base), function(mine, merr)
+						if not mine then
+							return fail(merr)
+						end
+						table.sort(mine, function(a, b)
+							return a.number < b.number
+						end)
+						prs = mine
+						local pending = #prs
+						local function done_one()
+							pending = pending - 1
+							status = pending > 0
+									and ("<!-- ghtodos: loading PR details (%d left)... -->"):format(pending)
+								or nil
+							render()
+						end
+						if pending == 0 then
+							return done_one()
+						end
+						status = ("<!-- ghtodos: loading PR details (%d left)... -->"):format(pending)
+						render()
+						for _, pr in ipairs(prs) do
+							ghtodos_gh({
+								"pr",
+								"view",
+								tostring(pr.number),
+								"-R",
+								repo,
+								"--json",
+								"number,title,isDraft,mergeable,labels,latestReviews,statusCheckRollup",
+							}, function(detail, derr)
+								pr.lines = detail and ghtodos_pr_lines(detail, me, final)
+									or {
+										("- %s - #%d"):format(pr.title, pr.number),
+										"  - Failed to load: " .. (derr or "?"),
+										"",
+									}
+								done_one()
+							end)
+						end
+					end)
+				end
+			)
+		end)
+	end)
+end
+
+vim.api.nvim_create_user_command("GHTodos", function(opts)
+	local repo = opts.args ~= "" and opts.args or vim.env.GHTODOS_REPO
+	if not repo or repo == "" then
+		return vim.notify("GHTodos: pass owner/repo or set $GHTODOS_REPO", vim.log.levels.ERROR)
+	end
+	ghtodos(repo)
+end, { nargs = "?", desc = "Stream my open PR TODOs below the cursor" })
+-- }}}
+
 -- }}}
 
 -- Bootstrap lazy.nvim {{{
@@ -914,6 +1153,7 @@ require("lazy").setup({
 					html = { "oxfmt" },
 					javascript = { "oxfmt" },
 					javascriptreact = { "oxfmt" },
+					json = { "oxfmt" },
 					lua = { "stylua" },
 					markdown = { "oxfmt" },
 					rust = { "rustfmt", lsp_format = "fallback" },
@@ -1136,8 +1376,8 @@ require("lazy").setup({
 				legacy_commands = false, -- this will be removed in the next major release
 				workspaces = {
 					{
-						name = "personal",
-						path = "~/Syncthing/HomeRock",
+						name = "work",
+						path = "~/Library/CloudStorage/Dropbox/Work/SyncTimes",
 					},
 				},
 			},

@@ -198,6 +198,16 @@ function create_symlinks() {
   done
 }
 
+function ensure_local_fish_config() {
+  local local_fish="$HOME/.config/fish/local.fish"
+  if [[ ! -e "$local_fish" ]]; then
+    ensure_dir "$(dirname "$local_fish")"
+    try_to "Create $local_fish for machine-local environment variables" \
+      "printf '%s\n' '# Machine-local environment variables (not tracked by git)' '# set -gx MY_TEST_ENVIRONMENT_VARIABLE \"Hello world\"' > \"$local_fish\"" \
+      "rm \"$local_fish\""
+  fi
+}
+
 function install_sleepwatcher_plist() {
   sleepwatcher_dir=$(brew --prefix sleepwatcher)
   ensure_dir "$sleepwatcher_dir"
@@ -346,6 +356,7 @@ function main() {
 
   backup_existing_config_files
   create_symlinks
+  ensure_local_fish_config
 
   install_sleepwatcher_plist
   install_wallpaper_kitty
