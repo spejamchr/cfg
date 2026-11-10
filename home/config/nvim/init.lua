@@ -1040,6 +1040,9 @@ require("lazy").setup({
 						mason_name = "oxlint",
 						ls_config_name = "oxlint",
 						config = {
+							-- The project enables type-aware rules (needs oxlint-tsgolint); the LSP skips them by default.
+							settings = { typeAware = true },
+							init_options = { settings = { typeAware = true } },
 							-- Find the project's .oxlintrc.json[c] (the default only looks for .oxlintrc.json).
 							root_dir = function(bufnr, on_dir)
 								local fname = vim.api.nvim_buf_get_name(bufnr)
@@ -1053,8 +1056,14 @@ require("lazy").setup({
 							end,
 							-- Prefer the project's pinned oxlint so editor diagnostics match.
 							cmd = function(dispatchers, config)
-								local root = vim.fs.root(config.root_dir or 0, "node_modules/.bin/oxlint")
-								local local_bin = root and vim.fs.joinpath(root, "node_modules/.bin/oxlint")
+								local local_bin
+								for dir in vim.fs.parents(vim.fs.joinpath(config.root_dir or vim.fn.getcwd(), "x")) do
+									local candidate = vim.fs.joinpath(dir, "node_modules/.bin/oxlint")
+									if vim.uv.fs_stat(candidate) then
+										local_bin = candidate
+										break
+									end
+								end
 								if local_bin then
 									return vim.lsp.rpc.start({ local_bin, "--lsp" }, dispatchers)
 								end
