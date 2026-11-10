@@ -1036,7 +1036,32 @@ require("lazy").setup({
 							},
 						},
 					},
-					{ mason_name = "oxlint", ls_config_name = "oxlint", config = {} },
+					{
+						mason_name = "oxlint",
+						ls_config_name = "oxlint",
+						config = {
+							-- Find the project's .oxlintrc.json[c] (the default only looks for .oxlintrc.json).
+							root_dir = function(bufnr, on_dir)
+								local fname = vim.api.nvim_buf_get_name(bufnr)
+								local found = vim.fs.find(
+									{ ".oxlintrc.json", ".oxlintrc.jsonc" },
+									{ path = fname, upward = true }
+								)[1]
+								if found then
+									on_dir(vim.fs.dirname(found))
+								end
+							end,
+							-- Prefer the project's pinned oxlint so editor diagnostics match.
+							cmd = function(dispatchers, config)
+								local root = vim.fs.root(config.root_dir or 0, "node_modules/.bin/oxlint")
+								local local_bin = root and vim.fs.joinpath(root, "node_modules/.bin/oxlint")
+								if local_bin then
+									return vim.lsp.rpc.start({ local_bin, "--lsp" }, dispatchers)
+								end
+								return vim.lsp.rpc.start({ "oxc_language_server" }, dispatchers)
+							end,
+						},
+					},
 					{ mason_name = "prisma-language-server", ls_config_name = "prismals", config = {} },
 					{
 						mason_name = "rust-analyzer",
